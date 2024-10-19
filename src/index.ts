@@ -1,5 +1,6 @@
-import { resolve } from 'node:path'
 import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
+import process from 'node:process'
 import { deepMerge } from './utils'
 
 export interface ConfigOptions<T> {
