@@ -20,7 +20,29 @@ bun install -d bun-config
 
 ## Get Started
 
-...
+If you are building any sort of Bun project, you can use the `loadConfig` function to load your configuration.
+
+```ts
+import type { ConfigOptions } from 'bun-config'
+import { loadConfig } from 'bun-config'
+
+const options: ConfigOptions = {
+  name: 'my-app', // required
+  cwd: './', // default: process.cwd()
+  defaults: { // default: {}
+    port: 3000,
+    host: 'localhost',
+  },
+}
+
+const resolvedConfig = await loadConfig(options)
+
+console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a config file is found
+```
+
+> [!TIP]
+> If your process.cwd() includes a $name.config.ts or $name.config.js file, it will be loaded and merged with the defaults, with the config file values taking precedence.
+
 
 ## Testing
 
