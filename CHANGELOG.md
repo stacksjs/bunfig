@@ -1,4 +1,17 @@
 
+## v0.1.0...main
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.0...main)
+
+### 🏡 Chore
+
+- Adjust links ([aff0251](https://github.com/stacksjs/bun-config/commit/aff0251))
+- Remove `existsSync` check ([d8e8684](https://github.com/stacksjs/bun-config/commit/d8e8684))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## ...main
 
 
