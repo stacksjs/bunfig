@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { deepMerge } from './utils'
@@ -13,16 +12,13 @@ export async function loadConfig<T extends Record<string, unknown>>({ name, cwd,
   const c = cwd ?? process.cwd()
   const configPath = resolve(c, `${name}.config`)
 
-  if (existsSync(configPath)) {
-    try {
-      const importedConfig = await import(configPath)
-      const loadedConfig = importedConfig.default || importedConfig
-      return deepMerge(defaultConfig, loadedConfig)
-    }
-    catch (error) {
-      console.error(`Error loading config from ${configPath}:`, error)
-    }
+  try {
+    const importedConfig = await import(configPath)
+    const loadedConfig = importedConfig.default || importedConfig
+    return deepMerge(defaultConfig, loadedConfig)
   }
-
-  return defaultConfig
+  catch (error) {
+    console.error(`Error loading config from ${configPath}:`, error)
+    return defaultConfig
+  }
 }
