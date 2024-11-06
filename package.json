@@ -1,8 +1,8 @@
 {
   "name": "bun-config",
   "type": "module",
-  "version": "0.4.0",
-  "description": "A simple TypeScript starter kit using Bun.",
+  "version": "0.0.0",
+  "description": "A smart & fully-typed configuration loader for Bun.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
   "homepage": "https://github.com/stacksjs/bun-config#readme",

@@ -1,4 +1,36 @@
 
+## ...main
+
+
+### 🏡 Chore
+
+- Initial commit ([0d2505b](https://github.com/stacksjs/bun-config/commit/0d2505b))
+- Wip ([2530d87](https://github.com/stacksjs/bun-config/commit/2530d87))
+- Wip ([647e3e5](https://github.com/stacksjs/bun-config/commit/647e3e5))
+- Wip ([420a65e](https://github.com/stacksjs/bun-config/commit/420a65e))
+- Wip ([e95123e](https://github.com/stacksjs/bun-config/commit/e95123e))
+- Wip ([9c7c77e](https://github.com/stacksjs/bun-config/commit/9c7c77e))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
+## ...main
+
+
+### 🏡 Chore
+
+- Initial commit ([0d2505b](https://github.com/stacksjs/bun-config/commit/0d2505b))
+- Wip ([2530d87](https://github.com/stacksjs/bun-config/commit/2530d87))
+- Wip ([647e3e5](https://github.com/stacksjs/bun-config/commit/647e3e5))
+- Wip ([420a65e](https://github.com/stacksjs/bun-config/commit/420a65e))
+- Wip ([e95123e](https://github.com/stacksjs/bun-config/commit/e95123e))
+- Wip ([9c7c77e](https://github.com/stacksjs/bun-config/commit/9c7c77e))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.3.1...main
 
 [compare changes](https://github.com/stacksjs/ts-starter/compare/v0.3.1...main)

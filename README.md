@@ -43,7 +43,6 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 > [!TIP]
 > If your process.cwd() includes a `$name.config.{ts,js,mjs,cjs}` file, it will be loaded and merged with the defaults, with file config file values taking precedence.
 
-
 ## Testing
 
 ```bash

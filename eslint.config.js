@@ -9,7 +9,4 @@ export default stacks({
   typescript: true,
   jsonc: true,
   yaml: true,
-  ignores: [
-    'fixtures/**',
-  ],
 })
