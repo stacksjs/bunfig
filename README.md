@@ -92,8 +92,8 @@ The MIT License (MIT). Please see [LICENSE](https://github.com/stacksjs/bun-conf
 Made with 💙
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/@stacksjs/bun-config?style=flat-square
-[npm-version-href]: https://npmjs.com/package/@stacksjs/bun-config
+[npm-version-src]: https://img.shields.io/npm/v/bun-config?style=flat-square
+[npm-version-href]: https://npmjs.com/package/bun-config
 [github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/bun-config/ci.yml?style=flat-square&branch=main
 [github-actions-href]: https://github.com/stacksjs/bun-config/actions?query=workflow%3Aci
 
