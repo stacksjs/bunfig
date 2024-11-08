@@ -1,3 +1,11 @@
+/**
+ * Deep merge objects
+ *
+ * @param target - The target object
+ * @param sources - The source objects
+ * @returns The merged object
+ * @example deepMerge({ foo: 'bar' }, { bar: 'baz' }) // { foo: 'bar', bar: 'baz' }
+ */
 export function deepMerge<T extends object>(target: T, ...sources: Array<Partial<T>>): T {
   if (!sources.length)
     return target

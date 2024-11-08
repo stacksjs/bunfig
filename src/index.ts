@@ -1,24 +1,30 @@
+import type { ConfigOptions } from './types'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { deepMerge } from './utils'
 
-export interface ConfigOptions<T> {
-  name: string
-  cwd?: string
-  defaultConfig: T
-}
-
+/**
+ * Load Config
+ *
+ * @param {object} options - The configuration options.
+ * @param {string} options.name - The name of the configuration file.
+ * @param {string} [options.cwd] - The current working directory. If not provided, defaults to the current process's working directory.
+ * @param {T} options.defaultConfig - The default configuration.
+ * @returns {Promise<T>} The merged configuration object.
+ * @example ```ts
+ * // imports from example.config.{ts,js} and merges with default config
+ * await loadConfig({ name: 'example', defaultConfig: { foo: 'bar' } })
+ */
 export async function loadConfig<T extends Record<string, unknown>>({ name, cwd, defaultConfig }: ConfigOptions<T>): Promise<T> {
-  const c = cwd ?? process.cwd()
-  const configPath = resolve(c, `${name}.config`)
+  const configPath = resolve(cwd || process.cwd(), `${name}.config`)
 
   try {
     const importedConfig = await import(configPath)
     const loadedConfig = importedConfig.default || importedConfig
     return deepMerge(defaultConfig, loadedConfig)
   }
-  catch (error) {
-    console.error(`Error loading config from ${configPath}:`, error)
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  catch (error: any) {
     return defaultConfig
   }
 }

@@ -31,7 +31,6 @@
     "lint": "bunx eslint .",
     "lint:fix": "bunx eslint . --fix",
     "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
-    "commit": "git cz",
     "changelog": "bunx changelogen --output CHANGELOG.md",
     "prepublishOnly": "bun --bun run build",
     "release": "bun run changelog && bunx bumpp package.json --all",
@@ -39,28 +38,19 @@
     "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.5.0",
     "@stacksjs/eslint-config": "^3.8.1-beta.2",
     "@types/bun": "^1.1.13",
     "bumpp": "^9.8.1",
-    "bun-plugin-dts-auto": "^0.20.6",
+    "bun-plugin-dtsx": "^0.21.0",
     "changelogen": "^0.5.7",
-    "commitizen": "^4.3.1",
-    "cz-git": "^1.10.1",
     "lint-staged": "^15.2.10",
     "simple-git-hooks": "^2.11.1",
     "typescript": "^5.6.3"
   },
   "simple-git-hooks": {
-    "pre-commit": "bun lint-staged",
-    "commit-msg": "bunx --no -- commitlint --edit $1"
+    "pre-commit": "bun lint-staged"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "bunx eslint . --fix"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-git"
-    }
+    "*.{js,ts}": "bunx eslint . --fix"
   }
 }
