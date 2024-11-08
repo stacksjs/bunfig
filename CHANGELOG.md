@@ -1,4 +1,8 @@
 
+## v0.1.2...v0.1.2
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.2...v0.1.2)
+
 ## v0.1.1...main
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.1...main)
