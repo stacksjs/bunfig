@@ -1,4 +1,16 @@
 
+## v0.1.2...main
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.2...main)
+
+### 🏡 Chore
+
+- Update `bun-plugin-dtsx` ([cb7de86](https://github.com/stacksjs/bun-config/commit/cb7de86))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.1.2...v0.1.2
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.2...v0.1.2)
