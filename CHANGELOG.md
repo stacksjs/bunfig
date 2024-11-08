@@ -1,4 +1,16 @@
 
+## v0.1.1...main
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.1...main)
+
+### 🏡 Chore
+
+- Minor adjustments ([18ab3dd](https://github.com/stacksjs/bun-config/commit/18ab3dd))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.1.0...main
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.0...main)
