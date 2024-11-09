@@ -1,4 +1,16 @@
 
+## v0.1.4...main
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.4...main)
+
+### 🏡 Chore
+
+- Update dtsx ([0cdc51c](https://github.com/stacksjs/bun-config/commit/0cdc51c))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.1.3...main
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.3...main)
