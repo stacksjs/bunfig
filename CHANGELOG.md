@@ -1,4 +1,16 @@
 
+## v0.1.3...main
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.3...main)
+
+### 🏡 Chore
+
+- Update deps ([f4f11b5](https://github.com/stacksjs/bun-config/commit/f4f11b5))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.1.2...main
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.2...main)
