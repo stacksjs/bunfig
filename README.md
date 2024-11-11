@@ -23,10 +23,15 @@ bun install -d bun-config
 If you are building any sort of Bun project, you can use the `loadConfig` function to load your configuration.
 
 ```ts
-import type { ConfigOptions } from 'bun-config'
+import type { Config } from 'bun-config'
 import { loadConfig } from 'bun-config'
 
-const options: ConfigOptions = {
+interface MyLibraryConfig {
+  port: number
+  host: string
+}
+
+const options: Config<MyLibraryConfig> = {
   name: 'my-app', // required
   cwd: './', // default: process.cwd()
   defaults: { // default: {}
