@@ -1,4 +1,18 @@
 
+## v0.1.5...main
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.5...main)
+
+### 🏡 Chore
+
+- Adjust changelog ([89f61db](https://github.com/stacksjs/bun-config/commit/89f61db))
+- Update readme ([9768a15](https://github.com/stacksjs/bun-config/commit/9768a15))
+- Export Config type ([19d1a4e](https://github.com/stacksjs/bun-config/commit/19d1a4e))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.1.5...v0.1.5
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.5...v0.1.5)
