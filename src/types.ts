@@ -5,7 +5,7 @@
  * @param cwd - The current working directory.
  * @param defaultConfig - The default configuration.
  */
-export interface ConfigOptions<T> {
+export interface Config<T> {
   name: string
   cwd?: string
   defaultConfig: T
