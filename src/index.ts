@@ -8,14 +8,18 @@ import { deepMerge } from './utils'
  *
  * @param {object} options - The configuration options.
  * @param {string} options.name - The name of the configuration file.
- * @param {string} [options.cwd] - The current working directory. If not provided, defaults to the current process's working directory.
+ * @param {string} [options.cwd] - The current working directory.
  * @param {T} options.defaultConfig - The default configuration.
- * @returns {Promise<T>} The merged configuration object.
+ * @returns {Promise<T>} The merged configuration.
  * @example ```ts
- * // imports from example.config.{ts,js} and merges with default config
- * await loadConfig({ name: 'example', defaultConfig: { foo: 'bar' } })
+ * // Merges arrays if both configs are arrays, otherwise does object deep merge
+ * await loadConfig({
+ *   name: 'example',
+ *   defaultConfig: [{ foo: 'bar' }]
+ * })
+ * ```
  */
-export async function loadConfig<T extends Record<string, unknown>>({ name, cwd, defaultConfig }: Config<T>): Promise<T> {
+export async function loadConfig<T>({ name, cwd, defaultConfig }: Config<T>): Promise<T> {
   const configPath = resolve(cwd || process.cwd(), `${name}.config`)
 
   try {
