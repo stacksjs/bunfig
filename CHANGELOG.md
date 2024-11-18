@@ -1,4 +1,20 @@
 
+## v0.2.0...main
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.2.0...main)
+
+### 🚀 Enhancements
+
+- Properly handle arrays ([56dd53a](https://github.com/stacksjs/bun-config/commit/56dd53a))
+
+### 🏡 Chore
+
+- Add `dtsx` to dictionary ([429eee8](https://github.com/stacksjs/bun-config/commit/429eee8))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.1.5...main
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.1.5...main)
