@@ -1,4 +1,16 @@
 
+## v0.3.0...main
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.3.0...main)
+
+### 🏡 Chore
+
+- Improve merging & return types ([a13db50](https://github.com/stacksjs/bun-config/commit/a13db50))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.2.0...main
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.2.0...main)
