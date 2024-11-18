@@ -34,3 +34,4 @@ export async function loadConfig<T>({ name, cwd, defaultConfig }: Config<T>): Pr
 }
 
 export * from './types'
+export * from './utils'

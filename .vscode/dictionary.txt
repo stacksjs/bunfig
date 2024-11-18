@@ -17,6 +17,7 @@ dtsx
 entrypoints
 heroicons
 lockb
+Mergeable
 openweb
 outdir
 pausable

@@ -1,39 +1,56 @@
+import type { DeepMerge, SimplifyDeep } from './types'
+
 /**
- * Deep merge objects or arrays
+ * Deep Merge
  *
- * @param target - The target object or array
- * @param sources - The source objects or arrays
- * @returns The merged result
+ * Merges arrays if both configs are arrays, otherwise does object deep merge.
+ *
+ * @param target - The target object.
+ * @param sources - The source objects.
+ * @returns The merged object.
+ * @example ```ts
+ * deepMerge({ foo: 'bar' }, { bar: 'baz' })
+ * deepMerge([{ foo: 'bar' }], [{ bar: 'baz' }])
+ * deepMerge({ foo: 'bar' }, [{ foo: 'baz' }])
+ * ```
  */
-export function deepMerge<T>(target: T, ...sources: Partial<T>[]): T {
+export function deepMerge<T, S>(target: T, ...sources: S[]): T extends object
+  ? S extends any[]
+    ? S
+    : S extends object
+      ? SimplifyDeep<DeepMerge<T, S>>
+      : T
+  : T extends any[]
+    ? S extends any[]
+      ? T
+      : T
+    : T {
   if (!sources.length)
-    return target
+    return target as any
 
   const source = sources.shift()
   if (!source)
-    return target
+    return target as any
+
+  if (Array.isArray(source) !== Array.isArray(target)
+    || isObject(source) !== isObject(target)) {
+    return source as any
+  }
 
   if (Array.isArray(target) && Array.isArray(source)) {
-    // If both are arrays, concatenate them
-    return [...target, ...source] as T
+    return [...target, ...source] as any
   }
 
   if (isObject(target) && isObject(source)) {
     for (const key in source) {
       if (Object.prototype.hasOwnProperty.call(source, key)) {
         const sourceValue = source[key]
-        if (Array.isArray(sourceValue) && Array.isArray((target as any)[key])) {
-          // Merge arrays within objects
-          (target as any)[key] = [...(target as any)[key], ...sourceValue]
-        }
-        else if (isObject(sourceValue) && isObject((target as any)[key])) {
-          // Deep merge nested objects
-          (target as any)[key] = deepMerge((target as any)[key], sourceValue)
-        }
-        else {
-          // Replace primitive values and objects/arrays that don't match in type
+        if (!Object.prototype.hasOwnProperty.call(target, key)) {
           (target as any)[key] = sourceValue
+          continue
         }
+
+        (target as any)[key] = deepMerge((target as any)[key], sourceValue)
       }
     }
   }

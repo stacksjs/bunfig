@@ -10,3 +10,23 @@ export interface Config<T> {
   cwd?: string
   defaultConfig: T
 }
+
+export type SimplifyDeep<T> = T extends object
+  ? { [P in keyof T]: SimplifyDeep<T[P]> }
+  : T
+
+export type DeepMerge<T, S> = {
+  [P in keyof (T & S)]: P extends keyof T
+    ? P extends keyof S
+      ? DeepMergeable<T[P], S[P]>
+      : T[P]
+    : P extends keyof S
+      ? S[P]
+      : never
+}
+
+export type DeepMergeable<T, S> = T extends object
+  ? S extends object
+    ? DeepMerge<T, S>
+    : S
+  : S
