@@ -50,10 +50,10 @@ We would like to extend our thanks to the following sponsors for funding Stacks 
 ## Credits
 
 - [Chris Breuer](https://github.com/chrisbbreuer)
-- [All Contributors](../../contributors)
+- [All Contributors](https://github.com/stacksjs/bunfig/contributors)
 
 ## License
 
-The MIT License (MIT). Please see [LICENSE](https://github.com/stacksjs/bun-config/tree/main/LICENSE.md) for more information.
+The MIT License (MIT). Please see [LICENSE](https://github.com/stacksjs/bunfig/tree/main/LICENSE.md) for more information.
 
 Made with 💙
