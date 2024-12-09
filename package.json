@@ -5,13 +5,13 @@
   "description": "A smart & fully-typed configuration loader for Bun.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
-  "homepage": "https://github.com/stacksjs/bun-config#readme",
+  "homepage": "https://github.com/stacksjs/bunfig#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stacksjs/bun-config.git"
+    "url": "git+https://github.com/stacksjs/bunfig.git"
   },
   "bugs": {
-    "url": "https://github.com/stacksjs/bun-config/issues"
+    "url": "https://github.com/stacksjs/bunfig/issues"
   },
   "keywords": ["config", "loader", "bun", "bunfig"],
   "exports": {
@@ -35,17 +35,21 @@
     "prepublishOnly": "bun --bun run build",
     "release": "bun run changelog && bunx bumpp package.json --all",
     "test": "bun test",
+    "dev:docs": "bun --bun vitepress dev docs",
+    "build:docs": "bun --bun vitepress build docs",
+    "preview:docs": "bun --bun vitepress preview docs",
     "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
-    "@stacksjs/eslint-config": "^3.8.1-beta.2",
+    "@stacksjs/eslint-config": "^3.11.3-beta.4",
     "@types/bun": "^1.1.14",
     "bumpp": "^9.9.0",
     "bun-plugin-dtsx": "^0.21.9",
     "changelogen": "^0.5.7",
     "lint-staged": "^15.2.10",
     "simple-git-hooks": "^2.11.1",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitepress": "^1.5.0"
   },
   "simple-git-hooks": {
     "pre-commit": "bun lint-staged"
