@@ -1,5 +1,5 @@
 {
-  "name": "bun-config",
+  "name": "bunfig",
   "type": "module",
   "version": "0.3.2",
   "description": "A smart & fully-typed configuration loader for Bun.",
@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/stacksjs/bun-config/issues"
   },
-  "keywords": ["config", "loader", "bun"],
+  "keywords": ["config", "loader", "bun", "bunfig"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

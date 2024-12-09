@@ -23,8 +23,8 @@ bun install -d bun-config
 If you are building any sort of Bun project, you can use the `loadConfig` function to load your configuration.
 
 ```ts
-import type { Config } from 'bun-config'
-import { loadConfig } from 'bun-config'
+import type { Config } from 'bunfig'
+import { loadConfig } from 'bunfig'
 
 interface MyLibraryConfig {
   port: number
