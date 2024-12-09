@@ -1,4 +1,16 @@
 
+## v0.3.2...main
+
+[compare changes](https://github.com/stacksjs/bun-config/compare/v0.3.2...main)
+
+### 🏡 Chore
+
+- Rename to bunfig ([818095f](https://github.com/stacksjs/bun-config/commit/818095f))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.3.1...main
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.3.1...main)
