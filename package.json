@@ -43,10 +43,10 @@
   "devDependencies": {
     "@stacksjs/eslint-config": "^3.11.3-beta.4",
     "@types/bun": "^1.1.14",
-    "bumpp": "^9.9.0",
+    "bumpp": "^9.9.1",
     "bun-plugin-dtsx": "^0.21.9",
     "changelogen": "^0.5.7",
-    "lint-staged": "^15.2.10",
+    "lint-staged": "^15.2.11",
     "simple-git-hooks": "^2.11.1",
     "typescript": "^5.7.2",
     "vitepress": "^1.5.0"
