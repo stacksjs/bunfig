@@ -5,9 +5,10 @@ hero:
   name: "bunfig"
   text: "A smart config loader for Bun projects."
   tagline: "Lightweight, zero-dependency, and fully typed."
+  image: /images/logo-white.png
   actions:
     - theme: brand
-      text: Documentation
+      text: Get Started
       link: /intro
     - theme: alt
       text: View on GitHub
@@ -24,3 +25,5 @@ features:
     icon: "🔍"
     details: "Type-safe configuration."
 ---
+
+<Home />

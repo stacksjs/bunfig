@@ -1,3 +1,5 @@
+<p align="center"><img src="https://github.com/stacksjs/bunfig/blob/main/.github/art/cover.png?raw=true" alt="Social Card of this repo"></p>
+
 # Introduction
 
 `bunfig` is a smart configuration loader for Bun projects. It is lightweight, zero-dependency, and fully typed.
