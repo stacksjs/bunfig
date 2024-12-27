@@ -81,7 +81,7 @@ export default withPwa(
       ['meta', { name: 'author', content: 'Stacks.js, Inc.' }],
       ['meta', {
         name: 'tags',
-        content: 'bunfig, config, stacksjs, lightweight, zero-config',
+        content: 'bunfig, config, stacksjs, lightweight, zero-config, local development, smart, unconfig-like',
       }],
       ['meta', { property: 'og:type', content: 'website' }],
       ['meta', { property: 'og:locale', content: 'en' }],
