@@ -52,7 +52,7 @@ const sidebar = [
   {
     text: 'Get Started',
     items: [
-      { text: 'Introduction', link: '/intro' },
+      { text: 'Intro', link: '/intro' },
       { text: 'Install', link: '/install' },
       { text: 'Usage', link: '/usage' },
     ],
