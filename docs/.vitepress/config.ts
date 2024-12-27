@@ -19,11 +19,11 @@ const analyticsHead: HeadConfig[] = [
 ]
 
 const nav = [
+  { text: 'News', link: 'https://stacksjs.org/news' },
   {
     text: 'Changelog',
     link: 'https://github.com/stacksjs/bunfig/blob/main/CHANGELOG.md',
   },
-  // { text: 'Blog', link: 'https://updates.ow3.org' },
   {
     text: 'Resources',
     items: [
@@ -31,6 +31,7 @@ const nav = [
       { text: 'Sponsors', link: '/sponsors' },
       { text: 'Partners', link: '/partners' },
       { text: 'Postcardware', link: '/postcardware' },
+      { text: 'License', link: '/license' },
       {
         items: [
           {
@@ -56,13 +57,17 @@ const sidebar = [
       { text: 'Usage', link: '/usage' },
     ],
   },
+  { text: 'Showcase', link: '/Showcase' },
 ]
+
+const description = 'A smart config leader for Bun projects'
+const title = 'bunfig | A smart config leader for Bun projects.'
 
 export default withPwa(
   defineConfig({
     lang: 'en-US',
     title: 'bunfig',
-    description: 'A smart config leader for Bun projects.',
+    description,
     lastUpdated: true,
     cleanUrls: true,
     metaChunk: true,
@@ -71,9 +76,18 @@ export default withPwa(
       ['link', { rel: 'icon', type: 'image/svg+xml', href: './images/logo-mini.svg' }],
       ['link', { rel: 'icon', type: 'image/png', href: './images/logo.png' }],
       ['meta', { name: 'theme-color', content: '#0A0ABC' }],
+      ['meta', { name: 'title', content: title }],
+      ['meta', { name: 'description', content: description }],
+      ['meta', { name: 'author', content: 'Stacks.js, Inc.' }],
+      ['meta', {
+        name: 'tags',
+        content: 'bunfig, config, stacksjs, lightweight, zero-config',
+      }],
       ['meta', { property: 'og:type', content: 'website' }],
       ['meta', { property: 'og:locale', content: 'en' }],
-      ['meta', { property: 'og:title', content: 'bunfig | A smart config leader for Bun projects.' }],
+      ['meta', { property: 'og:title', content: title }],
+      ['meta', { property: 'og:description', content: description }],
+
       ['meta', { property: 'og:site_name', content: 'bunfig' }],
       ['meta', { property: 'og:image', content: './images/og-image.jpg' }],
       ['meta', { property: 'og:url', content: 'https://bunfig.netlify.app/' }],
@@ -82,7 +96,10 @@ export default withPwa(
     ],
 
     themeConfig: {
-      logo: './images/logo-transparent.svg',
+      logo: {
+        light: './images/logo-transparent.svg',
+        dark: './images/logo-white-transparent.svg',
+      },
 
       nav,
       sidebar,
