@@ -60,8 +60,8 @@ const sidebar = [
   { text: 'Showcase', link: '/Showcase' },
 ]
 
-const description = 'A smart config leader for Bun projects'
-const title = 'bunfig | A smart config leader for Bun projects.'
+const description = 'A smart config loader for Bun projects'
+const title = 'bunfig | A smart config loader for Bun projects.'
 
 export default withPwa(
   defineConfig({
