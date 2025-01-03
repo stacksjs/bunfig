@@ -17,6 +17,9 @@ destructurable
 dtsx
 entrypoints
 heroicons
+iconify
+Laravel
+localtunnels
 lockb
 Mergeable
 openweb
@@ -26,12 +29,15 @@ Postcardware
 prefetch
 preinstall
 quickfix
+shikijs
 socio
 Solana
 Spatie
 stacksjs
+tlsx
 typecheck
 unconfig
+unocss
 unplugin
 unref
 upath
