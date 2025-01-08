@@ -1,4 +1,16 @@
 
+## v0.5.1...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.5.1...main)
+
+### 🏡 Chore
+
+- Ensure vite comment makes dist output ([595c6a4](https://github.com/stacksjs/bunfig/commit/595c6a4))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.5.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.5.0...main)
