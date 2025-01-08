@@ -9,6 +9,7 @@
 ## Features
 
 - Smart configuration loader
+- Optimized Bun & browser support
 - Lightweight & zero-dependency
 - Fully typed
 

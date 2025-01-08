@@ -8,6 +8,8 @@
 export interface Config<T> {
   name: string
   cwd?: string
+  endpoint?: string
+  headers?: Record<string, string>
   defaultConfig: T
 }
 

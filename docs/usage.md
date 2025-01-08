@@ -59,3 +59,7 @@ export default {
 ```
 
 This file will be loaded and merged with the defaults, with the file values taking precedence.
+
+## Browser Support
+
+wip
