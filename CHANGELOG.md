@@ -1,4 +1,43 @@
 
+## v0.4.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.4.0...main)
+
+### 🚀 Enhancements
+
+- Add browser support ([6661520](https://github.com/stacksjs/bunfig/commit/6661520))
+
+### 📖 Documentation
+
+- Enhance documentation ([79445b1](https://github.com/stacksjs/bunfig/commit/79445b1))
+- Enhance docs context ([451a249](https://github.com/stacksjs/bunfig/commit/451a249))
+- Enhance docs ([b438753](https://github.com/stacksjs/bunfig/commit/b438753))
+- Adjust install section ([d58be12](https://github.com/stacksjs/bunfig/commit/d58be12))
+- Adjust code theme ([ff226dd](https://github.com/stacksjs/bunfig/commit/ff226dd))
+- Improve showcase ([6533123](https://github.com/stacksjs/bunfig/commit/6533123))
+- Improve sponsors ([a7c4a96](https://github.com/stacksjs/bunfig/commit/a7c4a96))
+
+### 🏡 Chore
+
+- Add initial docs ([8abe01b](https://github.com/stacksjs/bunfig/commit/8abe01b))
+- Update links ([451f52a](https://github.com/stacksjs/bunfig/commit/451f52a))
+- Several minor updates ([1b57da3](https://github.com/stacksjs/bunfig/commit/1b57da3))
+- Update bun ([0bd8043](https://github.com/stacksjs/bunfig/commit/0bd8043))
+- Typo ([e039df0](https://github.com/stacksjs/bunfig/commit/e039df0))
+- Revert unconfig ([de66cbd](https://github.com/stacksjs/bunfig/commit/de66cbd))
+- Adjust keywords ([2ec8cb1](https://github.com/stacksjs/bunfig/commit/2ec8cb1))
+- Add text lock file ([77d4704](https://github.com/stacksjs/bunfig/commit/77d4704))
+- Get lint to work within vscode browsers ([394b220](https://github.com/stacksjs/bunfig/commit/394b220))
+- Add to dictionary ([4780836](https://github.com/stacksjs/bunfig/commit/4780836))
+- Add `qrx` to showcase ([7d4225c](https://github.com/stacksjs/bunfig/commit/7d4225c))
+- Update renovate config ([142a2e9](https://github.com/stacksjs/bunfig/commit/142a2e9))
+- Add missing docblock option ([0acd13a](https://github.com/stacksjs/bunfig/commit/0acd13a))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+- Cab-mikee ([@cab-mikee](http://github.com/cab-mikee))
+
 ## v0.3.2...main
 
 [compare changes](https://github.com/stacksjs/bun-config/compare/v0.3.2...main)
