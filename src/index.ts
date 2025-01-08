@@ -37,7 +37,7 @@ export async function loadConfig<T>({
     const configPath = resolve(cwd || process.cwd(), `${name}.config`)
 
     try {
-      const importedConfig = await import(/* @vite-ignore */configPath)
+      const importedConfig = await import(configPath)
       const loadedConfig = importedConfig.default || importedConfig
       return deepMerge(defaultConfig, loadedConfig) as T
     }
