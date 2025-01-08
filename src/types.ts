@@ -7,10 +7,10 @@
  */
 export interface Config<T> {
   name: string
+  defaultConfig: T
   cwd?: string
   endpoint?: string
   headers?: Record<string, string>
-  defaultConfig: T
 }
 
 export type SimplifyDeep<T> = T extends object

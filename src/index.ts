@@ -25,19 +25,19 @@ import { deepMerge } from './utils'
 export async function loadConfig<T>({
   name,
   cwd,
-  endpoint = '/api/config',
+  defaultConfig,
+  endpoint,
   headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
-  defaultConfig,
 }: Config<T>): Promise<T> {
   // If running in a server (Bun) environment, load the config from the file system
   if (typeof window === 'undefined') {
     const configPath = resolve(cwd || process.cwd(), `${name}.config`)
 
     try {
-      const importedConfig = await import(configPath)
+      const importedConfig = await import(/* @vite-ignore */configPath)
       const loadedConfig = importedConfig.default || importedConfig
       return deepMerge(defaultConfig, loadedConfig) as T
     }
@@ -45,6 +45,11 @@ export async function loadConfig<T>({
     catch (error: any) {
       return defaultConfig
     }
+  }
+
+  if (!endpoint) {
+    console.warn('An endpoint is required to fetch the client config. Using the default config.')
+    return defaultConfig
   }
 
   // If running in a browser environment, load the config from an API endpoint
