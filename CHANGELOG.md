@@ -1,4 +1,16 @@
 
+## v0.5.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.5.0...main)
+
+### 🏡 Chore
+
+- Minor updates ([a20b390](https://github.com/stacksjs/bunfig/commit/a20b390))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.4.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.4.0...main)
