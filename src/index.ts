@@ -48,7 +48,7 @@ export async function loadConfig<T>({
   }
 
   if (!endpoint) {
-    console.warn('An endpoint is required to fetch the client config. Using the default config.')
+    console.warn('An API endpoint is required to load the client config.')
     return defaultConfig
   }
 
