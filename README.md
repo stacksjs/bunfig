@@ -1,4 +1,4 @@
-<p align="center"><img src="https://github.com/stacksjs/bun-config/blob/main/.github/art/cover.png?raw=true" alt="Social Card of this repo"></p>
+<p align="center"><img src="https://github.com/stacksjs/bunfig/blob/main/.github/art/cover.png?raw=true" alt="Social Card of this repo"></p>
 
 [![npm version][npm-version-src]][npm-version-href]
 [![GitHub Actions][github-actions-src]][github-actions-href]
@@ -16,7 +16,7 @@
 ## Install
 
 ```bash
-bun install -d bun-config
+bun install -d bunfig
 ```
 
 ## Get Started
@@ -93,15 +93,15 @@ We would like to extend our thanks to the following sponsors for funding Stacks 
 
 ## License
 
-The MIT License (MIT). Please see [LICENSE](https://github.com/stacksjs/bun-config/tree/main/LICENSE.md) for more information.
+The MIT License (MIT). Please see [LICENSE](https://github.com/stacksjs/bunfig/tree/main/LICENSE.md) for more information.
 
 Made with 💙
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/bun-config?style=flat-square
-[npm-version-href]: https://npmjs.com/package/bun-config
-[github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/bun-config/ci.yml?style=flat-square&branch=main
-[github-actions-href]: https://github.com/stacksjs/bun-config/actions?query=workflow%3Aci
+[npm-version-src]: https://img.shields.io/npm/v/bunfig?style=flat-square
+[npm-version-href]: https://npmjs.com/package/bunfig
+[github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/bunfig/ci.yml?style=flat-square&branch=main
+[github-actions-href]: https://github.com/stacksjs/bunfig/actions?query=workflow%3Aci
 
-<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/bun-config/main?style=flat-square
-[codecov-href]: https://codecov.io/gh/stacksjs/bun-config -->
+<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/bunfig/main?style=flat-square
+[codecov-href]: https://codecov.io/gh/stacksjs/bunfig -->
