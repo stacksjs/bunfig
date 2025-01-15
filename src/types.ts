@@ -4,6 +4,16 @@
  * @param name - The name of the configuration file.
  * @param cwd - The current working directory.
  * @param defaultConfig - The default configuration.
+ * @param endpoint - The API endpoint to fetch config from in browser environments.
+ * @param headers - The headers to send with the request in browser environments.
+ * @example ```ts
+ * // Merges arrays if both configs are arrays, otherwise does object deep merge
+ * await loadConfig({
+ *   name: 'example',
+ *   endpoint: '/api/my-custom-config/endpoint',
+ *   defaultConfig: [{ foo: 'bar' }]
+ * })
+ * ```
  */
 export interface Config<T> {
   name: string
