@@ -1,4 +1,25 @@
 
+## v0.5.2...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.5.2...main)
+
+### 🏡 Chore
+
+- Improve console warning ([078a0cd](https://github.com/stacksjs/bunfig/commit/078a0cd))
+- Finish rename ([cf76f16](https://github.com/stacksjs/bunfig/commit/cf76f16))
+- Enhance lint and sponsors ([cc80788](https://github.com/stacksjs/bunfig/commit/cc80788))
+- Enhance sponsors ([ba0c3a8](https://github.com/stacksjs/bunfig/commit/ba0c3a8))
+- Remove flag ([73f0b47](https://github.com/stacksjs/bunfig/commit/73f0b47))
+- Add jsdocs ([6f445b0](https://github.com/stacksjs/bunfig/commit/6f445b0))
+- Improve default config path ([5187483](https://github.com/stacksjs/bunfig/commit/5187483))
+- Use text lockfile ([b7852a8](https://github.com/stacksjs/bunfig/commit/b7852a8))
+- Teach word ([7e59656](https://github.com/stacksjs/bunfig/commit/7e59656))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+- Cab-mikee ([@cab-mikee](http://github.com/cab-mikee))
+
 ## v0.5.1...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.5.1...main)
