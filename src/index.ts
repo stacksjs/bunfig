@@ -34,7 +34,8 @@ export async function loadConfig<T>({
 }: Config<T>): Promise<T> {
   // If running in a server (Bun) environment, load the config from the file system
   if (typeof window === 'undefined') {
-    const configPath = resolve(cwd || process.cwd(), `${name}.config`)
+    // back 3 times to get out of node_modules into the root directory, assuming the config is in the root directory
+    const configPath = resolve(cwd || '../../../', `${name}.config`)
 
     try {
       const importedConfig = await import(configPath)
