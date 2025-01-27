@@ -1,10 +1,14 @@
-<p align="center"><img src="https://github.com/stacksjs/bunfig/blob/main/.github/art/cover.png?raw=true" alt="Social Card of this repo"></p>
+<p align="center"><img src="https://github.com/stacksjs/bunfig/blob/main/.github/art/cover.jpg?raw=true" alt="Social Card of this repo"></p>
 
 [![npm version][npm-version-src]][npm-version-href]
 [![GitHub Actions][github-actions-src]][github-actions-href]
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 <!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
+
+# Bunfig
+
+> Smart configuration loader for libraries, apps, and CLIs built utilizing Bun.
 
 ## Features
 
