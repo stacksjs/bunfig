@@ -77,7 +77,7 @@ ___
   - Private Discord channel invite
   - Free Personal Account for Stacks Dashboard
   - Social media follow
-  - Name listed in the `BACKERS.md` file of >70x `stacksjs/core` repos, `stacksjs/stacks`, `tlsx`, `rpx`, `dtsx`, `qrx`, `localtunnels`, `bunfig`, `vite-plugin-local`, `ts-collect`, `ts-spreadsheets`, and few others, above other individual backers.
+  - Name listed in the `BACKERS.md` file of >70x `stacksjs/core` repos, `stacksjs/stacks`, `audiox`, `buddy.sh`, `bunfig`, `bun-plugin-auto-imports`, `bun-plugin-dtsx`, `bun-plugin-unocss`, `clarity`, `dnsx`, `docs.stacksjs.org`, `dtsx`, `httx`, `imgx`, `localtunnel.sh`, `qrx`, `reverse-proxy.sh`, `tlsx.sh`, `ts-collect`, `ts-spreadsheets`, `vite-plugin-local`, `vidx` and few others, above other individual backers.
 
 ___
 
