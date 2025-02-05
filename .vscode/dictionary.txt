@@ -1,4 +1,5 @@
 antfu
+audiox
 biomejs
 booleanish
 bumpp
@@ -14,10 +15,13 @@ davidanson
 degit
 deps
 destructurable
+dnsx
 dtsx
 entrypoints
 heroicons
+httx
 iconify
+imgx
 Laravel
 localtunnels
 lockb
@@ -42,6 +46,7 @@ unocss
 unplugin
 unref
 upath
+vidx
 vite
 vitebook
 vitejs
