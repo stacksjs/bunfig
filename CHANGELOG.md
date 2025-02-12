@@ -1,4 +1,32 @@
 
+## v0.5.3...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.5.3...main)
+
+### 🚀 Enhancements
+
+- Allow for dotfile configs ([a6fd8f6](https://github.com/stacksjs/bunfig/commit/a6fd8f6))
+
+### 🏡 Chore
+
+- Update project meta info ([1aceaa8](https://github.com/stacksjs/bunfig/commit/1aceaa8))
+- Update bun version ([bb181ae](https://github.com/stacksjs/bunfig/commit/bb181ae))
+- Adjust Postcardware section ([b447d80](https://github.com/stacksjs/bunfig/commit/b447d80))
+- Add github funding info ([f5d07c5](https://github.com/stacksjs/bunfig/commit/f5d07c5))
+- Sponsor changes ([f789de7](https://github.com/stacksjs/bunfig/commit/f789de7))
+- Sponsor change ([7e8219e](https://github.com/stacksjs/bunfig/commit/7e8219e))
+- Additional dictionary ([23a3a6d](https://github.com/stacksjs/bunfig/commit/23a3a6d))
+- Funding changes ([73b6ff3](https://github.com/stacksjs/bunfig/commit/73b6ff3))
+- Adjust file name ([d511d98](https://github.com/stacksjs/bunfig/commit/d511d98))
+- Update bun version ([0b91ad5](https://github.com/stacksjs/bunfig/commit/0b91ad5))
+- Update eslint config ([56065fa](https://github.com/stacksjs/bunfig/commit/56065fa))
+- Lint ([48f514a](https://github.com/stacksjs/bunfig/commit/48f514a))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+- Cab-mikee ([@cab-mikee](http://github.com/cab-mikee))
+
 ## v0.5.2...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.5.2...main)
