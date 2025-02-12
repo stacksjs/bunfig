@@ -3,6 +3,20 @@ import { resolve } from 'node:path'
 import { deepMerge } from './utils'
 
 /**
+ * Attempts to load a config file from a specific path
+ */
+async function tryLoadConfig<T>(configPath: string, defaultConfig: T): Promise<T | null> {
+  try {
+    const importedConfig = await import(configPath)
+    const loadedConfig = importedConfig.default || importedConfig
+    return deepMerge(defaultConfig, loadedConfig) as T
+  }
+  catch {
+    return null
+  }
+}
+
+/**
  * Load Config
  *
  * @param {object} options - The configuration options.
@@ -31,33 +45,32 @@ export async function loadConfig<T>({
     'Content-Type': 'application/json',
   },
 }: Config<T>): Promise<T> {
-  // If running in a server (Bun) environment, load the config from the file system
+  // If running in a server environment, load the config from the file system
   if (typeof window === 'undefined') {
-    try {
-      // back 3 times to get out of node_modules into the root directory, assuming the config is in the root directory
-      const configPath = resolve(cwd || '../../../', `${name}.config`)
-      const importedConfig = await import(configPath)
-      const loadedConfig = importedConfig.default || importedConfig
+    const baseDir = cwd || '../../../'
 
-      return deepMerge(defaultConfig, loadedConfig) as T
-    }
-    // eslint-disable-next-line unused-imports/no-unused-vars
-    catch (error: any) {
-      try {
-        const dotConfigPath = resolve(cwd || '../../../', `.${name}.config`)
-        const importedConfig = await import(dotConfigPath)
-        const loadedConfig = importedConfig.default || importedConfig
+    // Try loading config in order of preference
+    const configPaths = [
+      `${name}.config`,
+      `.${name}.config`,
+      name,
+      `.${name}`,
+    ]
 
-        return deepMerge(defaultConfig, loadedConfig) as T
-      }
-      catch (error) {
-        console.error('Failed to load client config:', error)
-
-        return defaultConfig
+    for (const configPath of configPaths) {
+      const fullPath = resolve(baseDir, configPath)
+      const config = await tryLoadConfig(fullPath, defaultConfig)
+      if (config !== null) {
+        return config
       }
     }
+
+    console.error('Failed to load client config from any expected location')
+
+    return defaultConfig
   }
 
+  // Browser environment checks
   if (!endpoint) {
     console.warn('An API endpoint is required to load the client config.')
     return defaultConfig
