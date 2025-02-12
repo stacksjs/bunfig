@@ -1,6 +1,5 @@
 import type { Config } from './types'
 import { resolve } from 'node:path'
-import process from 'node:process'
 import { deepMerge } from './utils'
 
 /**
