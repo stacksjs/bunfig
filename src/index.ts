@@ -34,17 +34,28 @@ export async function loadConfig<T>({
 }: Config<T>): Promise<T> {
   // If running in a server (Bun) environment, load the config from the file system
   if (typeof window === 'undefined') {
-    // back 3 times to get out of node_modules into the root directory, assuming the config is in the root directory
-    const configPath = resolve(cwd || '../../../', `${name}.config`)
-
     try {
+      // back 3 times to get out of node_modules into the root directory, assuming the config is in the root directory
+      const configPath = resolve(cwd || '../../../', `${name}.config`)
       const importedConfig = await import(configPath)
       const loadedConfig = importedConfig.default || importedConfig
+
       return deepMerge(defaultConfig, loadedConfig) as T
     }
     // eslint-disable-next-line unused-imports/no-unused-vars
     catch (error: any) {
-      return defaultConfig
+      try {
+        const dotConfigPath = resolve(cwd || '../../../', `.${name}.config`)
+        const importedConfig = await import(dotConfigPath)
+        const loadedConfig = importedConfig.default || importedConfig
+
+        return deepMerge(defaultConfig, loadedConfig) as T
+      }
+      catch (error) {
+        console.error('Failed to load client config:', error)
+
+        return defaultConfig
+      }
     }
   }
 
