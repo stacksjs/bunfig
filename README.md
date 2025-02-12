@@ -51,7 +51,7 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 ```
 
 > [!TIP]
-> If your process.cwd() includes a `$name.config.{ts,js,mjs,cjs}` file, it will be loaded and merged with the defaults, with file config file values taking precedence.
+> If your `process.cwd()` includes a `$name.config.{ts,js,mjs,cjs}` _(or `.$name.config.{ts,js,mjs,cjs}`)_ file, it will be loaded and merged with defaults, where file config file values take precedence.
 
 ## Testing
 
