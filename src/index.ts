@@ -5,7 +5,7 @@ import { deepMerge } from './utils'
 /**
  * Attempts to load a config file from a specific path
  */
-async function tryLoadConfig<T>(configPath: string, defaultConfig: T): Promise<T | null> {
+export async function tryLoadConfig<T>(configPath: string, defaultConfig: T): Promise<T | null> {
   try {
     const importedConfig = await import(configPath)
     const loadedConfig = importedConfig.default || importedConfig
