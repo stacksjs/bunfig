@@ -1,4 +1,21 @@
 
+## v0.6.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.6.0...main)
+
+### 🚀 Enhancements
+
+- Allow for config file names that equal config name ([87f89de](https://github.com/stacksjs/bunfig/commit/87f89de))
+- Export `tryLoadConfig` ([9db46cf](https://github.com/stacksjs/bunfig/commit/9db46cf))
+
+### 🏡 Chore
+
+- Adjust instruction for dotfile configs ([c3b8a9b](https://github.com/stacksjs/bunfig/commit/c3b8a9b))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.5.3...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.5.3...main)
