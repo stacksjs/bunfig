@@ -51,7 +51,38 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 ```
 
 > [!TIP]
-> If your `process.cwd()` includes a `$name.config.{ts,js,mjs,cjs}` _(or `.$name.config.{ts,js,mjs,cjs}`)_ file, it will be loaded and merged with defaults, where file config file values take precedence.
+> If your `process.cwd()` includes a `$name.config.{ts,js,mjs,cjs,json}` _(or `.$name.config.{ts,js,mjs,cjs,json}`)_ file, it will be loaded and merged with defaults, where file config file values take precedence. For minimalists, it also loads a `.$name.{ts,js,mjs,cjs,json}` and `$name.{ts,js,mjs,cjs,json}` file if present.
+
+Alternatively, you can use the `config` function to load your configuration.
+
+```ts
+import type { Config } from 'bunfig'
+import { config } from 'bunfig'
+
+interface MyAppOrLibraryConfig {
+  port: number
+  host: string
+}
+
+const options: Config<MyAppOrLibraryConfig> = {
+  name: 'my-app', // required to know which config file to load
+  cwd: './', // default: process.cwd()
+  defaults: { // default: {}
+    port: 3000,
+    host: 'localhost',
+  },
+}
+
+const resolvedConfig = await config(options)
+```
+
+The config function is a wrapper around the `loadConfig` function and is useful for loading configuration in a more flexible way. It accepts an options object with the following properties:
+
+- `name`: The name of the config file to load.
+- `cwd`: The current working directory to load the config file from.
+- `defaultConfig`: The default config to use if no config file is found.
+- `endpoint`: The endpoint to fetch the config from.
+- `headers`: The headers to send to the endpoint.
 
 ## Testing
 
