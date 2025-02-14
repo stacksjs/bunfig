@@ -1,9 +1,9 @@
-import { configDir, generateConfigTypes, generatedDir } from '../src/config'
+import { defaultConfigDir, defaultGeneratedDir, generateConfigTypes } from '../src/config'
 
 try {
   generateConfigTypes({
-    configDir,
-    generatedDir,
+    configDir: defaultConfigDir,
+    generatedDir: defaultGeneratedDir,
   })
 }
 catch (error) {

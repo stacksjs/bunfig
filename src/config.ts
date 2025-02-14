@@ -2,6 +2,7 @@ import type { ConfigNames } from './generated/config-types'
 import type { Config } from './types'
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
+import process from 'node:process'
 import { deepMerge } from './utils'
 
 export async function config<T>(
@@ -60,6 +61,8 @@ export async function loadConfig<T>({
   name = '',
   cwd,
   defaultConfig,
+  configDir,
+  generatedDir,
   endpoint,
   headers = {
     'Accept': 'application/json',
@@ -119,15 +122,22 @@ export async function loadConfig<T>({
   }
 }
 
-export const defaultConfigDir: string = resolve(__dirname, '../config')
-export const defaultGeneratedDir: string = resolve(__dirname, '../src/generated')
+export const defaultConfigDir: string = resolve(
+  process.cwd(),
+  'config',
+)
+
+export const defaultGeneratedDir: string = resolve(
+  process.cwd(),
+  'src/generated',
+)
 
 export function generateConfigTypes(options: {
   configDir: string
   generatedDir: string
 }): void {
-  const configDir = resolve(__dirname, options.configDir || '../config')
-  const generatedDir = resolve(__dirname, options.generatedDir || '../src/generated')
+  const configDir = resolve(process.cwd(), options.configDir)
+  const generatedDir = resolve(process.cwd(), options.generatedDir)
   const outputFile = resolve(generatedDir, 'config-types.ts')
 
   // Create generated directory if it doesn't exist
