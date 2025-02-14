@@ -82,3 +82,9 @@ jobs:
 
       - name: Unit Test
         run: bun test
+
+      - name: Build
+        run: bun run build
+
+      - name: Publish Commit
+        run: bunx pkg-pr-new publish
