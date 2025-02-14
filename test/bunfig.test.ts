@@ -1,128 +1,378 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock, spyOn, test } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import process from 'node:process'
+import { config, deepMerge, generateConfigTypes, loadConfig } from '../src'
 
-// Example function to test
-function add(a: number, b: number): number {
-  return a + b
-}
-
-// Example async function to test
-async function fetchData(): Promise<string> {
-  return new Promise(resolve => setTimeout(() => resolve('data'), 100))
-}
-
-// Example module to mock
-const apiModule = {
-  fetchUserData: async (id: number) => {
-    // Simulating an API call
-    return { id, name: 'John Doe', email: 'john@example.com' }
-  },
-}
-
-describe('my awesome package', () => {
-  let testValue: number
-
-  beforeAll(() => {
-    // eslint-disable-next-line no-console
-    console.log('Running before all tests')
-  })
-
-  afterAll(() => {
-    // eslint-disable-next-line no-console
-    console.log('Running after all tests')
-  })
+describe('bunfig', () => {
+  const testConfigDir = resolve(process.cwd(), 'test/tmp/config')
+  const testGeneratedDir = resolve(process.cwd(), 'test/tmp/generated')
 
   beforeEach(() => {
-    testValue = 10
+    // Clean up test directories
+    if (existsSync(testConfigDir))
+      rmSync(testConfigDir, { recursive: true })
+    if (existsSync(testGeneratedDir))
+      rmSync(testGeneratedDir, { recursive: true })
+
+    // Create test directories
+    mkdirSync(testConfigDir, { recursive: true })
+    mkdirSync(testGeneratedDir, { recursive: true })
   })
 
   afterEach(() => {
-    testValue = 0
+    // Cleanup test directories
+    if (existsSync(testConfigDir))
+      rmSync(testConfigDir, { recursive: true })
+    if (existsSync(testGeneratedDir))
+      rmSync(testGeneratedDir, { recursive: true })
   })
 
-  it('should demonstrate basic assertion', () => {
-    expect(1).toBe(1)
-  })
-
-  it('should test the add function', () => {
-    expect(add(2, 3)).toBe(5)
-    expect(add(-1, 1)).toBe(0)
-  })
-
-  it('should work with various matchers', () => {
-    expect(true).toBeTruthy()
-    expect(false).toBeFalsy()
-    expect(null).toBeNull()
-    expect(undefined).toBeUndefined()
-    expect([1, 2, 3]).toContain(2)
-    expect({ name: 'John' }).toHaveProperty('name')
-    expect(() => {
-      throw new Error('Test error')
-    }).toThrow('Test error')
-  })
-
-  it('should handle async tests', async () => {
-    const result = await fetchData()
-    expect(result).toBe('data')
-  })
-
-  it('should use beforeEach and afterEach', () => {
-    expect(testValue).toBe(10)
-    testValue += 5
-    expect(testValue).toBe(15)
-  })
-
-  test('should work with test function as well', () => {
-    expect(true).toBe(true)
-  })
-
-  it('should demonstrate spy functionality', () => {
-    const consoleSpy = spyOn(console, 'log')
-    // eslint-disable-next-line no-console
-    console.log('Test message')
-    expect(consoleSpy).toHaveBeenCalledWith('Test message')
-    consoleSpy.mockRestore()
-  })
-
-  it.todo('should implement this test later')
-
-  it.skip('should skip this test', () => {
-    // This test will be skipped
-    expect(true).toBe(false)
-  })
-
-  describe('Mocking example', () => {
-    it('should demonstrate mock functionality', async () => {
-      // Create a mock function
-      const mockFetchUserData = mock((id: number) => {
-        return Promise.resolve({ id, name: 'Mocked User', email: 'mocked@example.com' })
+  describe('loadConfig', () => {
+    it('should load default config when no config file exists', async () => {
+      const defaultConfig = { port: 3000, host: 'localhost' }
+      const result = await loadConfig({
+        name: 'test-app',
+        cwd: testConfigDir,
+        defaultConfig,
       })
 
-      // Replace the original function with the mock
-      apiModule.fetchUserData = mockFetchUserData
+      expect(result).toEqual(defaultConfig)
+    })
 
-      // Use the mocked function
-      const result = await apiModule.fetchUserData(1)
+    it('should merge config file with defaults', async () => {
+      const configPath = resolve(testConfigDir, 'merge-test.config.ts')
+      const configContent = `export default { host: 'custom-host' }`
 
-      // Assert the mock was called with the correct argument
-      expect(mockFetchUserData).toHaveBeenCalledWith(1)
+      writeFileSync(configPath, configContent)
 
-      // Assert the mock returned the expected result
-      expect(result).toEqual({ id: 1, name: 'Mocked User', email: 'mocked@example.com' })
-
-      // Check how many times the mock was called
-      expect(mockFetchUserData).toHaveBeenCalledTimes(1)
-
-      // Reset the mock
-      mockFetchUserData.mockReset()
-
-      // Provide a new implementation for the mock
-      mockFetchUserData.mockImplementation((id: number) => {
-        return Promise.resolve({ id, name: 'New Mock', email: 'new@example.com' })
+      const defaultConfig = { port: 3000, host: 'localhost' }
+      const result = await loadConfig({
+        name: 'merge-test',
+        cwd: testConfigDir,
+        defaultConfig,
       })
 
-      // Use the mock with the new implementation
-      const newResult = await apiModule.fetchUserData(2)
-      expect(newResult).toEqual({ id: 2, name: 'New Mock', email: 'new@example.com' })
+      expect(result).toEqual({ port: 3000, host: 'custom-host' })
+    })
+
+    it('should try all config file patterns', async () => {
+      const configPath = resolve(testConfigDir, '.pattern-test.config.ts')
+      const configContent = `export default { host: 'from-dot-file' }`
+
+      writeFileSync(configPath, configContent)
+
+      const defaultConfig = { port: 3000, host: 'localhost' }
+      const result = await loadConfig({
+        name: 'pattern-test',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      expect(result).toEqual({ port: 3000, host: 'from-dot-file' })
+    })
+
+    it('should handle invalid config file gracefully', async () => {
+      // Clean up any existing files first
+      if (existsSync(testConfigDir))
+        rmSync(testConfigDir, { recursive: true })
+
+      // Create a fresh directory
+      mkdirSync(testConfigDir, { recursive: true })
+
+      // Create an invalid config file
+      const configPath = resolve(testConfigDir, 'invalid-test.config.ts')
+      const configContent = 'export default "not an object";'
+
+      writeFileSync(configPath, configContent)
+
+      // Wait for file system operations to complete
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      // Log directory contents after cleanup and file creation
+      console.error('Test directory contents after cleanup:', readdirSync(testConfigDir))
+
+      const defaultConfig = { port: 3000, host: 'localhost' }
+      const result = await loadConfig({
+        name: 'invalid-test',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      // Log the actual result for debugging
+      console.error('Actual result:', result)
+
+      expect(result).toEqual(defaultConfig)
+    })
+
+    it('should handle browser environment', async () => {
+      // Mock window to simulate browser environment
+      const originalWindow = globalThis.window
+      // @ts-expect-error - mocking window
+      globalThis.window = {}
+
+      const mockFetch = mock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ host: 'api-host' }),
+        }),
+      )
+      // @ts-expect-error - mocking fetch
+      globalThis.fetch = mockFetch
+
+      const defaultConfig = { port: 3000, host: 'localhost' }
+      const result = await loadConfig({
+        name: 'test-app',
+        endpoint: '/api/config',
+        defaultConfig,
+      })
+
+      expect(result).toEqual({ port: 3000, host: 'api-host' })
+      expect(mockFetch).toHaveBeenCalledWith('/api/config', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+
+      // Restore window
+      globalThis.window = originalWindow
+    })
+
+    it('should handle browser fetch errors', async () => {
+      // Mock window to simulate browser environment
+      const originalWindow = globalThis.window
+      // @ts-expect-error - mocking window
+      globalThis.window = {}
+
+      const consoleSpy = spyOn(console, 'error')
+      const mockFetch = mock(() => Promise.reject(new Error('Network error')))
+
+      globalThis.fetch = mockFetch
+
+      const defaultConfig = { port: 3000, host: 'localhost' }
+      const result = await loadConfig({
+        name: 'test-app',
+        endpoint: '/api/config',
+        defaultConfig,
+      })
+
+      expect(result).toEqual(defaultConfig)
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to load client config:', expect.any(Error))
+
+      // Restore window
+      globalThis.window = originalWindow
+      consoleSpy.mockRestore()
+    })
+
+    it('should handle non-200 responses in browser', async () => {
+      // Mock window to simulate browser environment
+      const originalWindow = globalThis.window
+      // @ts-expect-error - mocking window
+      globalThis.window = {}
+
+      const mockFetch = mock(() =>
+        Promise.resolve({
+          ok: false,
+          status: 404,
+        }),
+      )
+      // @ts-expect-error - mocking fetch
+      globalThis.fetch = mockFetch
+
+      const defaultConfig = { port: 3000, host: 'localhost' }
+      const result = await loadConfig({
+        name: 'test-app',
+        endpoint: '/api/config',
+        defaultConfig,
+      })
+
+      expect(result).toEqual(defaultConfig)
+
+      // Restore window
+      globalThis.window = originalWindow
+    })
+
+    it('should handle custom headers in browser', async () => {
+      // Mock window to simulate browser environment
+      const originalWindow = globalThis.window
+      // @ts-expect-error - mocking window
+      globalThis.window = {}
+
+      const mockFetch = mock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ host: 'api-host' }),
+        }),
+      )
+      // @ts-expect-error - mocking fetch
+      globalThis.fetch = mockFetch
+
+      const defaultConfig = { port: 3000, host: 'localhost' }
+      const customHeaders = {
+        'Authorization': 'Bearer token',
+        'X-Custom-Header': 'value',
+      }
+
+      const result = await loadConfig({
+        name: 'test-app',
+        endpoint: '/api/config',
+        headers: customHeaders,
+        defaultConfig,
+      })
+
+      expect(result).toEqual({ port: 3000, host: 'api-host' })
+      expect(mockFetch).toHaveBeenCalledWith('/api/config', {
+        method: 'GET',
+        headers: {
+          ...customHeaders,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+
+      // Restore window
+      globalThis.window = originalWindow
+    })
+  })
+
+  describe('config function', () => {
+    it('should handle string input', async () => {
+      const configPath = resolve(testConfigDir, 'simple.config.ts')
+      const configContent = `export default { value: 'test' }`
+
+      writeFileSync(configPath, configContent)
+
+      const result = await config<{ value: string }>({
+        name: 'simple',
+        cwd: testConfigDir,
+        defaultConfig: { value: 'default' },
+      })
+
+      expect(result).toEqual({ value: 'test' })
+    })
+
+    it('should handle string input with no config file', async () => {
+      const result = await config('non-existent')
+      expect(result).toEqual({})
+    })
+  })
+
+  describe('deepMerge', () => {
+    it('should merge objects deeply', () => {
+      const target = { a: 1, b: { c: 2 } }
+      const source = { b: { d: 3 }, e: 4 }
+      const result = deepMerge(target, source)
+
+      expect(result).toEqual({
+        a: 1,
+        b: { c: 2, d: 3 },
+        e: 4,
+      })
+    })
+
+    it('should handle arrays', () => {
+      const target = [1, 2, { a: 1 }]
+      const source = [3, 4, { b: 2 }]
+      const result = deepMerge(target, source)
+
+      expect(result).toEqual([3, 4, { a: 1, b: 2 }])
+    })
+
+    it('should handle null and undefined values', () => {
+      const target = { a: 1, b: 2 }
+      const source = { a: null, c: undefined }
+      const result = deepMerge(target, source)
+
+      expect(result).toEqual({ a: null, b: 2, c: undefined })
+    })
+
+    it('should handle empty objects', () => {
+      const target = {}
+      const source = {}
+      const result = deepMerge(target, source)
+
+      expect(result).toEqual({})
+    })
+
+    it('should handle nested arrays', () => {
+      const target = { arr: [1, 2, [3, 4]] }
+      const source = { arr: [5, 6, [7, 8]] }
+      const result = deepMerge(target, source)
+
+      expect(result).toEqual({ arr: [5, 6, [7, 8]] })
+    })
+
+    it('should handle mixed types', () => {
+      const target = { a: [1, 2], b: { c: 3 } }
+      const source = { a: { d: 4 }, b: [5, 6] }
+      const result = deepMerge(target, source)
+
+      expect(result).toEqual({ a: { d: 4 }, b: [5, 6] })
+    })
+  })
+
+  describe('generateConfigTypes', () => {
+    it('should generate config types', () => {
+      // Create some test config files
+      writeFileSync(resolve(testConfigDir, 'app.ts'), 'export default {}')
+      writeFileSync(resolve(testConfigDir, 'test.ts'), 'export default {}')
+
+      generateConfigTypes({
+        configDir: testConfigDir,
+        generatedDir: testGeneratedDir,
+      })
+
+      const typesFile = resolve(testGeneratedDir, 'config-types.ts')
+      expect(existsSync(typesFile)).toBe(true)
+
+      const content = readFileSync(typesFile, 'utf-8')
+      expect(content).toContain('export type ConfigNames = \'app\' | \'test\'')
+    })
+
+    it('should handle empty config directory', () => {
+      generateConfigTypes({
+        configDir: testConfigDir,
+        generatedDir: testGeneratedDir,
+      })
+
+      const typesFile = resolve(testGeneratedDir, 'config-types.ts')
+      expect(existsSync(typesFile)).toBe(true)
+
+      const content = readFileSync(typesFile, 'utf-8')
+      expect(content).toContain('export type ConfigNames = string')
+    })
+
+    it('should handle non-existent config directory', () => {
+      generateConfigTypes({
+        configDir: resolve(testConfigDir, 'non-existent'),
+        generatedDir: testGeneratedDir,
+      })
+
+      const typesFile = resolve(testGeneratedDir, 'config-types.ts')
+      expect(existsSync(typesFile)).toBe(true)
+
+      const content = readFileSync(typesFile, 'utf-8')
+      expect(content).toContain('export type ConfigNames = string')
+    })
+
+    it('should handle various file extensions', () => {
+      writeFileSync(resolve(testConfigDir, 'app.ts'), 'export default {}')
+      writeFileSync(resolve(testConfigDir, 'test.js'), 'export default {}')
+      writeFileSync(resolve(testConfigDir, 'other.json'), '{}')
+
+      generateConfigTypes({
+        configDir: testConfigDir,
+        generatedDir: testGeneratedDir,
+      })
+
+      const typesFile = resolve(testGeneratedDir, 'config-types.ts')
+      const content = readFileSync(typesFile, 'utf-8')
+      const matches = content.match(/ConfigNames = '(.+)'/)?.[1]
+      expect(matches?.includes('app')).toBe(true)
+      expect(matches?.includes('test')).toBe(true)
+      expect(matches?.includes('other')).toBe(true)
     })
   })
 })

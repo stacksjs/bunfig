@@ -18,12 +18,10 @@ cli
   .option('--verbose', 'Enable verbose logging')
   .example('bunfig generate --config-dir ./config --generated-dir ./src/generated')
   .action(async (options?: CLIOptions) => {
-    if (!options?.configDir || !options.generatedDir) {
-      return generateConfigTypes({
-        configDir: options?.configDir || defaultConfigDir,
-        generatedDir: options?.generatedDir || defaultGeneratedDir,
-      })
-    }
+    generateConfigTypes({
+      configDir: options?.configDir || defaultConfigDir,
+      generatedDir: options?.generatedDir || defaultGeneratedDir,
+    })
   })
 
 cli.command('version', 'Show the version of the Bunfig CLI').action(() => {
