@@ -9,6 +9,13 @@ await Bun.build({
   plugins: [dts()],
 })
 
+await Bun.build({
+  entrypoints: ['bin/cli.ts'],
+  outdir: './dist',
+  target: 'bun',
+  plugins: [dts()],
+})
+
 // Read the built file
 const filePath = './dist/index.js'
 const content = await readFile(filePath, 'utf8')

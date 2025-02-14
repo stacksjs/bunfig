@@ -1,0 +1,1 @@
+export type ConfigNames = string

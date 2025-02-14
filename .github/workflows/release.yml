@@ -38,3 +38,15 @@ jobs:
         run: bunx changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Attach Binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            bin/bunfig-linux-x64
+            bin/bunfig-linux-arm64
+            bin/bunfig-windows-x64.exe
+            bin/bunfig-darwin-x64
+            bin/bunfig-darwin-arm64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

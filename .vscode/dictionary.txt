@@ -35,6 +35,7 @@ preinstall
 quickfix
 shikijs
 socio
+softprops
 Solana
 Spatie
 stacksjs
