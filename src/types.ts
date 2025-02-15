@@ -18,8 +18,8 @@
 export interface Config<T> {
   name?: string
   cwd?: string
-  generatedDir?: string
   configDir?: string
+  generatedDir?: string
   endpoint?: string
   headers?: Record<string, string>
   defaultConfig: T
