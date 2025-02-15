@@ -12,10 +12,12 @@
 
 ## Features
 
-- Smart configuration loader
-- Optimized Bun & browser support
-- Lightweight & zero-dependency
-- Fully typed
+- 🔄 **Smart Config**: _intelligent configuration loading_
+- 🌐 **Universal**: _optimized for both Bun & browser environments_
+- 🪶 **Lightweight**: _zero dependencies, built on native modules_
+- 💪 **Type-Safe**: _fully typed configurations with generated type definitions_
+- 🛠️ **CLI Tools**: _powerful & easy-to-use CLI_
+- 📦 **Flexible**: _supports multiple config file formats (.ts, .js, .mjs, .cjs, .json, .mts, .cts)_
 
 ## Install
 
