@@ -235,6 +235,398 @@ describe('bunfig', () => {
       // Restore window
       globalThis.window = originalWindow
     })
+
+    it('should correctly merge nested configuration objects', async () => {
+      interface DatabaseConfig {
+        host: string
+        ports: {
+          primary: number
+          secondary: number
+        }
+        security: {
+          ssl: boolean
+          certPath?: string
+        }
+        username?: string
+      }
+
+      interface CacheConfig {
+        enabled?: boolean
+        ttl: number
+      }
+
+      interface TestConfig {
+        database: DatabaseConfig
+        cache: CacheConfig
+      }
+
+      const configPath = resolve(testConfigDir, 'nested-test.config.ts')
+      const configContent = `
+        export default {
+          database: {
+            host: 'custom-host',
+            ports: {
+              primary: 5432
+            },
+            security: {
+              ssl: true
+            }
+          },
+          cache: {
+            ttl: 3600
+          }
+        }
+      `
+
+      writeFileSync(configPath, configContent)
+
+      const defaultConfig: TestConfig = {
+        database: {
+          host: 'localhost',
+          ports: {
+            primary: 3306,
+            secondary: 3307,
+          },
+          security: {
+            ssl: false,
+            certPath: '/default/path',
+          },
+          username: 'default',
+        },
+        cache: {
+          enabled: true,
+          ttl: 1800,
+        },
+      }
+
+      const result = await loadConfig<TestConfig>({
+        name: 'nested-test',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      expect(result).toEqual({
+        database: {
+          host: 'custom-host',
+          ports: {
+            primary: 5432,
+            secondary: 3307,
+          },
+          security: {
+            ssl: true,
+            certPath: '/default/path',
+          },
+          username: 'default',
+        },
+        cache: {
+          enabled: true,
+          ttl: 3600,
+        },
+      })
+    })
+
+    it('should correctly merge arrays in configuration', async () => {
+      interface Middleware {
+        name: string
+        order?: number
+        config?: {
+          type: string
+        }
+      }
+
+      interface ArrayTestConfig {
+        plugins: string[]
+        middleware: Middleware[]
+        features: {
+          supported: string[]
+          experimental?: string[]
+        }
+      }
+
+      const configPath = resolve(testConfigDir, 'array-test.config.ts')
+      const configContent = `
+        export default {
+          plugins: ['custom-plugin-1', 'custom-plugin-2'],
+          middleware: [
+            { name: 'custom-mid', order: 1 },
+            { name: 'auth', config: { type: 'jwt' } }
+          ],
+          features: {
+            supported: ['feature1', 'feature2']
+          }
+        }
+      `
+
+      writeFileSync(configPath, configContent)
+
+      const defaultConfig: ArrayTestConfig = {
+        plugins: ['default-plugin'],
+        middleware: [
+          { name: 'logger', order: 0 },
+          { name: 'auth', config: { type: 'basic' } },
+        ],
+        features: {
+          supported: ['feature3'],
+          experimental: ['exp1'],
+        },
+      }
+
+      const result = await loadConfig<ArrayTestConfig>({
+        name: 'array-test',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      expect(result).toEqual({
+        plugins: ['custom-plugin-1', 'custom-plugin-2', 'default-plugin'],
+        middleware: [
+          { name: 'custom-mid', order: 1 },
+          { name: 'auth', config: { type: 'jwt' } },
+          { name: 'logger', order: 0 },
+        ],
+        features: {
+          supported: ['feature1', 'feature2', 'feature3'],
+          experimental: ['exp1'],
+        },
+      })
+    })
+
+    it('should handle deeply nested arrays and objects', async () => {
+      interface CacheConfig {
+        enabled: boolean
+        duration?: number
+      }
+
+      interface Endpoint {
+        path: string
+        methods: string[]
+        middleware: string[]
+        config: {
+          cache: CacheConfig
+        }
+      }
+
+      interface ApiConfig {
+        endpoints: Endpoint[]
+        prefix?: string
+      }
+
+      interface DeepConfig {
+        routes: {
+          api: ApiConfig
+        }
+      }
+
+      const configPath = resolve(testConfigDir, 'deep-nested.config.ts')
+      const configContent = `
+        export default {
+          routes: {
+            api: {
+              endpoints: [
+                {
+                  path: '/users',
+                  methods: ['GET', 'POST'],
+                  middleware: ['auth'],
+                  config: {
+                    cache: {
+                      enabled: true,
+                      duration: 3600
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      `
+
+      writeFileSync(configPath, configContent)
+
+      const defaultConfig: DeepConfig = {
+        routes: {
+          api: {
+            endpoints: [
+              {
+                path: '/health',
+                methods: ['GET'],
+                middleware: ['logger'],
+                config: {
+                  cache: {
+                    enabled: false,
+                  },
+                },
+              },
+            ],
+            prefix: '/api/v1',
+          },
+        },
+      }
+
+      const result = await loadConfig<DeepConfig>({
+        name: 'deep-nested',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      expect(result).toEqual({
+        routes: {
+          api: {
+            endpoints: [
+              {
+                path: '/users',
+                methods: ['GET', 'POST'],
+                middleware: ['auth'],
+                config: {
+                  cache: {
+                    enabled: true,
+                    duration: 3600,
+                  },
+                },
+              },
+              {
+                path: '/health',
+                methods: ['GET'],
+                middleware: ['logger'],
+                config: {
+                  cache: {
+                    enabled: false,
+                  },
+                },
+              },
+            ],
+            prefix: '/api/v1',
+          },
+        },
+      })
+    })
+
+    it('should handle empty config files', async () => {
+      const configPath = resolve(testConfigDir, 'empty.config.ts')
+      const configContent = `export default {}`
+
+      writeFileSync(configPath, configContent)
+
+      const defaultConfig = {
+        setting: 'default',
+        flag: true,
+      }
+
+      const result = await loadConfig({
+        name: 'empty',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      expect(result).toEqual(defaultConfig)
+    })
+
+    it('should handle malformed config files gracefully', async () => {
+      const configPath = resolve(testConfigDir, 'malformed.config.ts')
+      const configContent = `
+        export default {
+          incomplete: {
+            nested: {
+              // missing closing brackets
+      `
+
+      writeFileSync(configPath, configContent)
+
+      const defaultConfig = {
+        setting: 'default',
+        flag: true,
+      }
+
+      const result = await loadConfig({
+        name: 'malformed',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      expect(result).toEqual(defaultConfig)
+    })
+
+    it('should handle undefined and null values in config', async () => {
+      const configPath = resolve(testConfigDir, 'nullable.config.ts')
+      const configContent = `
+        export default {
+          definedValue: 'exists',
+          nullValue: null,
+          undefinedValue: undefined,
+          nested: {
+            nullValue: null,
+            undefinedValue: undefined
+          }
+        }
+      `
+
+      writeFileSync(configPath, configContent)
+
+      const defaultConfig = {
+        definedValue: 'default',
+        nullValue: 'default',
+        undefinedValue: 'default',
+        nested: {
+          nullValue: 'default',
+          undefinedValue: 'default',
+          preserved: true,
+        },
+      }
+
+      const result = await loadConfig({
+        name: 'nullable',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      expect(result).toEqual({
+        definedValue: 'exists',
+        nullValue: 'default',
+        undefinedValue: 'default',
+        nested: {
+          nullValue: 'default',
+          undefinedValue: 'default',
+          preserved: true,
+        },
+      })
+    })
+
+    it('should handle very large nested objects without stack overflow', async () => {
+      interface DeepNestedConfig {
+        nested?: DeepNestedConfig
+        value?: string
+        shallow?: boolean
+      }
+
+      const configPath = resolve(testConfigDir, 'large.config.ts')
+
+      // Create a deeply nested object
+      let nestedConfig: DeepNestedConfig = { value: 'deep' }
+      for (let i = 0; i < 100; i++) {
+        nestedConfig = { nested: nestedConfig }
+      }
+
+      const configContent = `export default ${JSON.stringify(nestedConfig)}`
+      writeFileSync(configPath, configContent)
+
+      const defaultConfig: DeepNestedConfig = { shallow: true }
+
+      const result = await loadConfig<DeepNestedConfig>({
+        name: 'large',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      expect(result).toBeTruthy()
+      expect(result.shallow).toBe(true)
+
+      // Verify the deepest value is preserved
+      let current: DeepNestedConfig = result
+      for (let i = 0; i < 100 && current.nested; i++) {
+        expect(current.nested).toBeTruthy()
+        current = current.nested
+      }
+      expect(current.value).toBe('deep')
+    })
   })
 
   describe('config function', () => {
@@ -273,11 +665,25 @@ describe('bunfig', () => {
     })
 
     it('should handle arrays', () => {
-      const target = [1, 2, { a: 1 }]
-      const source = [3, 4, { b: 2 }]
+      interface TestObject {
+        id: number
+        value: string
+      }
+
+      const target: TestObject[] = [
+        { id: 1, value: 'one' },
+        { id: 2, value: 'two' },
+      ]
+      const source: TestObject[] = [
+        { id: 3, value: 'three' },
+        { id: 4, value: 'four' },
+      ]
       const result = deepMerge(target, source)
 
-      expect(result).toEqual([3, 4, { a: 1, b: 2 }])
+      expect(result).toEqual([
+        { id: 3, value: 'three' },
+        { id: 4, value: 'four' },
+      ])
     })
 
     it('should handle null and undefined values', () => {
@@ -297,19 +703,37 @@ describe('bunfig', () => {
     })
 
     it('should handle nested arrays', () => {
-      const target = { arr: [1, 2, [3, 4]] }
-      const source = { arr: [5, 6, [7, 8]] }
+      interface NestedArrayConfig {
+        arr: (number | number[])[]
+      }
+
+      const target: NestedArrayConfig = { arr: [1, 2, [3, 4]] }
+      const source: NestedArrayConfig = { arr: [5, 6, [7, 8]] }
       const result = deepMerge(target, source)
 
       expect(result).toEqual({ arr: [5, 6, [7, 8]] })
     })
 
-    it('should handle mixed types', () => {
-      const target = { a: [1, 2], b: { c: 3 } }
-      const source = { a: { d: 4 }, b: [5, 6] }
+    it('should handle mixed types with proper type checking', () => {
+      interface MixedConfig {
+        a: number[] | { d: number }
+        b: { c: number } | number[]
+      }
+
+      const target: MixedConfig = {
+        a: [1, 2],
+        b: { c: 3 },
+      }
+      const source: MixedConfig = {
+        a: { d: 4 },
+        b: [5, 6],
+      }
       const result = deepMerge(target, source)
 
-      expect(result).toEqual({ a: { d: 4 }, b: [5, 6] })
+      expect(result).toEqual({
+        a: { d: 4 },
+        b: [5, 6],
+      })
     })
   })
 
