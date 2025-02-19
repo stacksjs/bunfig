@@ -1,0 +1,87 @@
+---
+description: Key code conventions
+globs: "**/*.{ts,tsx}"
+---
+## Key Conventions
+
+- Prefer browser-compatible implementations when possible
+  ```ts
+  // Good - Browser compatible
+  const config = await fetch('/api/config').then(r => r.json())
+
+  // Avoid - Node.js specific
+  const config = require('./config')
+  ```
+
+- Aim for comprehensive test coverage
+  ```ts
+  // Test both success and failure cases
+  describe('loadConfig', () => {
+    it('success case - load config', async () => {})
+    it('failure case - handle errors', async () => {})
+    it('edge case - malformed config', async () => {})
+  })
+  ```
+
+- Use proper TypeScript types instead of `any`
+  ```ts
+  // Good
+  function loadConfig<T extends Record<string, unknown>>(options: Config<T>): Promise<T>
+
+  // Avoid
+  function loadConfig(options: any): Promise<any>
+  ```
+
+- Use consistent error handling and logging
+  ```ts
+  // Good
+  console.error('Failed to load config:', error)
+  return options.defaultConfig
+
+  // Avoid
+  console.log('Error:', e)
+  throw e
+  ```
+
+- Follow file naming conventions
+  ```
+  config.ts           // Core functionality
+  config.test.ts      // Test files
+  config.types.ts     // Type definitions
+  .{name}.config.ts   // Config files
+  ```
+
+- Use proper exports and imports
+  ```ts
+  // Good
+  export { loadConfig } from './loader'
+  export type { Config } from './types'
+
+  // Avoid
+  export default {
+    loadConfig,
+    Config,
+  }
+  ```
+
+- Maintain consistent directory structure
+  ```
+  src/           // Source code
+  ├─ index.ts    // Main exports
+  ├─ types.ts    // Type definitions
+  ├─ config.ts   // Configuration
+  ├─ merge.ts    // Deep merge
+  └─ utils/      // Utilities
+  ```
+
+- Follow ESLint rules and maintain consistent style
+  ```ts
+  // Good - Follow ESLint config
+  const config = {
+    name: 'app',
+    port: 3000,
+  }
+
+  // Avoid - Inconsistent style
+  const config={name:'app',port:3000}
+  ```

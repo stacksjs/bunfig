@@ -1,0 +1,131 @@
+---
+description: Syntax and Formatting specifics
+globs: "**/*.{ts,tsx}"
+---
+## Syntax & Formatting Guidelines
+
+- Use consistent indentation (2 spaces)
+  ```ts
+  // Good
+  function loadConfig<T>(options: Config<T>) {
+    if (!options.name)
+      throw new Error('Config name is required')
+
+    return options.defaultConfig
+  }
+
+  // Avoid
+  function loadConfig<T>(options: Config<T>) {
+      if (!options.name)
+          throw new Error('Config name is required')
+
+      return options.defaultConfig
+  }
+  ```
+
+- Use concise syntax for simple conditionals
+  ```ts
+  // Good
+  if (!options.name)
+    throw new Error('Config name is required')
+
+  // Avoid
+  if (!options.name) {
+    throw new Error('Config name is required')
+  }
+  ```
+
+- Format function declarations consistently
+  ```ts
+  // Good
+  async function loadConfig<T>(
+    options: Config<T>,
+    context?: Context
+  ): Promise<T> {
+    // Implementation
+  }
+
+  // Avoid
+  async function loadConfig<T>(options: Config<T>, context?: Context): Promise<T>
+  {
+    // Implementation
+  }
+  ```
+
+- Format type definitions clearly
+  ```ts
+  // Good
+  interface Config<T = Record<string, any>> {
+    name: string
+    cwd?: string
+    defaultConfig?: T
+    endpoint?: string
+  }
+
+  // Avoid
+  interface Config<T=Record<string,any>>{name:string,cwd?:string,defaultConfig?:T,endpoint?:string}
+  ```
+
+- Use proper spacing in object literals
+  ```ts
+  // Good
+  const config = {
+    name: 'app',
+    options: {
+      port: 3000,
+      host: 'localhost',
+    },
+  }
+
+  // Avoid
+  const config={name:'app',options:{port:3000,host:'localhost'}}
+  ```
+
+- Format imports consistently
+  ```ts
+  // Good
+  import { describe, expect, it } from 'bun:test'
+  import { existsSync, readFileSync } from 'node:fs'
+  import { resolve } from 'node:path'
+
+  // Avoid
+  import {describe,expect,it} from 'bun:test'
+  import {existsSync,readFileSync} from 'node:fs'
+  import {resolve} from 'node:path'
+  ```
+
+- Use proper JSDoc formatting
+  ```ts
+  // Good
+  /**
+   * Loads configuration from a file
+   * @param options - Configuration options
+   * @returns Resolved configuration
+   */
+  function loadConfig(options: Config): Promise<unknown>
+
+  // Avoid
+  /** Loads configuration from a file
+   * @param options Configuration options
+   * @returns Resolved configuration */
+  function loadConfig(options: Config): Promise<unknown>
+  ```
+
+- Format test cases consistently
+  ```ts
+  // Good
+  describe('loadConfig', () => {
+    it('should load default config', async () => {
+      const result = await loadConfig(options)
+      expect(result).toEqual(expected)
+    })
+  })
+
+  // Avoid
+  describe('loadConfig',()=>{
+    it('should load default config',async()=>{
+      const result=await loadConfig(options)
+      expect(result).toEqual(expected)
+    })
+  })
+  ```

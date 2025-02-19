@@ -1,0 +1,89 @@
+---
+description: Error Handling and Validation specifics
+globs: "**/*.{ts,tsx}"
+---
+## Error Handling Guidelines
+
+- Use early returns and guard clauses for validation
+  ```ts
+  function loadConfig<T>(options: Config<T>) {
+    if (!options.name)
+      throw new Error('Config name is required')
+
+    if (!isObject(options.defaultConfig))
+      throw new Error('Default config must be an object')
+
+    // Continue with valid input
+  }
+  ```
+
+- Implement proper error types
+  ```ts
+  class ConfigError extends Error {
+    constructor(
+      message: string,
+      public readonly code: string,
+      public readonly details?: unknown
+    ) {
+      super(message)
+      this.name = 'ConfigError'
+    }
+  }
+  ```
+
+- Use descriptive error messages
+  ```ts
+  throw new ConfigError(
+    `Failed to load config file: ${filePath}`,
+    'CONFIG_LOAD_ERROR',
+    { cause: error }
+  )
+  ```
+
+- Handle async errors properly
+  ```ts
+  async function loadConfigFile(path: string) {
+    try {
+      const content = await Bun.file(path).text()
+      return JSON.parse(content)
+    } catch (error) {
+      if (error instanceof SyntaxError)
+        throw new ConfigError('Invalid JSON in config file', 'PARSE_ERROR')
+      throw new ConfigError('Failed to read config file', 'READ_ERROR')
+    }
+  }
+  ```
+
+- Implement proper error logging
+  ```ts
+  function handleError(error: unknown) {
+    if (error instanceof ConfigError) {
+      console.error(`[${error.code}] ${error.message}`)
+      if (error.details)
+        console.debug('Error details:', error.details)
+    } else {
+      console.error('Unexpected error:', error)
+    }
+  }
+  ```
+
+- Use error boundaries for unexpected errors
+  ```ts
+  try {
+    await loadConfig(options)
+  } catch (error) {
+    handleError(error)
+    return options.defaultConfig ?? {}
+  }
+  ```
+
+- Ensure errors are typed when using Result types
+  ```ts
+  import { Result, ok, err } from 'neverthrow'
+
+  function validateConfig(config: unknown): Result<Config, ConfigError> {
+    if (!isValidConfig(config))
+      return err(new ConfigError('Invalid config format', 'VALIDATION_ERROR'))
+    return ok(config)
+  }
+  ```

@@ -1,0 +1,84 @@
+---
+description: Testing specifics
+globs: "test/**/*.{ts,tsx}"
+---
+## Testing Guidelines
+
+- Write tests for all public APIs and utilities
+  ```ts
+  describe('loadConfig', () => {
+    it('should load default config when no file exists', async () => {
+      const result = await loadConfig({
+        name: 'test',
+        defaultConfig: { port: 3000 }
+      })
+      expect(result).toEqual({ port: 3000 })
+    })
+  })
+  ```
+
+- Use proper test organization with describe blocks
+  ```ts
+  describe('bunfig', () => {
+    describe('loadConfig', () => {
+      // Config loading tests
+    })
+
+    describe('deepMerge', () => {
+      // Merge function tests
+    })
+  })
+  ```
+
+- Test edge cases and error scenarios
+  ```ts
+  it('should handle malformed config files', async () => {
+    const result = await loadConfig({
+      name: 'invalid',
+      defaultConfig: { fallback: true }
+    })
+    expect(result).toEqual({ fallback: true })
+  })
+  ```
+
+- Use proper cleanup in tests
+  ```ts
+  beforeEach(() => {
+    // Setup test environment
+    if (existsSync(testConfigDir))
+      rmSync(testConfigDir, { recursive: true })
+    mkdirSync(testConfigDir, { recursive: true })
+  })
+
+  afterEach(() => {
+    // Cleanup test files
+    if (existsSync(testConfigDir))
+      rmSync(testConfigDir, { recursive: true })
+  })
+  ```
+
+- Use Bun's native test modules
+  ```ts
+  import { describe, expect, it, mock } from 'bun:test'
+  ```
+
+- Mock external dependencies properly
+  ```ts
+  const mockFetch = mock(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({ config: 'value' })
+    })
+  )
+  globalThis.fetch = mockFetch
+  ```
+
+- Test both success and failure paths
+  ```ts
+  it('should handle network errors', async () => {
+    mockFetch.mockImplementation(() =>
+      Promise.reject(new Error('Network error'))
+    )
+    // Test error handling
+  })
+  ```

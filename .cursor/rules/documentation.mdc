@@ -1,0 +1,70 @@
+---
+description: Documentation specific rules
+globs: "**/*.{ts,tsx,md}"
+---
+## Documentation Guidelines
+
+## API Documentation
+- Document all public APIs thoroughly
+- Include TypeScript type information
+- Provide clear function signatures
+- Document config options and defaults
+- Include return type information
+- Document async behavior
+
+## Configuration Examples
+- Provide basic usage examples
+- Include complex configuration examples
+- Document all supported config formats
+- Show browser usage examples
+- Include TypeScript configuration examples
+- Document config merging behavior
+
+## Type Documentation
+- Document generic type parameters
+- Explain type constraints
+- Document interface properties
+- Include type union explanations
+- Document type generation features
+- Provide type utility examples
+
+## Error Documentation
+- Document common error scenarios
+- Include error handling examples
+- Document error recovery options
+- Explain validation errors
+- Document browser-specific errors
+- Include troubleshooting guides
+
+## Code Examples
+- Include runnable code examples
+- Provide TypeScript examples
+- Show error handling patterns
+- Include browser environment examples
+- Document testing approaches
+- Include CLI usage examples
+
+## Best Practices
+- Keep documentation up to date
+- Use consistent formatting
+- Include inline code comments
+- Document breaking changes
+- Maintain a changelog
+- Include version information
+
+## File Structure
+- Maintain clear docs organization
+- Use proper markdown formatting
+- Include table of contents
+- Organize by topic
+- Keep related docs together
+- Use proper headings
+
+## Documentation Standards
+- Use clear and concise language
+- Include proper code blocks
+- Document all parameters
+- Provide return value descriptions
+- Include usage notes
+- Document dependencies
+- Keep examples current

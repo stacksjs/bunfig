@@ -1,0 +1,69 @@
+---
+description: TypeScript Usage specifics
+globs: "**/*.{ts,tsx}"
+---
+## TypeScript Usage
+
+- Use interfaces for configuration objects and public APIs
+  ```ts
+  // Good
+  interface Config<T = Record<string, any>> {
+    name: string
+    cwd?: string
+    defaultConfig?: T
+    endpoint?: string
+  }
+
+  // Avoid
+  type Config = {
+    name: string
+    // ...
+  }
+  ```
+
+- Use `as const` for fixed values instead of enums
+  ```ts
+  // Good
+  const CONFIG_EXTENSIONS = ['.ts', '.js', '.mjs', '.cjs', '.json'] as const
+
+  // Avoid
+  enum ConfigExtensions {
+    TS = '.ts',
+    JS = '.js'
+  }
+  ```
+
+- Use proper generic constraints for type safety
+  ```ts
+  // Good
+  function loadConfig<T extends Record<string, unknown>>(options: Config<T>): Promise<T>
+
+  // Avoid
+  function loadConfig<T>(options: Config<T>): Promise<T>
+  ```
+
+- Implement strict type checking for config merging
+  ```ts
+  // Good
+  function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T
+
+  // Avoid
+  function deepMerge(target: any, source: any): any
+  ```
+
+- Use type guards for runtime type checking
+  ```ts
+  // Good
+  function isObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null
+  }
+  ```
+
+- Export types explicitly for public APIs
+  ```ts
+  // Good
+  export type { Config, ConfigOptions }
+  export interface DeepMergeOptions {
+    // ...
+  }
+  ```

@@ -1,0 +1,74 @@
+---
+description: Project structure information
+globs: "**/*"
+---
+## Project Structure
+
+## Root Directory
+```
+├─ package.json        # Package configuration
+├─ tsconfig.json       # TypeScript configuration
+├─ eslint.config.ts    # ESLint configuration
+├─ bunfig.toml        # Bun configuration
+├─ README.md          # Project documentation
+├─ CHANGELOG.md       # Version history
+└─ LICENSE.md         # License information
+```
+
+## Source Code
+```
+src/
+├─ index.ts           # Main entry point
+├─ types.ts           # Type definitions
+├─ config.ts          # Configuration loading
+├─ merge.ts           # Deep merge implementation
+├─ utils/             # Utility functions
+└─ generated/         # Generated type files
+```
+
+## Test Files
+```
+test/
+├─ bunfig.test.ts     # Main test suite
+├─ cli.test.ts        # CLI tests
+├─ tmp/               # Temporary test files
+│  ├─ config/         # Test config files
+│  └─ generated/      # Test generated files
+└─ fixtures/          # Test fixtures
+```
+
+## Documentation
+```
+docs/
+├─ intro.md           # Introduction guide
+├─ usage.md           # Usage documentation
+├─ api/               # API documentation
+├─ .vitepress/        # VitePress configuration
+└─ public/            # Static assets
+```
+
+## Development
+```
+.vscode/             # VS Code configuration
+.github/             # GitHub configuration
+├─ workflows/        # CI/CD workflows
+└─ FUNDING.yml       # Funding information
+.cursor/             # Cursor IDE configuration
+└─ rules/           # Project rules
+```
+
+## Build Output
+```
+dist/
+├─ index.js          # Main bundle
+├─ index.d.ts        # Type definitions
+└─ cli.js           # CLI bundle
+```
+
+## Conventions
+- Keep related files together
+- Use consistent file naming
+- Follow module organization patterns
+- Maintain clear separation of concerns
+- Document directory purposes
+- Keep directory structure flat when possible
