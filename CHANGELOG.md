@@ -1,4 +1,36 @@
 
+## v0.7.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.7.0...main)
+
+### 🚀 Enhancements
+
+- Add `config(opts)` export ([a318e2c](https://github.com/stacksjs/bunfig/commit/a318e2c))
+- **ci:** Release on commit ([cd4d835](https://github.com/stacksjs/bunfig/commit/cd4d835))
+- Add CLI ([a562ff9](https://github.com/stacksjs/bunfig/commit/a562ff9))
+
+### 🏡 Chore
+
+- Change test file name ([4aea26a](https://github.com/stacksjs/bunfig/commit/4aea26a))
+- Minor updates ([89b249a](https://github.com/stacksjs/bunfig/commit/89b249a))
+- Add `bunfig` ([4ad2cfc](https://github.com/stacksjs/bunfig/commit/4ad2cfc))
+- Add tests ([d936ca8](https://github.com/stacksjs/bunfig/commit/d936ca8))
+- Adjust bunfig permissions ([6749c0e](https://github.com/stacksjs/bunfig/commit/6749c0e))
+- Remove generated content ([2536e04](https://github.com/stacksjs/bunfig/commit/2536e04))
+- Improve test ([4793e81](https://github.com/stacksjs/bunfig/commit/4793e81))
+- Lint ([9676c48](https://github.com/stacksjs/bunfig/commit/9676c48))
+- Improve readme ([30dec0c](https://github.com/stacksjs/bunfig/commit/30dec0c))
+- Improve postcardware ([21c2c38](https://github.com/stacksjs/bunfig/commit/21c2c38))
+- Improve test case ([bdb9c1b](https://github.com/stacksjs/bunfig/commit/bdb9c1b))
+- Add cursor roles ([e2a0276](https://github.com/stacksjs/bunfig/commit/e2a0276))
+- Remove unused comment ([63b92c3](https://github.com/stacksjs/bunfig/commit/63b92c3))
+- Improve `deepMerge` ([e57d8bc](https://github.com/stacksjs/bunfig/commit/e57d8bc))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+- Cab-mikee ([@cab-mikee](http://github.com/cab-mikee))
+
 ## v0.6.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.6.0...main)
