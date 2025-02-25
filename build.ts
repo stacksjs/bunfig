@@ -3,12 +3,23 @@ import { dts } from 'bun-plugin-dtsx'
 
 console.log('Building...')
 
+// Build the main package
 await Bun.build({
   entrypoints: ['src/index.ts'],
   outdir: './dist',
+  target: 'bun',
   plugins: [dts()],
 })
 
+// Build the browser version
+await Bun.build({
+  entrypoints: ['src/browser.ts'],
+  outdir: './dist/browser',
+  target: 'browser',
+  plugins: [dts()],
+})
+
+// Build the CLI
 await Bun.build({
   entrypoints: ['bin/cli.ts'],
   outdir: './dist',

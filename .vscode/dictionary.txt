@@ -18,6 +18,7 @@ destructurable
 dnsx
 dtsx
 entrypoints
+happydom
 heroicons
 httx
 iconify
@@ -33,6 +34,7 @@ Postcardware
 prefetch
 preinstall
 quickfix
+Registrator
 shikijs
 socio
 softprops
@@ -51,5 +53,6 @@ vidx
 vite
 vitebook
 vitejs
+vitepress
 vue-demi
 vueus

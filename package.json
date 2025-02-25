@@ -51,6 +51,7 @@
     "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
+    "@happy-dom/global-registrator": "^17.1.8",
     "@iconify-json/carbon": "^1.2.7",
     "@shikijs/vitepress-twoslash": "^3.0.0",
     "@stacksjs/eslint-config": "^4.2.1-beta.1",

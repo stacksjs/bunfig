@@ -27,7 +27,9 @@ bun install -d bunfig
 
 ## Get Started
 
-If you are building any sort of Bun project, you can use the `loadConfig` function to load your configuration.
+### Server Environment
+
+If you are building any sort of Bun project, you can use the `loadConfig` function to load your configuration from files:
 
 ```ts
 import type { Config } from 'bunfig'
@@ -41,7 +43,7 @@ interface MyLibraryConfig {
 const options: Config<MyLibraryConfig> = {
   name: 'my-app', // required
   cwd: './', // default: process.cwd()
-  defaults: { // default: {}
+  defaultConfig: { // default: {}
     port: 3000,
     host: 'localhost',
   },
@@ -55,7 +57,45 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 > [!TIP]
 > If your `process.cwd()` includes a `$name.config.{ts,js,mjs,cjs,json}` _(or `.$name.config.{ts,js,mjs,cjs,json}`)_ file, it will be loaded and merged with defaults, where file config file values take precedence. For minimalists, it also loads a `.$name.{ts,js,mjs,cjs,json}` and `$name.{ts,js,mjs,cjs,json}` file if present.
 
-Alternatively, you can use the `config` function to load your configuration.
+### Browser Environment
+
+For browser environments, use the `loadConfig` function from the browser-specific entry point to load your configuration from an API endpoint:
+
+```ts
+import type { Config } from 'bunfig'
+import { loadConfig } from 'bunfig/browser'
+
+interface MyLibraryConfig {
+  port: number
+  host: string
+}
+
+const options: Config<MyLibraryConfig> = {
+  name: 'my-app',
+  endpoint: '/api/config', // required for browser environment
+  defaultConfig: {
+    port: 3000,
+    host: 'localhost',
+  },
+  headers: { // optional custom headers
+    'Authorization': 'Bearer token',
+    'X-Custom-Header': 'value',
+  },
+}
+
+const resolvedConfig = await loadConfig(options)
+```
+
+In the browser:
+
+- The `endpoint` parameter is required to specify where to fetch the configuration
+- Custom headers can be provided to authenticate or customize the request
+- Default headers (`Accept` and `Content-Type`) are automatically included
+- If the fetch fails, the default configuration is used as a fallback
+
+### Alternative Usage
+
+Alternatively, you can use the `config` function to load your configuration in server environments:
 
 ```ts
 import type { Config } from 'bunfig'
@@ -69,7 +109,7 @@ interface MyAppOrLibraryConfig {
 const options: Config<MyAppOrLibraryConfig> = {
   name: 'my-app', // required to know which config file to load
   cwd: './', // default: process.cwd()
-  defaults: { // default: {}
+  defaultConfig: { // default: {}
     port: 3000,
     host: 'localhost',
   },
@@ -83,8 +123,8 @@ The config function is a wrapper around the `loadConfig` function and is useful 
 - `name`: The name of the config file to load.
 - `cwd`: The current working directory to load the config file from.
 - `defaultConfig`: The default config to use if no config file is found.
-- `endpoint`: The endpoint to fetch the config from.
-- `headers`: The headers to send to the endpoint.
+
+For browser usage, see the [Browser Environment](#browser-environment) section above.
 
 ## Testing
 
