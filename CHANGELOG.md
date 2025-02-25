@@ -1,4 +1,16 @@
 
+## v0.8.1...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.1...main)
+
+### 🏡 Chore
+
+- Add browser export ([0dac529](https://github.com/stacksjs/bunfig/commit/0dac529))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.8.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.0...main)
