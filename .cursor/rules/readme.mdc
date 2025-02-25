@@ -2,9 +2,6 @@
 description: General information based on the latest ./README.md content
 globs:
 ---
-Update it if APIs change:
-
-
 # Bunfig
 
 > Smart configuration loader for libraries, apps, and CLIs built utilizing Bun.
