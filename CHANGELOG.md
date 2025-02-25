@@ -1,4 +1,18 @@
 
+## v0.8.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.0...main)
+
+### 🏡 Chore
+
+- Ignore bunfig & generated ([d407340](https://github.com/stacksjs/bunfig/commit/d407340))
+- Several minor updates ([32e7f8e](https://github.com/stacksjs/bunfig/commit/32e7f8e))
+- Improve browser test suite ([0439989](https://github.com/stacksjs/bunfig/commit/0439989))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.7.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.7.0...main)
