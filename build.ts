@@ -14,7 +14,7 @@ await Bun.build({
 // Build the browser version
 await Bun.build({
   entrypoints: ['src/browser.ts'],
-  outdir: './dist/browser',
+  outdir: './dist',
   target: 'browser',
   plugins: [dts()],
 })
