@@ -93,7 +93,6 @@ export async function loadConfig<T>({
     }
   }
 
-  console.error('Failed to load client config from any expected location')
   return defaultConfig
 }
 
