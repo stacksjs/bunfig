@@ -11,4 +11,5 @@ node_modules
 temp
 docs/.vitepress/cache
 bin/bunfig
+bin/bunfig*
 src/generated
