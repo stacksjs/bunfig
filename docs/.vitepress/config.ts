@@ -58,6 +58,21 @@ const sidebar = [
       { text: 'Usage', link: '/usage' },
     ],
   },
+  {
+    text: 'Features',
+    items: [
+      { text: 'Discovery', link: '/features/configuration-discovery' },
+      { text: 'Merging', link: '/features/configuration-merging' },
+
+    ],
+  },
+  {
+    text: 'API Reference',
+    items: [
+      { text: 'Load Config', link: '/api/load-config' },
+      { text: 'Types', link: '/api/types' },
+    ],
+  },
   { text: 'Showcase', link: '/Showcase' },
 ]
 

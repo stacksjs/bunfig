@@ -2,13 +2,27 @@ import type { Config } from './types'
 import { deepMerge } from './utils'
 
 /**
- * Load config in browser environment
+ * Loads configuration in a browser environment.
  *
- * @param name - The name of the configuration
- * @param endpoint - The API endpoint to fetch config from
- * @param defaultConfig - The default configuration
- * @param headers - Optional headers to include in the request
- * @returns The merged configuration
+ * @template T - The type of the configuration object
+ * @param {object} options - The configuration options
+ * @param {string} options.name - The name of the configuration
+ * @param {string} options.endpoint - The API endpoint to fetch config from
+ * @param {T} options.defaultConfig - The default configuration values
+ * @param {Record<string, string>} [options.headers] - Optional headers to include in the request
+ * @returns {Promise<T>} The merged configuration
+ *
+ * @example
+ * ```typescript
+ * const config = await loadConfig({
+ *   name: 'my-app',
+ *   endpoint: '/api/config',
+ *   defaultConfig: {
+ *     theme: 'light',
+ *     language: 'en'
+ *   }
+ * })
+ * ```
  */
 export async function loadConfig<T>({
   name: _name,
