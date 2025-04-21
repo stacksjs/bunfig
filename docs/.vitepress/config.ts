@@ -61,19 +61,18 @@ const sidebar = [
   {
     text: 'Features',
     items: [
-      { text: 'Discovery', link: '/features/configuration-discovery' },
-      { text: 'Merging', link: '/features/configuration-merging' },
-
+      { text: 'Configuration Loading', link: '/features/configuration-loading' },
+      { text: 'Type Safety', link: '/features/type-safety' },
     ],
   },
   {
-    text: 'API Reference',
+    text: 'Advanced',
     items: [
-      { text: 'Load Config', link: '/api/load-config' },
-      { text: 'Types', link: '/api/types' },
+      { text: 'Browser Support', link: '/advanced/browser-support' },
     ],
   },
-  { text: 'Showcase', link: '/Showcase' },
+  { text: 'API Reference', link: '/api' },
+  { text: 'Showcase', link: '/showcase' },
 ]
 
 const description = 'A smart config loader for Bun projects'
