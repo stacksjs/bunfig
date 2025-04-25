@@ -1,4 +1,21 @@
 
+## v0.8.2...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.2...main)
+
+### 🏡 Chore
+
+- Remove error message ([424aae2](https://github.com/stacksjs/bunfig/commit/424aae2))
+- Bin build changes and stargazers ([eca78ef](https://github.com/stacksjs/bunfig/commit/eca78ef))
+- Add stacksjs/docs ([e030e44](https://github.com/stacksjs/bunfig/commit/e030e44))
+- Add feature and api reference ([34c088f](https://github.com/stacksjs/bunfig/commit/34c088f))
+- Improve documentation ([942d593](https://github.com/stacksjs/bunfig/commit/942d593))
+- Improve load config ([457992b](https://github.com/stacksjs/bunfig/commit/457992b))
+
+### ❤️ Contributors
+
+- Cab-mikee ([@cab-mikee](https://github.com/cab-mikee))
+
 ## v0.8.1...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.1...main)
