@@ -88,11 +88,36 @@ export async function loadConfig<T>({
     for (const ext of extensions) {
       const fullPath = resolve(baseDir, `${configPath}${ext}`)
       const config = await tryLoadConfig(fullPath, defaultConfig)
-      if (config !== null)
+      if (config !== null) {
+        console.log('config found:', `${configPath}${ext}`)
         return config
+      }
     }
   }
 
+  // Then try package.json
+  try {
+    const pkgPath = resolve(baseDir, 'package.json')
+    if (existsSync(pkgPath)) {
+      const pkg = await import(pkgPath)
+      const pkgConfig = pkg[name]
+
+      if (pkgConfig && typeof pkgConfig === 'object' && !Array.isArray(pkgConfig)) {
+        try {
+          console.log('package config found!')
+          return deepMerge(defaultConfig, pkgConfig) as T
+        }
+        catch {
+          // If merging fails, continue to default config
+        }
+      }
+    }
+  }
+  catch {
+    // If package.json loading fails, continue to default config
+  }
+
+  console.log('No config found, using default config')
   return defaultConfig
 }
 
