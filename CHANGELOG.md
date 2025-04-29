@@ -1,4 +1,16 @@
 
+## v0.8.3...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.3...main)
+
+### 🏡 Chore
+
+- Improve debugging ([c6665be](https://github.com/stacksjs/bunfig/commit/c6665be))
+
+### ❤️ Contributors
+
+- Cab-mikee ([@cab-mikee](https://github.com/cab-mikee))
+
 ## v0.8.2...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.2...main)
