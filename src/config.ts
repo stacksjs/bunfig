@@ -2,7 +2,12 @@ import type { Config } from './types'
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
+import { Logger } from '@stacksjs/clarity'
 import { deepMerge } from './utils'
+
+const log = new Logger('bunfig', {
+  showTags: true,
+})
 
 type ConfigNames = string
 
@@ -89,7 +94,7 @@ export async function loadConfig<T>({
       const fullPath = resolve(baseDir, `${configPath}${ext}`)
       const config = await tryLoadConfig(fullPath, defaultConfig)
       if (config !== null) {
-        console.log('config found:', `${configPath}${ext}`)
+        log.debug(`Configuration found: ${configPath}${ext}`)
         return config
       }
     }
@@ -104,7 +109,7 @@ export async function loadConfig<T>({
 
       if (pkgConfig && typeof pkgConfig === 'object' && !Array.isArray(pkgConfig)) {
         try {
-          console.log('package config found!')
+          log.debug(`Configuration found in package.json!`)
           return deepMerge(defaultConfig, pkgConfig) as T
         }
         catch {
@@ -117,7 +122,7 @@ export async function loadConfig<T>({
     // If package.json loading fails, continue to default config
   }
 
-  console.log('No config found, using default config')
+  log.debug('No configuration found, now using default config')
   return defaultConfig
 }
 
