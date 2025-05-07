@@ -8,7 +8,6 @@ const cli = new CAC('bunfig')
 interface CLIOptions {
   configDir?: string
   generatedDir?: string
-  verbose?: boolean
 }
 
 cli
@@ -18,11 +17,16 @@ cli
   .option('--verbose', 'Enable verbose logging')
   .example('bunfig generate --config-dir ./config --generated-dir ./src/generated')
   .action(async (options?: CLIOptions) => {
+    console.log('Generating config types...')
     generateConfigTypes({
       configDir: options?.configDir || defaultConfigDir,
       generatedDir: options?.generatedDir || defaultGeneratedDir,
     })
   })
+
+cli.command('', 'Show the version of the Bunfig CLI').action(() => {
+  console.log(version)
+})
 
 cli.command('version', 'Show the version of the Bunfig CLI').action(() => {
   console.log(version)
