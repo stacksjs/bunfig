@@ -23,6 +23,7 @@ export interface Config<T> {
   endpoint?: string
   headers?: Record<string, string>
   defaultConfig: T
+  verbose?: boolean
 }
 
 export type SimplifyDeep<T> = T extends object

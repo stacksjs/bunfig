@@ -2,7 +2,12 @@ import type { Config } from './types'
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
+import { Logger } from '@stacksjs/clarity'
 import { deepMerge } from './utils'
+
+const log = new Logger('bunfig', {
+  showTags: true,
+})
 
 type ConfigNames = string
 
@@ -71,10 +76,15 @@ export async function loadConfig<T>({
   name = '',
   cwd,
   defaultConfig,
+  verbose = false,
 }: Config<T>): Promise<T> {
   // Server environment: load the config from the file system
   const baseDir = cwd || process.cwd()
   const extensions = ['.ts', '.js', '.mjs', '.cjs', '.json']
+
+  if (verbose) {
+    log.info(`Loading configuration for "${name}" from ${baseDir}`)
+  }
 
   // Try loading config in order of preference
   const configPaths = [
@@ -89,6 +99,9 @@ export async function loadConfig<T>({
       const fullPath = resolve(baseDir, `${configPath}${ext}`)
       const config = await tryLoadConfig(fullPath, defaultConfig)
       if (config !== null) {
+        if (verbose) {
+          log.success(`Configuration loaded from: ${configPath}${ext}`)
+        }
         return config
       }
     }
@@ -103,18 +116,30 @@ export async function loadConfig<T>({
 
       if (pkgConfig && typeof pkgConfig === 'object' && !Array.isArray(pkgConfig)) {
         try {
+          if (verbose) {
+            log.success(`Configuration loaded from package.json: ${name}`)
+          }
           return deepMerge(defaultConfig, pkgConfig) as T
         }
-        catch {
+        catch (error) {
+          if (verbose) {
+            log.warn(`Failed to merge package.json config for ${name}:`, error)
+          }
           // If merging fails, continue to default config
         }
       }
     }
   }
-  catch {
+  catch (error) {
+    if (verbose) {
+      log.warn(`Failed to load package.json for ${name}:`, error)
+    }
     // If package.json loading fails, continue to default config
   }
 
+  if (verbose) {
+    log.info(`No configuration found for ${name}, using default configuration`)
+  }
   return defaultConfig
 }
 
