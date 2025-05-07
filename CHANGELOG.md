@@ -1,4 +1,16 @@
 
+## v0.8.4...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.4...main)
+
+### 🏡 Chore
+
+- Remove debugging ([d05b673](https://github.com/stacksjs/bunfig/commit/d05b673))
+
+### ❤️ Contributors
+
+- Cab-mikee ([@cab-mikee](https://github.com/cab-mikee))
+
 ## v0.8.3...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.3...main)
