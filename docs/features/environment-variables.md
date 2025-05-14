@@ -142,12 +142,12 @@ export default {
 }
 
 // Final resolved configuration:
-{
-  port: 8080,              // From environment variable
-  debug: true,             // From config file
-  api: {
-    url: 'https://staging-api.example.com', // From environment variable
-    timeout: 10000,        // From config file
-  },
-}
+// {
+//   port: 8080,              // From environment variable
+//   debug: true,             // From config file
+//   api: {
+//     url: 'https://staging-api.example.com', // From environment variable
+//     timeout: 10000,        // From config file
+//   },
+// }
 ```

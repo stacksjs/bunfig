@@ -13,6 +13,7 @@ describe('applyEnvVarsToConfig unit test', () => {
     process.env.TEST_APP_PORT = '8080'
     process.env.TEST_APP_HOST = 'env-host'
 
+    // eslint-disable-next-line no-console
     console.log('DEBUG ENV:', process.env)
 
     const defaultConfig = {
@@ -22,6 +23,7 @@ describe('applyEnvVarsToConfig unit test', () => {
 
     const result = applyEnvVarsToConfig('test-app', defaultConfig, true)
 
+    // eslint-disable-next-line no-console
     console.log('DEBUG RESULT:', result)
 
     expect(result).toEqual({

@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { Logger } from '@stacksjs/clarity'
 import { version } from '../package.json'
-import { deepMerge, getEnvOrDefault } from './utils'
+import { deepMerge } from './utils'
 
 const log = new Logger('bunfig', {
   showTags: true,
@@ -156,6 +156,8 @@ export function applyEnvVarsToConfig<T extends Record<string, any>>(
  * @param {string} options.name - The name of the configuration file.
  * @param {string} [options.cwd] - The current working directory.
  * @param {T} options.defaultConfig - The default configuration.
+ * @param {boolean} [options.verbose] - Whether to log verbose information.
+ * @param {boolean} [options.checkEnv] - Whether to check environment variables.
  * @returns {Promise<T>} The merged configuration.
  * @example ```ts
  * await loadConfig({

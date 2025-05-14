@@ -10,6 +10,10 @@ const config: ESLintConfig = stacks({
   typescript: true,
   jsonc: true,
   yaml: true,
+
+  ignores: [
+    'src/browser.ts',
+  ],
 })
 
 export default config
