@@ -3,7 +3,8 @@ import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { Logger } from '@stacksjs/clarity'
-import { deepMerge } from './utils'
+import { version } from '../package.json'
+import { deepMerge, getEnvOrDefault } from './utils'
 
 const log = new Logger('bunfig', {
   showTags: true,
@@ -23,6 +24,7 @@ export async function config<T>(
       generatedDir: './generated',
       configDir: './config',
       defaultConfig: {} as T,
+      checkEnv: true,
     })
   }
 
@@ -58,6 +60,96 @@ export async function tryLoadConfig<T>(configPath: string, defaultConfig: T): Pr
 }
 
 /**
+ * Apply environment variables to config based on config name
+ * This is an internal utility used by loadConfig when checkEnv is true
+ *
+ * @param name - The config name
+ * @param config - The config object to apply env vars to
+ * @param verbose - Whether to log verbose information
+ * @returns The config with environment variables applied
+ */
+export function applyEnvVarsToConfig<T extends Record<string, any>>(
+  name: string,
+  config: T,
+  verbose = false,
+): T {
+  if (!name)
+    return config
+
+  const envPrefix = name.toUpperCase().replace(/-/g, '_')
+  const result = { ...config }
+
+  // Recursively process the config object
+  function processObject(obj: Record<string, any>, path: string[] = []): Record<string, any> {
+    const result = { ...obj }
+
+    for (const [key, value] of Object.entries(obj)) {
+      const envPath = [...path, key]
+
+      // Format the environment variable key:
+      // 1. Convert camelCase to UPPER_SNAKE_CASE
+      // 2. Join path segments with underscores
+      const formatKey = (k: string) => k.replace(/([A-Z])/g, '_$1').toUpperCase()
+      const envKey = `${envPrefix}_${envPath.map(formatKey).join('_')}`
+
+      // Also support the old format without the extra underscores (for backward compatibility)
+      const oldEnvKey = `${envPrefix}_${envPath.map(p => p.toUpperCase()).join('_')}`
+
+      if (verbose)
+        log.info(`Checking environment variable ${envKey} for config ${name}.${envPath.join('.')}`)
+
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        // Process nested objects recursively
+        result[key] = processObject(value, envPath)
+      }
+      else {
+        // Apply environment variable if it exists (check both formats)
+        const envValue = process.env[envKey] || process.env[oldEnvKey]
+        if (envValue !== undefined) {
+          // Convert the environment variable to the appropriate type
+          if (verbose) {
+            log.info(`Using environment variable ${envValue ? envKey : oldEnvKey} for config ${name}.${envPath.join('.')}`)
+          }
+
+          if (typeof value === 'number') {
+            result[key] = Number(envValue)
+          }
+          else if (typeof value === 'boolean') {
+            result[key] = envValue.toLowerCase() === 'true'
+          }
+          else if (Array.isArray(value)) {
+            try {
+              // Try to parse as JSON array first
+              const parsed = JSON.parse(envValue)
+
+              if (Array.isArray(parsed)) {
+                // Successfully parsed as JSON array
+                result[key] = parsed
+              }
+              else {
+                // Parsed successfully but not as array, fall back to comma-separated
+                result[key] = envValue.split(',').map(item => item.trim())
+              }
+            }
+            catch {
+              // If JSON parsing fails, treat as comma-separated values
+              result[key] = envValue.split(',').map(item => item.trim())
+            }
+          }
+          else {
+            result[key] = envValue
+          }
+        }
+      }
+    }
+
+    return result
+  }
+
+  return processObject(result) as T
+}
+
+/**
  * Load Config
  *
  * @param {object} options - The configuration options.
@@ -77,7 +169,13 @@ export async function loadConfig<T>({
   cwd,
   defaultConfig,
   verbose = false,
+  checkEnv = true,
 }: Config<T>): Promise<T> {
+  // Apply environment variables to default config first
+  const configWithEnvVars = checkEnv && typeof defaultConfig === 'object' && defaultConfig !== null && !Array.isArray(defaultConfig)
+    ? applyEnvVarsToConfig(name, defaultConfig as Record<string, any>, verbose) as T
+    : defaultConfig
+
   // Server environment: load the config from the file system
   const baseDir = cwd || process.cwd()
   const extensions = ['.ts', '.js', '.mjs', '.cjs', '.json']
@@ -97,7 +195,7 @@ export async function loadConfig<T>({
   for (const configPath of configPaths) {
     for (const ext of extensions) {
       const fullPath = resolve(baseDir, `${configPath}${ext}`)
-      const config = await tryLoadConfig(fullPath, defaultConfig)
+      const config = await tryLoadConfig(fullPath, configWithEnvVars)
       if (config !== null) {
         if (verbose) {
           log.success(`Configuration loaded from: ${configPath}${ext}`)
@@ -119,7 +217,7 @@ export async function loadConfig<T>({
           if (verbose) {
             log.success(`Configuration loaded from package.json: ${name}`)
           }
-          return deepMerge(defaultConfig, pkgConfig) as T
+          return deepMerge(configWithEnvVars, pkgConfig) as T
         }
         catch (error) {
           if (verbose) {
@@ -138,9 +236,9 @@ export async function loadConfig<T>({
   }
 
   if (verbose) {
-    log.info(`No configuration found for ${name}, using default configuration`)
+    log.info(`No configuration found for ${name}, using default configuration with environment variables`)
   }
-  return defaultConfig
+  return configWithEnvVars
 }
 
 export const defaultConfigDir: string = resolve(
@@ -172,7 +270,7 @@ export function generateConfigTypes(options: {
         .sort() // Sort the file names alphabetically
     : []
 
-  const content = `// Generated by bunfig
+  const content = `// Generated by bunfig v${version}
 export type ConfigNames = ${files.length ? `'${files.join('\' | \'')}'` : 'string'}
 `
 

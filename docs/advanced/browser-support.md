@@ -24,6 +24,52 @@ const config = await loadConfig<MyConfig>({
 })
 ```
 
+### Environment Variables in Browser Context
+
+While the automatic environment variable loading feature works great in server-side environments, browsers don't have direct access to system environment variables. In browser environments:
+
+1. Environment variables can only be accessed if they are:
+   - Embedded during the build process by tools like Vite or webpack (e.g., replacing `process.env.API_URL` with the actual value)
+   - Made available through the API endpoint that serves your configuration
+
+2. The `checkEnv` option is supported for API consistency, but has little effect unless you've embedded environment variables at build time
+
+3. Common patterns for using environment-specific configuration in browsers include:
+   - Using different API endpoints for different environments
+   - Having the server inject environment variables into the initial page
+   - Using build-time environment variables for configuration generation
+
+```ts
+// In a browser context with build tool that supports env variables
+// If you're using Vite, for example, import.meta.env would contain these values
+const apiEndpoint = process.env.API_ENDPOINT || '/api/config'
+
+const config = await loadConfig<MyConfig>({
+  name: 'my-app',
+  endpoint: apiEndpoint,
+  defaultConfig: { /* ... */ },
+})
+```
+
+For a universal (isomorphic) approach that works in both server and browser contexts, you can implement a pattern like this:
+
+```ts
+import { isBrowser } from 'bunfig/browser'
+
+async function getConfig() {
+  if (isBrowser()) {
+    // Browser: load from API
+    const { loadConfig } = await import('bunfig/browser')
+    return loadConfig({ endpoint: '/api/config', /* ... */ })
+  }
+  else {
+    // Server: use file-based config with env vars
+    const { loadConfig } = await import('bunfig')
+    return loadConfig({ name: 'my-app', /* ... */ })
+  }
+}
+```
+
 ### Custom Headers
 
 You can include custom headers in your configuration requests:

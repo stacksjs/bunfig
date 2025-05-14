@@ -1,4 +1,19 @@
 import type { DeepMerge, SimplifyDeep } from './types'
+import process from 'node:process'
+
+/**
+ * Get a value from environment variables or return a default value
+ * @param key - Environment variable key
+ * @param defaultValue - Default value if environment variable is not set
+ * @returns The environment variable value or default value
+ */
+export function getEnvOrDefault<T>(key: string, defaultValue: T): T {
+  if (typeof process === 'undefined' || !process.env)
+    return defaultValue
+
+  const envValue = process.env[key]
+  return envValue !== undefined ? (envValue as unknown as T) : defaultValue
+}
 
 /**
  * Deep Merge

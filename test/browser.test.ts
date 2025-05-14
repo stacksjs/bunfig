@@ -210,4 +210,45 @@ describe('browser', () => {
     globalThis.window = originalWindow
     consoleSpy.mockRestore()
   })
+
+  it('should accept checkEnv option for API consistency', async () => {
+    // Mock window to simulate browser environment
+    const originalWindow = globalThis.window
+    // @ts-expect-error - mocking window
+    globalThis.window = {}
+
+    const mockFetch = mock(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ host: 'api-host' }),
+      }),
+    )
+    // @ts-expect-error - mocking fetch
+    globalThis.fetch = mockFetch
+
+    const defaultConfig = { port: 3000, host: 'localhost' }
+
+    // Test with checkEnv: true (default)
+    const result1 = await loadConfig({
+      name: 'test-app',
+      endpoint: '/api/config',
+      defaultConfig,
+      checkEnv: true,
+    })
+
+    expect(result1).toEqual({ port: 3000, host: 'api-host' })
+
+    // Test with checkEnv: false (should behave the same in browser)
+    const result2 = await loadConfig({
+      name: 'test-app',
+      endpoint: '/api/config',
+      defaultConfig,
+      checkEnv: false,
+    })
+
+    expect(result2).toEqual({ port: 3000, host: 'api-host' })
+
+    // Restore window
+    globalThis.window = originalWindow
+  })
 })

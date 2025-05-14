@@ -16,6 +16,7 @@
 - 🌐 **Universal**: _optimized for both Bun & browser environments_
 - 🪶 **Lightweight**: _zero dependencies, built on native modules_
 - 💪 **Type-Safe**: _fully typed configurations with generated type definitions_
+- 🌍 **Environment Variables**: _automatic environment variable support based on config name_
 - 🛠️ **CLI Tools**: _powerful & easy-to-use CLI_
 - 📦 **Flexible**: _supports multiple config file formats (.ts, .js, .mjs, .cjs, .json, .mts, .cts)_
 
@@ -56,6 +57,60 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 
 > [!TIP]
 > If your `process.cwd()` includes a `$name.config.{ts,js,mjs,cjs,json}` _(or `.$name.config.{ts,js,mjs,cjs,json}`)_ file, it will be loaded and merged with defaults, where file config file values take precedence. For minimalists, it also loads a `.$name.{ts,js,mjs,cjs,json}` and `$name.{ts,js,mjs,cjs,json}` file if present.
+
+### Environment Variables
+
+Bunfig automatically checks for environment variables based on the config name. Environment variables take precedence over default values but are overridden by config files.
+
+You can disable this feature by setting `checkEnv: false` in your config options:
+
+```ts
+const options = {
+  name: 'my-app',
+  defaultConfig: { /* ... */ },
+  checkEnv: false, // Disable environment variable checking
+}
+```
+
+The naming convention for environment variables is:
+```
+[CONFIG_NAME]_[PROPERTY_NAME]
+```
+
+For nested properties, use underscores to separate the levels:
+```
+[CONFIG_NAME]_[NESTED_PROPERTY_PATH]
+```
+
+Example:
+
+```ts
+// With a config name of "my-app"
+const options = {
+  name: 'my-app',
+  defaultConfig: {
+    port: 3000,
+    host: 'localhost',
+    database: {
+      url: 'postgres://localhost:5432',
+      user: 'admin',
+    },
+  },
+}
+
+// These environment variables would be automatically used if set:
+// MY_APP_PORT=8080
+// MY_APP_HOST=example.com
+// MY_APP_DATABASE_URL=postgres://production:5432
+// MY_APP_DATABASE_USER=prod_user
+```
+
+For array values, you can use a JSON string or comma-separated values:
+```
+MY_APP_ALLOWED_ORIGINS=["https://example.com","https://api.example.com"]
+// or
+MY_APP_ALLOWED_ORIGINS=https://example.com,https://api.example.com
+```
 
 ### Browser Environment
 

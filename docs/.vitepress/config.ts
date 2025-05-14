@@ -2,7 +2,6 @@ import type { HeadConfig } from 'vitepress'
 import { transformerTwoslash } from '@shikijs/vitepress-twoslash'
 import { withPwa } from '@vite-pwa/vitepress'
 import { defineConfig } from 'vitepress'
-
 import vite from './vite.config'
 
 // https://vitepress.dev/reference/site-config
@@ -62,6 +61,7 @@ const sidebar = [
     text: 'Features',
     items: [
       { text: 'Configuration Loading', link: '/features/configuration-loading' },
+      { text: 'Environment Variables', link: '/features/environment-variables' },
       { text: 'Type Safety', link: '/features/type-safety' },
     ],
   },

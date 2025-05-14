@@ -6,12 +6,28 @@
  * @param defaultConfig - The default configuration.
  * @param endpoint - The API endpoint to fetch config from in browser environments.
  * @param headers - The headers to send with the request in browser environments.
+ * @param verbose - Whether to log verbose information.
+ * @param checkEnv - Whether to check environment variables. Defaults to true.
  * @example ```ts
  * // Merges arrays if both configs are arrays, otherwise does object deep merge
  * await loadConfig({
  *   name: 'example',
  *   endpoint: '/api/my-custom-config/endpoint',
  *   defaultConfig: [{ foo: 'bar' }]
+ * })
+ * ```
+ *
+ * Environment variables are automatically checked based on the config name.
+ * For example, with a config name of "tlsx" and a defaultConfig with a property "domain",
+ * the environment variable "TLSX_DOMAIN" will be checked and used if available.
+ * Nested properties use underscores: "TLSX_NESTED_PROPERTY".
+ *
+ * You can disable environment variable checking by setting checkEnv to false:
+ * ```ts
+ * await loadConfig({
+ *   name: 'example',
+ *   defaultConfig: { foo: 'bar' },
+ *   checkEnv: false
  * })
  * ```
  */
@@ -23,6 +39,7 @@ export interface Config<T> {
   endpoint?: string
   headers?: Record<string, string>
   defaultConfig: T
+  checkEnv?: boolean
   verbose?: boolean
 }
 
