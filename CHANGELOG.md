@@ -1,4 +1,16 @@
 
+## v0.9.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.9.0...main)
+
+### 🚀 Enhancements
+
+- Add `alias` option ([323a551](https://github.com/stacksjs/bunfig/commit/323a551))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.8.5...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.5...main)
