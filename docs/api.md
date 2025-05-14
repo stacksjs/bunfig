@@ -33,6 +33,15 @@ const config2 = await config<MyConfig>({
     port: 3000,
   },
 })
+
+// Using an alias
+const config3 = await config<MyConfig>({
+  name: 'my-app',
+  alias: 'app',
+  defaultConfig: {
+    port: 3000,
+  },
+})
 ```
 
 ### `loadConfig<T>`
@@ -42,6 +51,7 @@ Low-level configuration loader with more control over the loading process.
 ```ts
 async function loadConfig<T>({
   name,
+  alias,
   cwd,
   defaultConfig,
 }: Config<T>): Promise<T>
@@ -50,6 +60,7 @@ async function loadConfig<T>({
 #### Parameters
 
 - `name`: The name of your configuration
+- `alias`: An alternative name to check for config files (optional)
 - `cwd`: Working directory to search for config files (defaults to process.cwd())
 - `defaultConfig`: Default configuration values
 
@@ -61,6 +72,15 @@ const config = await loadConfig<MyConfig>({
   cwd: './config',
   defaultConfig: {
     port: 3000,
+  },
+})
+
+// With alias
+const tlsConfig = await loadConfig<TlsConfig>({
+  name: 'tlsx',
+  alias: 'tls',
+  defaultConfig: {
+    domain: 'example.com',
   },
 })
 ```
@@ -99,6 +119,7 @@ The main configuration options interface.
 ```ts
 interface Config<T> {
   name: string
+  alias?: string
   cwd?: string
   defaultConfig: T
 }
@@ -162,6 +183,8 @@ bunfig searches for configuration files in the following order:
 3. `{name}.{ts,js,mjs,cjs,json}`
 4. `.{name}.{ts,js,mjs,cjs,json}`
 
+If an alias is provided, it will also check for files with the alias name using the same patterns if no file with the primary name is found.
+
 The first file found in this order will be used. The contents will be deeply merged with the default configuration.
 
 ## Error Handling
@@ -211,4 +234,16 @@ All functions that load configuration files handle errors gracefully:
      port: 3000,
      host: 'localhost',
    }
+   ```
+
+5. Use aliases for backward compatibility or alternative naming:
+
+   ```ts
+   const config = await config<MyConfig>({
+     name: 'new-name',
+     alias: 'old-name',
+     defaultConfig: {
+       // ...
+     },
+   })
    ```

@@ -29,6 +29,31 @@ For example, if your `name` is "my-app", it will look for:
 - `.my-app.ts`
 (and the same for other supported extensions)
 
+## Configuration Aliases
+
+bunfig supports configuration aliases, allowing you to specify an alternative name for your configuration files. This is useful for:
+
+- Maintaining backward compatibility when renaming configurations
+- Supporting multiple naming conventions
+- Providing fallbacks for different environments
+
+When you specify an alias, bunfig will check for configuration files with both the primary name and the alias name, using the first one it finds:
+
+```ts
+const config = await loadConfig({
+  name: 'tlsx',
+  alias: 'tls',
+  defaultConfig: {
+    domain: 'example.com',
+    port: 443,
+  },
+})
+```
+
+This will check for both `tlsx.config.ts` and `tls.config.ts` (and other variations), using the primary name with higher priority. If no file with the primary name is found, it will use the alias name.
+
+The same alias resolution also applies when looking for configuration in the package.json file. If a section with the primary name doesn't exist, bunfig will look for a section with the alias name.
+
 ## Environment Variable Support
 
 bunfig automatically checks for environment variables based on your configuration name, making it easy to override settings in different environments. Environment variables follow this naming pattern:

@@ -19,6 +19,7 @@
 - 🌍 **Environment Variables**: _automatic environment variable support based on config name_
 - 🛠️ **CLI Tools**: _powerful & easy-to-use CLI_
 - 📦 **Flexible**: _supports multiple config file formats (.ts, .js, .mjs, .cjs, .json, .mts, .cts)_
+- 🔄 **Aliases**: _support for alternative configuration file names_
 
 ## Install
 
@@ -57,6 +58,23 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 
 > [!TIP]
 > If your `process.cwd()` includes a `$name.config.{ts,js,mjs,cjs,json}` _(or `.$name.config.{ts,js,mjs,cjs,json}`)_ file, it will be loaded and merged with defaults, where file config file values take precedence. For minimalists, it also loads a `.$name.{ts,js,mjs,cjs,json}` and `$name.{ts,js,mjs,cjs,json}` file if present.
+
+### Using Aliases
+
+You can specify an alias to check for alternative config file names when the primary name doesn't exist:
+
+```ts
+const config = await loadConfig({
+  name: 'tlsx',
+  alias: 'tls', // Alternative name to check if tlsx.config.* doesn't exist
+  defaultConfig: {
+    domain: 'example.com',
+    port: 443,
+  },
+})
+```
+
+This will check for both `tlsx.config.ts` and `tls.config.ts` _(and other variations)_ using the first one it finds. This is useful for maintaining backward compatibility when renaming configurations or providing fallbacks.
 
 ### Environment Variables
 

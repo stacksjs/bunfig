@@ -154,6 +154,7 @@ export function applyEnvVarsToConfig<T extends Record<string, any>>(
  *
  * @param {object} options - The configuration options.
  * @param {string} options.name - The name of the configuration file.
+ * @param {string} [options.alias] - An alternative name to check for config files.
  * @param {string} [options.cwd] - The current working directory.
  * @param {T} options.defaultConfig - The default configuration.
  * @param {boolean} [options.verbose] - Whether to log verbose information.
@@ -168,6 +169,7 @@ export function applyEnvVarsToConfig<T extends Record<string, any>>(
  */
 export async function loadConfig<T>({
   name = '',
+  alias,
   cwd,
   defaultConfig,
   verbose = false,
@@ -183,18 +185,28 @@ export async function loadConfig<T>({
   const extensions = ['.ts', '.js', '.mjs', '.cjs', '.json']
 
   if (verbose) {
-    log.info(`Loading configuration for "${name}" from ${baseDir}`)
+    log.info(`Loading configuration for "${name}"${alias ? ` (alias: "${alias}")` : ''} from ${baseDir}`)
+  }
+
+  // Build the list of config file patterns to try (including alias if provided)
+  const configPatterns = []
+
+  // Primary name patterns
+  configPatterns.push(`${name}.config`)
+  configPatterns.push(`.${name}.config`)
+  configPatterns.push(name)
+  configPatterns.push(`.${name}`)
+
+  // Alias patterns if an alias is provided
+  if (alias) {
+    configPatterns.push(`${alias}.config`)
+    configPatterns.push(`.${alias}.config`)
+    configPatterns.push(alias)
+    configPatterns.push(`.${alias}`)
   }
 
   // Try loading config in order of preference
-  const configPaths = [
-    `${name}.config`,
-    `.${name}.config`,
-    name,
-    `.${name}`,
-  ]
-
-  for (const configPath of configPaths) {
+  for (const configPath of configPatterns) {
     for (const ext of extensions) {
       const fullPath = resolve(baseDir, `${configPath}${ext}`)
       const config = await tryLoadConfig(fullPath, configWithEnvVars)
@@ -207,23 +219,33 @@ export async function loadConfig<T>({
     }
   }
 
-  // Then try package.json
+  // Then try package.json (for both name and alias)
   try {
     const pkgPath = resolve(baseDir, 'package.json')
     if (existsSync(pkgPath)) {
       const pkg = await import(pkgPath)
-      const pkgConfig = pkg[name]
+
+      // First try the primary name
+      let pkgConfig = pkg[name]
+
+      // If not found and alias is provided, try the alias
+      if (!pkgConfig && alias) {
+        pkgConfig = pkg[alias]
+        if (pkgConfig && verbose) {
+          log.success(`Using alias "${alias}" configuration from package.json`)
+        }
+      }
 
       if (pkgConfig && typeof pkgConfig === 'object' && !Array.isArray(pkgConfig)) {
         try {
           if (verbose) {
-            log.success(`Configuration loaded from package.json: ${name}`)
+            log.success(`Configuration loaded from package.json: ${pkgConfig === pkg[name] ? name : alias}`)
           }
           return deepMerge(configWithEnvVars, pkgConfig) as T
         }
         catch (error) {
           if (verbose) {
-            log.warn(`Failed to merge package.json config for ${name}:`, error)
+            log.warn(`Failed to merge package.json config:`, error)
           }
           // If merging fails, continue to default config
         }
@@ -232,13 +254,13 @@ export async function loadConfig<T>({
   }
   catch (error) {
     if (verbose) {
-      log.warn(`Failed to load package.json for ${name}:`, error)
+      log.warn(`Failed to load package.json:`, error)
     }
     // If package.json loading fails, continue to default config
   }
 
   if (verbose) {
-    log.info(`No configuration found for ${name}, using default configuration with environment variables`)
+    log.info(`No configuration found for "${name}"${alias ? ` or alias "${alias}"` : ''}, using default configuration with environment variables`)
   }
   return configWithEnvVars
 }

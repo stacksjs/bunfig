@@ -496,6 +496,79 @@ describe('bunfig', () => {
       }
       expect(current.value).toBe('deep')
     })
+
+    it('should handle string input with no config file', async () => {
+      const result = await config('non-existent')
+      expect(result).toEqual({})
+    })
+
+    it('should use alias when primary config file does not exist', async () => {
+      // Create config file with the alias name
+      const aliasConfigPath = resolve(testConfigDir, 'tls.config.ts')
+      const configContent = `export default { domain: 'example.com' }`
+
+      writeFileSync(aliasConfigPath, configContent)
+
+      const defaultConfig = {
+        domain: 'default.com',
+        port: 443,
+      }
+
+      const result = await loadConfig({
+        name: 'tlsx',
+        alias: 'tls',
+        cwd: testConfigDir,
+        defaultConfig,
+      })
+
+      expect(result).toEqual({
+        domain: 'example.com',
+        port: 443,
+      })
+    })
+
+    it('should use primary name over alias when both exist', async () => {
+      // Create config file with the primary name
+      const primaryConfigPath = resolve(testConfigDir, 'primary.config.ts')
+      writeFileSync(primaryConfigPath, `export default { name: 'primary' }`)
+
+      // Create config file with the alias name
+      const aliasConfigPath = resolve(testConfigDir, 'alias.config.ts')
+      writeFileSync(aliasConfigPath, `export default { name: 'alias' }`)
+
+      const result = await loadConfig({
+        name: 'primary',
+        alias: 'alias',
+        cwd: testConfigDir,
+        defaultConfig: { name: 'default' },
+      })
+
+      expect(result).toEqual({ name: 'primary' })
+    })
+
+    it('should use alias from package.json when primary is not found', async () => {
+      // Create a package.json with the alias configuration
+      const packageJsonPath = resolve(testConfigDir, 'package.json')
+      const packageJsonContent = JSON.stringify({
+        name: 'test-package',
+        tlsx: null, // This should be ignored
+        tls: { domain: 'from-package.json' },
+      })
+
+      writeFileSync(packageJsonPath, packageJsonContent)
+
+      const result = await loadConfig({
+        name: 'tlsx',
+        alias: 'tls',
+        cwd: testConfigDir,
+        defaultConfig: { domain: 'default.com', port: 443 },
+      })
+
+      expect(result).toEqual({
+        domain: 'from-package.json',
+        port: 443,
+      })
+    })
   })
 
   describe('config function', () => {
@@ -512,11 +585,6 @@ describe('bunfig', () => {
       })
 
       expect(result).toEqual({ value: 'test' })
-    })
-
-    it('should handle string input with no config file', async () => {
-      const result = await config('non-existent')
-      expect(result).toEqual({})
     })
   })
 

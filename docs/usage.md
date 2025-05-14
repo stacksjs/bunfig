@@ -25,6 +25,16 @@ const myConfig = await config<MyConfig>({
     host: 'localhost',
   },
 })
+
+// Using an alias for alternative config file names
+const myConfig = await config<MyConfig>({
+  name: 'my-app',
+  alias: 'app',
+  defaultConfig: {
+    port: 3000,
+    host: 'localhost',
+  },
+})
 ```
 
 ## Configuration File Resolution
@@ -43,6 +53,33 @@ For example, if your `name` is "my-app", it will look for:
 - `my-app.ts`
 - `.my-app.ts`
 (and the same for other supported extensions)
+
+When you specify an alias, bunfig will also check for files with the alias name using the same patterns if no file with the primary name is found.
+
+## Configuration Aliases
+
+You can use aliases to provide alternative configuration file names:
+
+```ts
+const tlsConfig = await loadConfig({
+  name: 'tlsx',
+  alias: 'tls',
+  defaultConfig: {
+    domain: 'example.com',
+    port: 443,
+  },
+})
+```
+
+This is useful for:
+
+- Maintaining backward compatibility when renaming configurations
+- Supporting multiple naming conventions
+- Providing fallbacks for different environments
+
+When both a primary config file and an alias config file exist, the primary file takes precedence.
+
+The alias feature also works when looking for config in package.json - if a section with the primary name isn't found, bunfig will look for a section with the alias name.
 
 ## Advanced Usage
 
@@ -110,6 +147,7 @@ Low-level configuration loader with more options.
 Options:
 
 - `name`: The name of your configuration
+- `alias`: An alternative name to check for config files (optional)
 - `cwd?`: Working directory to search for config files (defaults to process.cwd())
 - `defaultConfig`: Default configuration values
 
@@ -147,6 +185,7 @@ The configuration file's values will be deeply merged with your default configur
 3. Use TypeScript for better type safety
 4. Keep configuration files in a dedicated directory
 5. Use the type generation feature to ensure type safety across your project
+6. Use aliases for backward compatibility when renaming configurations
 
 ## Browser Support
 
