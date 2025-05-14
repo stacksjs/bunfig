@@ -1,4 +1,42 @@
 
+## v0.8.5...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.5...main)
+
+### 🚀 Enhancements
+
+- Add deep env variable support ([807d946](https://github.com/stacksjs/bunfig/commit/807d946))
+
+### 🏡 Chore
+
+- Add verbose on loadConfig ([b96a974](https://github.com/stacksjs/bunfig/commit/b96a974))
+- Add git-hooks with gitlint ([352cbfe](https://github.com/stacksjs/bunfig/commit/352cbfe))
+- Lint ([0ccbd9c](https://github.com/stacksjs/bunfig/commit/0ccbd9c))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+- Cab-mikee ([@cab-mikee](https://github.com/cab-mikee))
+
+## v0.8.5...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.5...main)
+
+### 🚀 Enhancements
+
+- Add deep env variable support ([807d946](https://github.com/stacksjs/bunfig/commit/807d946))
+
+### 🏡 Chore
+
+- Add verbose on loadConfig ([b96a974](https://github.com/stacksjs/bunfig/commit/b96a974))
+- Add git-hooks with gitlint ([352cbfe](https://github.com/stacksjs/bunfig/commit/352cbfe))
+- Lint ([0ccbd9c](https://github.com/stacksjs/bunfig/commit/0ccbd9c))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+- Cab-mikee ([@cab-mikee](https://github.com/cab-mikee))
+
 ## v0.8.4...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.8.4...main)
