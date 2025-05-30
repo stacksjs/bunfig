@@ -12,7 +12,8 @@
 
 ## Features
 
-- 🔄 **Smart Config**: _intelligent configuration loading_
+- 🔄 **Smart Config**: _intelligent configuration loading with multiple sources_
+- 🏠 **Home Directory Support**: _global configurations via `~/.config/$name/`_
 - 🌐 **Universal**: _optimized for both Bun & browser environments_
 - 🪶 **Lightweight**: _zero dependencies, built on native modules_
 - 💪 **Type-Safe**: _fully typed configurations with generated type definitions_
@@ -57,7 +58,37 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 ```
 
 > [!TIP]
-> If your `process.cwd()` includes a `$name.config.{ts,js,mjs,cjs,json}` _(or `.$name.config.{ts,js,mjs,cjs,json}`)_ file, it will be loaded and merged with defaults, where file config file values take precedence. For minimalists, it also loads a `.$name.{ts,js,mjs,cjs,json}` and `$name.{ts,js,mjs,cjs,json}` file if present.
+> bunfig will search for configuration files in this priority order:
+> 1. **Local directory**: `$name.config.{ts,js,mjs,cjs,json}` _(or `.$name.config.{ts,js,mjs,cjs,json}`)_ in your project
+> 2. **Home directory**: `~/.config/$name/config.{ts,js,mjs,cjs,json}` for global settings
+> 3. **Package.json**: configuration sections in your package.json file
+>
+> For minimalists, it also supports `.$name.{ts,js,mjs,cjs,json}` and `$name.{ts,js,mjs,cjs,json}` patterns in both local and home directories.
+
+### Home Directory Configuration
+
+bunfig supports global configuration files in your home directory following the XDG Base Directory specification. This is useful for:
+
+- **Global tool settings** that apply across all your projects
+- **Personal preferences** that you want to use everywhere
+- **Default configurations** that can be overridden per project
+
+```ts
+// ~/.config/my-app/config.ts (global configuration)
+export default {
+  theme: 'dark',
+  defaultPort: 8080,
+  globalFeatures: ['feature1', 'feature2'],
+}
+
+// ./my-app.config.ts (project-specific override)
+export default {
+  defaultPort: 3000, // Override global setting for this project
+  projectSpecific: true,
+}
+```
+
+The final configuration will be deeply merged, with local project settings taking precedence over global home directory settings.
 
 ### Using Aliases
 
@@ -74,7 +105,7 @@ const config = await loadConfig({
 })
 ```
 
-This will check for both `tlsx.config.ts` and `tls.config.ts` _(and other variations)_ using the first one it finds. This is useful for maintaining backward compatibility when renaming configurations or providing fallbacks.
+This will check for both `tlsx.config.ts` and `tls.config.ts` _(and other variations)_ in both local and home directories, using the first one it finds. This is useful for maintaining backward compatibility when renaming configurations or providing fallbacks.
 
 ### Environment Variables
 

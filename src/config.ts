@@ -1,5 +1,6 @@
 import type { Config } from './types'
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
+import { homedir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { Logger } from '@stacksjs/clarity'
@@ -205,7 +206,7 @@ export async function loadConfig<T>({
     configPatterns.push(`.${alias}`)
   }
 
-  // Try loading config in order of preference
+  // Try loading config in order of preference (local directory first)
   for (const configPath of configPatterns) {
     for (const ext of extensions) {
       const fullPath = resolve(baseDir, `${configPath}${ext}`)
@@ -215,6 +216,34 @@ export async function loadConfig<T>({
           log.success(`Configuration loaded from: ${configPath}${ext}`)
         }
         return config
+      }
+    }
+  }
+
+  // Try loading from user's home config directory (~/.config/$name/config.*)
+  if (name) {
+    const homeConfigDir = resolve(homedir(), '.config', name)
+    const homeConfigPatterns = ['config', `${name}.config`]
+
+    // Also try alias patterns in home config dir if alias is provided
+    if (alias) {
+      homeConfigPatterns.push(`${alias}.config`)
+    }
+
+    if (verbose) {
+      log.info(`Checking user config directory: ${homeConfigDir}`)
+    }
+
+    for (const configPath of homeConfigPatterns) {
+      for (const ext of extensions) {
+        const fullPath = resolve(homeConfigDir, `${configPath}${ext}`)
+        const config = await tryLoadConfig(fullPath, configWithEnvVars)
+        if (config !== null) {
+          if (verbose) {
+            log.success(`Configuration loaded from user config directory: ${fullPath}`)
+          }
+          return config
+        }
       }
     }
   }
