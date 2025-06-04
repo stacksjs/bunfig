@@ -79,16 +79,16 @@ export default {
 
 The final merged configuration will be:
 
-```ts
+```typescript
 {
-  theme: 'dark',           // From home config
-  defaultPort: 3000,       // From local config (overridden)
-  globalFeatures: ['feature1', 'feature2'], // From home config
+  theme: 'dark' // From home config
+  defaultPort: 3000
+  globalFeatures: ['feature1', 'feature2'] // From home config
   userPreferences: {
-    notifications: true,   // From home config
-    autoSave: false,      // From local config (overridden)
-  },
-  projectSpecific: true,  // From local config (added)
+    notifications: true // From home config
+    autoSave: false // From local config (overridden)
+  }
+  projectSpecific: true // From local config (added)
 }
 ```
 
