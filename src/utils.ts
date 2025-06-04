@@ -1,5 +1,4 @@
 import type { DeepMerge, SimplifyDeep } from './types'
-import process from 'node:process'
 
 /**
  * Get a value from environment variables or return a default value
@@ -8,6 +7,8 @@ import process from 'node:process'
  * @returns The environment variable value or default value
  */
 export function getEnvOrDefault<T>(key: string, defaultValue: T): T {
+  // eslint-disable-next-line ts/no-require-imports
+  const process = require('node:process')
   if (typeof process === 'undefined' || !process.env)
     return defaultValue
 

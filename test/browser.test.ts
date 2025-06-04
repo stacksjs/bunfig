@@ -17,6 +17,7 @@ describe('browser', () => {
     // Test browser environment with fetch
     // @ts-expect-error - mocking window
     globalThis.window = {}
+    // @ts-expect-error - mocking fetch with minimal implementation
     globalThis.fetch = () => Promise.resolve(new Response())
     expect(isBrowser()).toBe(true)
 
@@ -90,6 +91,7 @@ describe('browser', () => {
 
     const consoleSpy = spyOn(console, 'error')
     const mockFetch = mock(() => Promise.reject(new Error('Network error')))
+    // @ts-expect-error - mocking fetch with minimal implementation
     globalThis.fetch = mockFetch
 
     const defaultConfig = { port: 3000, host: 'localhost' }

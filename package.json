@@ -62,7 +62,7 @@
     "zip:darwin-arm64": "zip -j bin/bunfig-darwin-arm64.zip bin/bunfig-darwin-arm64"
   },
   "devDependencies": {
-    "@happy-dom/global-registrator": "^17.5.6",
+    "@happy-dom/global-registrator": "^18.0.1",
     "@stacksjs/clarity": "^0.3.15",
     "@stacksjs/docs": "^0.70.23",
     "@stacksjs/eslint-config": "^4.14.0-beta.3",
@@ -70,7 +70,7 @@
     "@types/bun": "^1.2.15",
     "bumpp": "^10.1.1",
     "bun-git-hooks": "^0.2.16",
-    "bun-plugin-dtsx": "^0.21.12",
+    "bun-plugin-dtsx": "^0.9.5",
     "changelogen": "^0.6.1",
     "typescript": "^5.8.3"
   },
