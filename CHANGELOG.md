@@ -1,4 +1,22 @@
 
+## v0.10.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.10.0...main)
+
+### 🚀 Enhancements
+
+- Add home directory support ([c5acd79](https://github.com/stacksjs/bunfig/commit/c5acd79))
+
+### 🏡 Chore
+
+- Update banner ([e540905](https://github.com/stacksjs/bunfig/commit/e540905))
+- Minor updates ([c34c228](https://github.com/stacksjs/bunfig/commit/c34c228))
+
+### ❤️ Contributors
+
+- Glennmichael123 ([@glennmichael123](https://github.com/glennmichael123))
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.9.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.9.0...main)
