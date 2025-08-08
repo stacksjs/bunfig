@@ -144,6 +144,44 @@ const result = {
 }
 ```
 
+### Array Merge Strategy
+
+By default, when bunfig merges arrays, it uses a replace strategy. That means if your configuration file defines an array (for example a list of commands), that array will replace the default array entirely. This gives you full control without pulling in defaults you don’t want.
+
+- Default: `arrayStrategy: 'replace'`
+- Optional: `arrayStrategy: 'merge'` to concatenate arrays using bunfig’s smart unique merge (for arrays of primitives and objects).
+
+Example (replace by default):
+
+```ts
+import { loadConfig } from 'bunfig'
+
+interface MyConfig {
+  commands: { name: string, command: string }[]
+}
+
+const config = await loadConfig<MyConfig>({
+  name: 'my-tool',
+  defaultConfig: {
+    commands: [
+      { name: 'default', command: 'echo default' },
+    ],
+  },
+})
+
+// If my-tool.config.ts defines its own `commands`, they will replace the defaults.
+```
+
+Enable merge behavior:
+
+```ts
+const config = await loadConfig<MyConfig>({
+  name: 'my-tool',
+  defaultConfig,
+  arrayStrategy: 'merge',
+})
+```
+
 ## Error Handling
 
 bunfig handles various error scenarios gracefully:

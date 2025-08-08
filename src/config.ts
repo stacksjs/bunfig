@@ -1,11 +1,11 @@
-import type { Config } from './types'
+import type { ArrayMergeStrategy, Config } from './types'
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { Logger } from '@stacksjs/clarity'
 import { version } from '../package.json'
-import { deepMerge } from './utils'
+import { deepMergeWithArrayStrategy } from './utils'
 
 const log = new Logger('bunfig', {
   showTags: true,
@@ -26,6 +26,7 @@ export async function config<T>(
       configDir: './config',
       defaultConfig: {} as T,
       checkEnv: true,
+      arrayStrategy: 'replace',
     })
   }
 
@@ -35,7 +36,7 @@ export async function config<T>(
 /**
  * Attempts to load a config file from a specific path
  */
-export async function tryLoadConfig<T>(configPath: string, defaultConfig: T): Promise<T | null> {
+export async function tryLoadConfig<T>(configPath: string, defaultConfig: T, arrayStrategy: ArrayMergeStrategy = 'replace'): Promise<T | null> {
   if (!existsSync(configPath))
     return null
 
@@ -49,7 +50,7 @@ export async function tryLoadConfig<T>(configPath: string, defaultConfig: T): Pr
 
     // Validate that the loaded config can be merged with the default config
     try {
-      return deepMerge(defaultConfig, loadedConfig) as T
+      return deepMergeWithArrayStrategy(defaultConfig, loadedConfig, arrayStrategy) as T
     }
     catch {
       return null
@@ -155,6 +156,7 @@ export function applyEnvVarsToConfig<T extends Record<string, any>>(
  *
  * @param {object} options - The configuration options.
  * @param {string} options.name - The name of the configuration file.
+ * @param {ArrayMergeStrategy} [options.arrayStrategy] - The strategy to use when merging arrays.
  * @param {string} [options.alias] - An alternative name to check for config files.
  * @param {string} [options.cwd] - The current working directory.
  * @param {T} options.defaultConfig - The default configuration.
@@ -175,6 +177,7 @@ export async function loadConfig<T>({
   defaultConfig,
   verbose = false,
   checkEnv = true,
+  arrayStrategy = 'replace',
 }: Config<T>): Promise<T> {
   // Apply environment variables to default config first
   const configWithEnvVars = checkEnv && typeof defaultConfig === 'object' && defaultConfig !== null && !Array.isArray(defaultConfig)
@@ -210,7 +213,7 @@ export async function loadConfig<T>({
   for (const configPath of configPatterns) {
     for (const ext of extensions) {
       const fullPath = resolve(baseDir, `${configPath}${ext}`)
-      const config = await tryLoadConfig(fullPath, configWithEnvVars)
+      const config = await tryLoadConfig(fullPath, configWithEnvVars, arrayStrategy)
       if (config !== null) {
         if (verbose) {
           log.success(`Configuration loaded from: ${configPath}${ext}`)
@@ -237,7 +240,7 @@ export async function loadConfig<T>({
     for (const configPath of homeConfigPatterns) {
       for (const ext of extensions) {
         const fullPath = resolve(homeConfigDir, `${configPath}${ext}`)
-        const config = await tryLoadConfig(fullPath, configWithEnvVars)
+        const config = await tryLoadConfig(fullPath, configWithEnvVars, arrayStrategy)
         if (config !== null) {
           if (verbose) {
             log.success(`Configuration loaded from user config directory: ${fullPath}`)
@@ -270,7 +273,7 @@ export async function loadConfig<T>({
           if (verbose) {
             log.success(`Configuration loaded from package.json: ${pkgConfig === pkg[name] ? name : alias}`)
           }
-          return deepMerge(configWithEnvVars, pkgConfig) as T
+          return deepMergeWithArrayStrategy(configWithEnvVars, pkgConfig, arrayStrategy) as T
         }
         catch (error) {
           if (verbose) {

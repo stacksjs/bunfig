@@ -54,6 +54,9 @@ async function loadConfig<T>({
   alias,
   cwd,
   defaultConfig,
+  checkEnv,
+  verbose,
+  arrayStrategy, // 'replace' | 'merge' (default 'replace')
 }: Config<T>): Promise<T>
 ```
 
@@ -63,6 +66,7 @@ async function loadConfig<T>({
 - `alias`: An alternative name to check for config files (optional)
 - `cwd`: Working directory to search for config files (defaults to process.cwd())
 - `defaultConfig`: Default configuration values
+- `arrayStrategy`: Controls how arrays are merged. Defaults to `'replace'` (user-provided arrays replace defaults). Set to `'merge'` to concatenate arrays using bunfig's smart merge.
 
 #### Example
 
@@ -121,7 +125,12 @@ interface Config<T> {
   name: string
   alias?: string
   cwd?: string
+  endpoint?: string // browser
+  headers?: Record<string, string> // browser
   defaultConfig: T
+  checkEnv?: boolean
+  verbose?: boolean
+  arrayStrategy?: 'replace' | 'merge'
 }
 ```
 
@@ -142,7 +151,8 @@ Attempts to load a config file from a specific path.
 ```ts
 async function tryLoadConfig<T>(
   configPath: string,
-  defaultConfig: T
+  defaultConfig: T,
+  arrayStrategy?: 'replace' | 'merge'
 ): Promise<T | null>
 ```
 

@@ -1,5 +1,5 @@
 import type { Config } from './types'
-import { deepMerge } from './utils'
+import { deepMergeWithArrayStrategy } from './utils'
 
 /**
  * Apply environment variables to config in browser context
@@ -143,7 +143,8 @@ export async function loadConfig<T>({
     'Content-Type': 'application/json',
   },
   checkEnv = true,
-}: Pick<Config<T>, 'name' | 'endpoint' | 'defaultConfig' | 'headers' | 'checkEnv'>): Promise<T> {
+  arrayStrategy = 'replace',
+}: Pick<Config<T>, 'name' | 'endpoint' | 'defaultConfig' | 'headers' | 'checkEnv' | 'arrayStrategy'>): Promise<T> {
   // Apply environment variables to default config if enabled and typeof defaultConfig is an object
   const configWithEnvVars = checkEnv && name && typeof defaultConfig === 'object' && defaultConfig !== null && !Array.isArray(defaultConfig)
     ? applyBrowserEnvVarsToConfig(name, defaultConfig as Record<string, any>) as T
@@ -171,7 +172,7 @@ export async function loadConfig<T>({
 
     // Validate that the loaded config can be merged with the default config
     try {
-      return deepMerge(configWithEnvVars, loadedConfig) as T
+      return deepMergeWithArrayStrategy(configWithEnvVars, loadedConfig, arrayStrategy) as T
     }
     catch {
       return configWithEnvVars

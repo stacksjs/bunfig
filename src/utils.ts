@@ -1,4 +1,4 @@
-import type { DeepMerge, SimplifyDeep } from './types'
+import type { ArrayMergeStrategy, DeepMerge, SimplifyDeep } from './types'
 
 /**
  * Get a value from environment variables or return a default value
@@ -195,6 +195,61 @@ export function deepMerge<T, S>(target: T, source: S): T extends any[]
   }
 
   return merged
+}
+
+/**
+ * Deep merge with configurable array strategy.
+ * - strategy 'replace' (default): source arrays replace target arrays
+ * - strategy 'merge': use deepMerge behavior that merges arrays uniquely
+ */
+export function deepMergeWithArrayStrategy<T, S>(
+  target: T,
+  source: S,
+  strategy: ArrayMergeStrategy = 'replace',
+): any {
+  // Preserve defaults if source is null/undefined
+  if (source === null || source === undefined)
+    return target as any
+
+  // If either side is an array, handle via strategy
+  if (Array.isArray(source)) {
+    return strategy === 'replace' ? source : deepMerge(target as any, source as any)
+  }
+  if (Array.isArray(target)) {
+    return strategy === 'replace' ? source : deepMerge(target as any, source as any)
+  }
+
+  // Non-objects: override
+  if (!isObject(source) || !isObject(target))
+    return source as any
+
+  const result: Record<string, any> = { ...(target as any) }
+  for (const key of Object.keys(source as any)) {
+    if (!Object.prototype.hasOwnProperty.call(source, key))
+      continue
+    const sourceValue = (source as any)[key]
+    const targetValue = (result as any)[key]
+
+    // Skip null/undefined to preserve defaults like loadConfig does
+    if (sourceValue === null || sourceValue === undefined)
+      continue
+
+    if (Array.isArray(sourceValue) || Array.isArray(targetValue)) {
+      if (strategy === 'replace') {
+        result[key] = sourceValue
+      }
+      else {
+        result[key] = deepMerge(targetValue, sourceValue)
+      }
+    }
+    else if (isObject(sourceValue) && isObject(targetValue)) {
+      result[key] = deepMergeWithArrayStrategy(targetValue, sourceValue, strategy)
+    }
+    else {
+      result[key] = sourceValue
+    }
+  }
+  return result
 }
 
 // Helper for deep equality check

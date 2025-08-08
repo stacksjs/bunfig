@@ -53,6 +53,7 @@ export interface Config<T> {
   defaultConfig: T
   checkEnv?: boolean
   verbose?: boolean
+  arrayStrategy?: ArrayMergeStrategy
 }
 
 export type SimplifyDeep<T> = T extends object
@@ -74,3 +75,5 @@ export type DeepMergeable<T, S> = T extends object
     ? DeepMerge<T, S>
     : S
   : S
+
+export type ArrayMergeStrategy = 'replace' | 'merge'

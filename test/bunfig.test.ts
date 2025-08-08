@@ -194,7 +194,7 @@ describe('bunfig', () => {
       })
     })
 
-    it('should correctly merge arrays in configuration', async () => {
+    it('should correctly merge arrays in configuration when arrayStrategy is set to merge', async () => {
       interface Middleware {
         name: string
         order?: number
@@ -244,6 +244,7 @@ describe('bunfig', () => {
         name: 'array-test',
         cwd: testConfigDir,
         defaultConfig,
+        arrayStrategy: 'merge',
       })
 
       expect(result).toEqual({
@@ -255,6 +256,72 @@ describe('bunfig', () => {
         ],
         features: {
           supported: ['feature1', 'feature2', 'feature3'],
+          experimental: ['exp1'],
+        },
+      })
+    })
+
+    it('should replace arrays by default (arrayStrategy: replace)', async () => {
+      interface Middleware {
+        name: string
+        order?: number
+        config?: {
+          type: string
+        }
+      }
+
+      interface ArrayTestConfig {
+        plugins: string[]
+        middleware: Middleware[]
+        features: {
+          supported: string[]
+          experimental?: string[]
+        }
+      }
+
+      const configPath = resolve(testConfigDir, 'array-replace.config.ts')
+      const configContent = `
+        export default {
+          plugins: ['custom-plugin-1', 'custom-plugin-2'],
+          middleware: [
+            { name: 'custom-mid', order: 1 },
+            { name: 'auth', config: { type: 'jwt' } }
+          ],
+          features: {
+            supported: ['feature1', 'feature2']
+          }
+        }
+      `
+
+      writeFileSync(configPath, configContent)
+
+      const defaultConfig: ArrayTestConfig = {
+        plugins: ['default-plugin'],
+        middleware: [
+          { name: 'logger', order: 0 },
+          { name: 'auth', config: { type: 'basic' } },
+        ],
+        features: {
+          supported: ['feature3'],
+          experimental: ['exp1'],
+        },
+      }
+
+      const result = await loadConfig<ArrayTestConfig>({
+        name: 'array-replace',
+        cwd: testConfigDir,
+        defaultConfig,
+        // arrayStrategy defaults to 'replace'
+      })
+
+      expect(result).toEqual({
+        plugins: ['custom-plugin-1', 'custom-plugin-2'],
+        middleware: [
+          { name: 'custom-mid', order: 1 },
+          { name: 'auth', config: { type: 'jwt' } },
+        ],
+        features: {
+          supported: ['feature1', 'feature2'],
           experimental: ['exp1'],
         },
       })
@@ -335,6 +402,7 @@ describe('bunfig', () => {
         name: 'deep-nested',
         cwd: testConfigDir,
         defaultConfig,
+        arrayStrategy: 'merge',
       })
 
       expect(result).toEqual({

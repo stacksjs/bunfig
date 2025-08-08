@@ -21,6 +21,8 @@ const config = await loadConfig<MyConfig>({
     theme: 'light',
     language: 'en',
   },
+  // Arrays replace defaults by default. To merge arrays instead:
+  // arrayStrategy: 'merge',
 })
 ```
 
