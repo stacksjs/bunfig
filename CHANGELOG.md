@@ -1,4 +1,16 @@
 
+## v0.10.1...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.10.1...main)
+
+### 🚀 Enhancements
+
+- Add support for `arrayStrategy` ([daac4f7](https://github.com/stacksjs/bunfig/commit/daac4f7))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.10.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.10.0...main)
