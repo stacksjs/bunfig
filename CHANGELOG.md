@@ -1,4 +1,16 @@
 
+## v0.11.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.11.0...main)
+
+### 🏡 Chore
+
+- Set bun version to 1.2.18 on CI release ([71b9a5f](https://github.com/stacksjs/bunfig/commit/71b9a5f))
+
+### ❤️ Contributors
+
+- Adelino Ngomacha <Adelinob335@gmail.com>
+
 ## v0.10.1...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.10.1...main)
