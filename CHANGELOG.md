@@ -1,4 +1,22 @@
 
+## v0.11.1...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.11.1...main)
+
+### 🚀 Enhancements
+
+- Add config and .config path support ([51f450f](https://github.com/stacksjs/bunfig/commit/51f450f))
+- Add dynamic type support ([03c4d24](https://github.com/stacksjs/bunfig/commit/03c4d24))
+
+### 🏡 Chore
+
+- Use `launchpad` ([8aef63f](https://github.com/stacksjs/bunfig/commit/8aef63f))
+- Update deps ([b314ce9](https://github.com/stacksjs/bunfig/commit/b314ce9))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.11.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.11.0...main)
