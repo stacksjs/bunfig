@@ -5,15 +5,16 @@
       "name": "bunfig",
       "devDependencies": {
         "@happy-dom/global-registrator": "^18.0.1",
+        "@stacksjs/clarity": "^0.3.15",
         "@stacksjs/docs": "^0.70.23",
         "@stacksjs/eslint-config": "^4.14.0-beta.3",
         "@stacksjs/gitlint": "^0.1.5",
-        "@types/bun": "^1.2.17",
+        "@types/bun": "^1.2.20",
         "bumpp": "^10.2.3",
-        "bun-git-hooks": "^0.2.16",
+        "bun-git-hooks": "^0.2.19",
         "bun-plugin-dtsx": "^0.9.5",
-        "changelogen": "^0.6.1",
-        "typescript": "^5.8.3",
+        "changelogen": "^0.6.2",
+        "typescript": "^5.9.2",
       },
     },
     "packages/bunfig": {
@@ -25,14 +26,11 @@
       "devDependencies": {
         "@happy-dom/global-registrator": "^18.0.1",
         "@stacksjs/clarity": "^0.3.15",
+        "@stacksjs/eslint-config": "^4.14.0-beta.3",
         "@types/bun": "^1.2.20",
         "bun-plugin-dtsx": "^0.9.5",
         "typescript": "^5.9.2",
       },
-    },
-    "packages/ts-plugin": {
-      "name": "bunfig-ts-plugin",
-      "version": "0.0.0",
     },
   },
   "overrides": {
@@ -800,8 +798,6 @@
     "bundle-name": ["bundle-name@4.1.0", "", { "dependencies": { "run-applescript": "^7.0.0" } }, "sha512-tjwM5exMg6BGRI+kNmTntNsvdZS1X8BFYS6tnJ2hdH0kVxM6/eVZ2xy+FqStSWvYmtfFMDLIxurorHwDKfDz5Q=="],
 
     "bunfig": ["bunfig@workspace:packages/bunfig"],
-
-    "bunfig-ts-plugin": ["bunfig-ts-plugin@workspace:packages/ts-plugin"],
 
     "c12": ["c12@3.2.0", "", { "dependencies": { "chokidar": "^4.0.3", "confbox": "^0.2.2", "defu": "^6.1.4", "dotenv": "^17.2.1", "exsolve": "^1.0.7", "giget": "^2.0.0", "jiti": "^2.5.1", "ohash": "^2.0.11", "pathe": "^2.0.3", "perfect-debounce": "^1.0.0", "pkg-types": "^2.2.0", "rc9": "^2.1.2" }, "peerDependencies": { "magicast": "^0.3.5" }, "optionalPeers": ["magicast"] }, "sha512-ixkEtbYafL56E6HiFuonMm1ZjoKtIo7TH68/uiEq4DAwv9NcUX2nJ95F8TrbMeNjqIkZpruo3ojXQJ+MGG5gcQ=="],
 
