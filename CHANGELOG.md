@@ -1,4 +1,17 @@
 
+## v0.12.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.12.0...main)
+
+### 🚀 Enhancements
+
+- Add `ConfigByName` and `ConfigOf` ([ec20381](https://github.com/stacksjs/bunfig/commit/ec20381))
+- Create `ts-plugin` ([9c55278](https://github.com/stacksjs/bunfig/commit/9c55278))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.11.1...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.11.1...main)
