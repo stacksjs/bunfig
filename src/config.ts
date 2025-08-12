@@ -159,6 +159,7 @@ export function applyEnvVarsToConfig<T extends Record<string, any>>(
  * @param {ArrayMergeStrategy} [options.arrayStrategy] - The strategy to use when merging arrays.
  * @param {string} [options.alias] - An alternative name to check for config files.
  * @param {string} [options.cwd] - The current working directory.
+ * @param {string} [options.configDir] - Additional directory to search for configuration files.
  * @param {T} options.defaultConfig - The default configuration.
  * @param {boolean} [options.verbose] - Whether to log verbose information.
  * @param {boolean} [options.checkEnv] - Whether to check environment variables.
@@ -174,6 +175,7 @@ export async function loadConfig<T>({
   name = '',
   alias,
   cwd,
+  configDir,
   defaultConfig,
   verbose = false,
   checkEnv = true,
@@ -192,33 +194,46 @@ export async function loadConfig<T>({
     log.info(`Loading configuration for "${name}"${alias ? ` (alias: "${alias}")` : ''} from ${baseDir}`)
   }
 
-  // Build the list of config file patterns to try (including alias if provided)
-  const configPatterns = []
+  // Base pattern sets for primary and alias
+  const primaryBarePatterns = [name, `.${name}`].filter(Boolean)
+  const primaryConfigSuffixPatterns = [`${name}.config`, `.${name}.config`].filter(Boolean)
+  const aliasBarePatterns = alias ? [alias, `.${alias}`] : []
+  const aliasConfigSuffixPatterns = alias ? [`${alias}.config`, `.${alias}.config`] : []
 
-  // Primary name patterns
-  configPatterns.push(`${name}.config`)
-  configPatterns.push(`.${name}.config`)
-  configPatterns.push(name)
-  configPatterns.push(`.${name}`)
+  // Determine local directories to search
+  const searchDirectories = Array.from(new Set([
+    baseDir,
+    resolve(baseDir, 'config'),
+    resolve(baseDir, '.config'),
+    configDir ? resolve(baseDir, configDir) : undefined,
+  ].filter(Boolean) as string[]))
 
-  // Alias patterns if an alias is provided
-  if (alias) {
-    configPatterns.push(`${alias}.config`)
-    configPatterns.push(`.${alias}.config`)
-    configPatterns.push(alias)
-    configPatterns.push(`.${alias}`)
-  }
+  // Try loading config in order of preference for each directory (local directories first)
+  for (const dir of searchDirectories) {
+    if (verbose)
+      log.info(`Searching for configuration in: ${dir}`)
 
-  // Try loading config in order of preference (local directory first)
-  for (const configPath of configPatterns) {
-    for (const ext of extensions) {
-      const fullPath = resolve(baseDir, `${configPath}${ext}`)
-      const config = await tryLoadConfig(fullPath, configWithEnvVars, arrayStrategy)
-      if (config !== null) {
-        if (verbose) {
-          log.success(`Configuration loaded from: ${configPath}${ext}`)
+    // Prefer bare names inside config directories to avoid redundant ".config" suffix
+    const isConfigLikeDir = [resolve(baseDir, 'config'), resolve(baseDir, '.config')]
+      .concat(configDir ? [resolve(baseDir, configDir)] : [])
+      .includes(dir)
+
+    const patternsForDir = isConfigLikeDir
+      // Primary first, then alias: prefer bare before *.config when inside config dirs
+      ? [...primaryBarePatterns, ...primaryConfigSuffixPatterns, ...aliasBarePatterns, ...aliasConfigSuffixPatterns]
+      // Primary first, then alias: default order keeps *.config before bare
+      : [...primaryConfigSuffixPatterns, ...primaryBarePatterns, ...aliasConfigSuffixPatterns, ...aliasBarePatterns]
+
+    for (const configPath of patternsForDir) {
+      for (const ext of extensions) {
+        const fullPath = resolve(dir, `${configPath}${ext}`)
+        const config = await tryLoadConfig(fullPath, configWithEnvVars, arrayStrategy)
+        if (config !== null) {
+          if (verbose) {
+            log.success(`Configuration loaded from: ${fullPath}`)
+          }
+          return config
         }
-        return config
       }
     }
   }

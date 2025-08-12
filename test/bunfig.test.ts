@@ -637,6 +637,154 @@ describe('bunfig', () => {
         port: 443,
       })
     })
+
+    it('should find config inside ./config directory', async () => {
+      const nestedDir = resolve(testConfigDir, 'config')
+      mkdirSync(nestedDir, { recursive: true })
+
+      const name = 'local-in-config'
+      const configPath = resolve(nestedDir, `${name}.config.ts`)
+      writeFileSync(configPath, `export default { source: 'config-dir' }`)
+
+      const result = await loadConfig<{ source: string }>({
+        name,
+        cwd: testConfigDir,
+        defaultConfig: { source: 'default' },
+      })
+
+      expect(result).toEqual({ source: 'config-dir' })
+    })
+
+    it('should find config inside ./.config directory', async () => {
+      const nestedDir = resolve(testConfigDir, '.config')
+      mkdirSync(nestedDir, { recursive: true })
+
+      const name = 'local-in-dot-config'
+      const configPath = resolve(nestedDir, `${name}.config.ts`)
+      writeFileSync(configPath, `export default { source: 'dot-config-dir' }`)
+
+      const result = await loadConfig<{ source: string }>({
+        name,
+        cwd: testConfigDir,
+        defaultConfig: { source: 'default' },
+      })
+
+      expect(result).toEqual({ source: 'dot-config-dir' })
+    })
+
+    it('should prefer bare name over name.config inside config directories', async () => {
+      const name = 'prefer-bare'
+      const dirConfig = resolve(testConfigDir, 'config')
+      const dirDotConfig = resolve(testConfigDir, '.config')
+      mkdirSync(dirConfig, { recursive: true })
+      mkdirSync(dirDotConfig, { recursive: true })
+
+      // In ./config: place both bare and *.config; bare should win
+      writeFileSync(resolve(dirConfig, `${name}.ts`), `export default { where: 'config-bare' }`)
+      writeFileSync(resolve(dirConfig, `${name}.config.ts`), `export default { where: 'config-suffixed' }`)
+
+      // In ./.config: place both; but ./config is searched before ./.config, so above should win regardless
+      writeFileSync(resolve(dirDotConfig, `${name}.ts`), `export default { where: 'dot-config-bare' }`)
+      writeFileSync(resolve(dirDotConfig, `${name}.config.ts`), `export default { where: 'dot-config-suffixed' }`)
+
+      const result = await loadConfig<{ where: string }>({
+        name,
+        cwd: testConfigDir,
+        defaultConfig: { where: 'default' },
+      })
+
+      expect(result).toEqual({ where: 'config-bare' })
+    })
+
+    it('should support bare alias names inside config directories', async () => {
+      const name = 'alias-bare'
+      const dirConfig = resolve(testConfigDir, 'config')
+      mkdirSync(dirConfig, { recursive: true })
+
+      // Only create alias files, both bare and suffixed; bare should take precedence in config dir
+      writeFileSync(resolve(dirConfig, `tls.ts`), `export default { target: 'alias-bare' }`)
+      writeFileSync(resolve(dirConfig, `tls.config.ts`), `export default { target: 'alias-suffixed' }`)
+
+      const result = await loadConfig<{ target: string }>({
+        name,
+        alias: 'tls',
+        cwd: testConfigDir,
+        defaultConfig: { target: 'default' },
+      })
+
+      expect(result).toEqual({ target: 'alias-bare' })
+    })
+
+    it('should respect directory precedence: base > config > .config > custom configDir', async () => {
+      const name = 'precedence-test'
+
+      // Prepare directories
+      const dirBase = testConfigDir
+      const dirConfig = resolve(testConfigDir, 'config')
+      const dirDotConfig = resolve(testConfigDir, '.config')
+      const dirExtras = resolve(testConfigDir, 'extras')
+      mkdirSync(dirConfig, { recursive: true })
+      mkdirSync(dirDotConfig, { recursive: true })
+      mkdirSync(dirExtras, { recursive: true })
+
+      // Write same-named configs in all locations with different sources
+      writeFileSync(resolve(dirExtras, `${name}.config.ts`), `export default { source: 'extras' }`)
+      writeFileSync(resolve(dirDotConfig, `${name}.config.ts`), `export default { source: 'dot-config' }`)
+      writeFileSync(resolve(dirConfig, `${name}.config.ts`), `export default { source: 'config' }`)
+      writeFileSync(resolve(dirBase, `${name}.config.ts`), `export default { source: 'base' }`)
+
+      const result = await loadConfig<{ source: string }>({
+        name,
+        cwd: testConfigDir,
+        configDir: 'extras',
+        defaultConfig: { source: 'default' },
+        verbose: false,
+      })
+
+      // Base directory should win
+      expect(result).toEqual({ source: 'base' })
+    })
+
+    it('should prioritize ./config over ./.config and custom configDir when base is missing', async () => {
+      const name = 'precedence-no-base'
+
+      const dirConfig = resolve(testConfigDir, 'config')
+      const dirDotConfig = resolve(testConfigDir, '.config')
+      const dirExtras = resolve(testConfigDir, 'extras')
+      mkdirSync(dirConfig, { recursive: true })
+      mkdirSync(dirDotConfig, { recursive: true })
+      mkdirSync(dirExtras, { recursive: true })
+
+      writeFileSync(resolve(dirExtras, `${name}.config.ts`), `export default { source: 'extras' }`)
+      writeFileSync(resolve(dirDotConfig, `${name}.config.ts`), `export default { source: 'dot-config' }`)
+      writeFileSync(resolve(dirConfig, `${name}.config.ts`), `export default { source: 'config' }`)
+
+      const result = await loadConfig<{ source: string }>({
+        name,
+        cwd: testConfigDir,
+        configDir: 'extras',
+        defaultConfig: { source: 'default' },
+      })
+
+      expect(result).toEqual({ source: 'config' })
+    })
+
+    it('should use a custom configDir when provided', async () => {
+      const extrasDir = resolve(testConfigDir, 'extras')
+      mkdirSync(extrasDir, { recursive: true })
+
+      const name = 'custom-config-dir'
+      writeFileSync(resolve(extrasDir, `${name}.config.ts`), `export default { source: 'extras' }`)
+
+      const result = await loadConfig<{ source: string }>({
+        name,
+        cwd: testConfigDir,
+        configDir: 'extras',
+        defaultConfig: { source: 'default' },
+      })
+
+      expect(result).toEqual({ source: 'extras' })
+    })
   })
 
   describe('config function', () => {
