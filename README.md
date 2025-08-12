@@ -16,7 +16,7 @@
 - 🏠 **Home Directory Support**: _global configurations via `~/.config/$name/`_
 - 🌐 **Universal**: _optimized for both Bun & browser environments_
 - 🪶 **Lightweight**: _zero dependencies, built on native modules_
-- 💪 **Type-Safe**: _fully typed configurations with generated type definitions_
+- 💪 **Type-Safe**: _fully typed configurations with generated or dynamic type definitions_
 - 🌍 **Environment Variables**: _automatic environment variable support based on config name_
 - 🛠️ **CLI Tools**: _powerful & easy-to-use CLI_
 - 📦 **Flexible**: _supports multiple config file formats (.ts, .js, .mjs, .cjs, .json, .mts, .cts)_
@@ -58,12 +58,12 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 ```
 
 > [!TIP]
-> bunfig will search for configuration files in this priority order:
-> 1. **Local directory**: `$name.config.{ts,js,mjs,cjs,json}` _(or `.$name.config.{ts,js,mjs,cjs,json}`)_ in your project
-> 2. **Home directory**: `~/.config/$name/config.{ts,js,mjs,cjs,json}` for global settings
-> 3. **Package.json**: configuration sections in your package.json file
->
-> For minimalists, it also supports `.$name.{ts,js,mjs,cjs,json}` and `$name.{ts,js,mjs,cjs,json}` patterns in both local and home directories.
+> bunfig searches for configuration in this order:
+> 1. **Project directories** (precedence: `./` > `./config` > `./.config` > custom `configDir` if provided)
+>    - In the project root: `$name.config.{ts,js,mjs,cjs,json}`, `.$name.config.{ts,js,mjs,cjs,json}`, `$name.{ts,js,mjs,cjs,json}`, `.$name.{ts,js,mjs,cjs,json}`
+>    - In `config/` or `.config/` (and your custom `configDir`): it prefers bare names (`$name.{ts,...}`, `.$name.{ts,...}`) before the suffixed forms (`$name.config.{ts,...}`, `.$name.config.{ts,...}`) to avoid redundancy
+> 2. **Home directory**: `~/.config/$name/config.{ts,js,mjs,cjs,json}` (and `~/.config/$name/$name.config.{ts,...}`)
+> 3. **Package.json**: a section named after your config `name` (or its `alias`)
 
 ### Home Directory Configuration
 
@@ -229,6 +229,64 @@ The config function is a wrapper around the `loadConfig` function and is useful 
 - `defaultConfig`: The default config to use if no config file is found.
 
 For browser usage, see the [Browser Environment](#browser-environment) section above.
+
+### Dynamic Config Name Types (no files on disk)
+
+You can get fully dynamic `ConfigNames` types in your app without generating files.
+
+Use the provided build plugin to expose a virtual module based on your `config` directory contents:
+
+```ts
+// build.ts
+// import { bunfigPlugin } from 'bunfig'
+
+await Bun.build({
+  entrypoints: ['src/index.ts'],
+  outdir: './dist',
+  target: 'bun',
+  plugins: [
+    bunfigPlugin(),
+  ],
+})
+```
+
+In your code, `ConfigNames` comes from a virtual module. When the plugin runs, it becomes a string-literal union of your config file basenames (e.g. `'app' | 'test'`). Without the plugin, it safely falls back to `string`.
+
+```ts
+import type { ConfigNames } from 'bunfig'
+
+function load(name: ConfigNames) {
+  // name is type-checked against your config files when the plugin is active
+}
+```
+
+If you need to generate static types files on disk, you can use the CLI as well:
+
+```bash
+bunx bunfig generate --config-dir ./config --generated-dir ./src/generated
+```
+
+#### How it works
+
+- **Virtual module**: bunfig exposes `ConfigNames` via `export type ConfigNames = import('virtual:bunfig-types').ConfigNames`. Your bundler plugin (`bunfigPlugin`) provides a virtual module at build time that turns it into a string-literal union of file basenames in your `config` directory.
+- **Safe fallback**: If no plugin is active, bunfig ships an ambient fallback declaration so the type resolves to `string`. This is published and available under the subpath `bunfig/virtual-bunfig-types`.
+- **No extra setup required**: Most setups work out of the box. If your TypeScript project uses strict project references or custom `types` filtering and you see a missing type error for `virtual:bunfig-types`, reference the shipped fallback explicitly using one of:
+
+```ts
+/// <reference types="bunfig" />
+```
+
+or in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["bunfig"]
+  }
+}
+```
+
+You do not import this file directly; it is an ambient declaration that satisfies the `import('virtual:bunfig-types')` type reference when a bundler plugin is not providing the virtual module.
 
 ## Testing
 

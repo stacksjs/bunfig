@@ -88,6 +88,31 @@ type ConfigNames = 'app' | 'database' | 'auth'
 const config = await config<MyConfig>('invalid-name') // Error: Argument of type '"invalid-name"' is not assignable to parameter of type ConfigNames
 ```
 
+## Dynamic Config Names (virtual module)
+
+bunfig can provide `ConfigNames` dynamically without generating files on disk.
+
+- When you enable the provided build plugin, a virtual module (`virtual:bunfig-types`) is created at build time. `ConfigNames` becomes a string-literal union derived from your `config` directory file basenames.
+- Without the plugin, bunfig falls back to an ambient declaration so `ConfigNames` is simply `string`.
+
+Most projects need no additional configuration. If your TypeScript setup filters global types and you encounter a missing type for `virtual:bunfig-types`, add an explicit reference to the shipped fallback:
+
+```ts
+/// <reference types="bunfig" />
+```
+
+or via `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["bunfig"]
+  }
+}
+```
+
+This file is ambient; do not import it. It only ensures the type reference resolves when the plugin is not active.
+
 ## Best Practices
 
 1. Always define interfaces for your configuration:

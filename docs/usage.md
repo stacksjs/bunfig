@@ -169,6 +169,28 @@ generateConfigTypes({
 
 This will generate a type definition file containing all available configuration names based on the files in your config directory.
 
+## Dynamic Config Names
+
+To get strict type checking of config names without generating files, enable the provided build plugin. It exposes a virtual module that turns `ConfigNames` into a union of your `config` filenames. Without the plugin, `ConfigNames` is `string` by design.
+
+If your TypeScript setup filters ambient types and you see a missing type error for `virtual:bunfig-types`, add:
+
+```ts
+/// <reference types="bunfig" />
+```
+
+or configure `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["bunfig"]
+  }
+}
+```
+
+See the README section “Dynamic Config Name Types (no files on disk)” for a full example.
+
 ## API Reference
 
 ### `config<T>`(nameOrOptions)

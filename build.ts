@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises'
+import { copyFile, readFile, writeFile } from 'node:fs/promises'
 import { dts } from 'bun-plugin-dtsx'
 
 console.log('Building...')
@@ -39,5 +39,14 @@ const updatedContent = content.replace(
 
 // Write the modified content back to the file
 await writeFile(filePath, updatedContent)
+
+// Copy the virtual module fallback types to dist so consumers can reference them when needed
+try {
+  await copyFile('src/virtual-bunfig-types.d.ts', 'dist/virtual-bunfig-types.d.ts')
+  console.log('Copied virtual-bunfig-types.d.ts to dist')
+}
+catch (error) {
+  console.warn('Could not copy virtual-bunfig-types.d.ts:', error)
+}
 
 console.log('Built and updated dynamic imports')

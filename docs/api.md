@@ -136,10 +136,30 @@ interface Config<T> {
 
 ### `ConfigNames`
 
-A type representing valid configuration names. This is automatically generated when using `generateConfigTypes`.
+Represents valid configuration names.
+
+- With the build plugin active, it resolves to a string-literal union inferred from your `config` directory (via a virtual module).
+- Without the plugin, it safely falls back to `string` using an ambient declaration shipped with bunfig.
 
 ```ts
-type ConfigNames = string // Or union of available config names if generated
+// With plugin: type could be 'app' | 'auth' | 'database'
+// Without plugin: type is string
+```
+
+If your TS setup needs it, you can explicitly reference the fallback types:
+
+```ts
+/// <reference types="bunfig" />
+```
+
+or in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["bunfig"]
+  }
+}
 ```
 
 ## Utility Functions

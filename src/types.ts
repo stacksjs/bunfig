@@ -1,3 +1,4 @@
+/// <reference path="./virtual-bunfig-types.d.ts" />
 /**
  * Config Options
  *
@@ -77,3 +78,8 @@ export type DeepMergeable<T, S> = T extends object
   : S
 
 export type ArrayMergeStrategy = 'replace' | 'merge'
+
+// Dynamic config names type
+// If a bundler plugin provides the virtual module, this will resolve to a
+// string-literal union of discovered config names. Otherwise, it falls back to string.
+export type ConfigNames = import('virtual:bunfig-types').ConfigNames
