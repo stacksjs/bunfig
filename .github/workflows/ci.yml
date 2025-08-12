@@ -107,4 +107,4 @@ jobs:
         run: bun run build
 
       - name: Publish Commit
-        run: bunx pkg-pr-new publish './packages/bunfig' './packages/ts-plugin'
+        run: bunx pkg-pr-new publish './packages/bunfig'
