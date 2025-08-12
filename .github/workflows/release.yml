@@ -1,4 +1,4 @@
-name: CI
+name: Releaser
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - 'v*'
 
 jobs:
-  release:
-    name: release
+  npm:
+    name: npm
     runs-on: ubuntu-latest
 
     steps:
@@ -17,14 +17,14 @@ jobs:
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.2.18
+        # env:
+        #   BUN_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - name: Use cached node_modules
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('**/bun.lockb') }}
+          key: node-modules-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
             node-modules-
 
@@ -32,7 +32,7 @@ jobs:
         run: bun install
 
       - name: Publish to npm
-        run: bun publish --access public
+        run: ./scripts/publish.sh
         env:
           BUN_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -41,14 +41,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Attach Binaries
-        uses: stacksjs/action-releaser@v1.1.0
-        with:
-          files: |
-            bin/bunfig-linux-x64.zip
-            bin/bunfig-linux-arm64.zip
-            bin/bunfig-windows-x64.zip
-            bin/bunfig-darwin-x64.zip
-            bin/bunfig-darwin-arm64.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Attach Binaries
+      #   uses: stacksjs/action-releaser@v1.1.0
+      #   with:
+      #     files: |
+      #       packages/bunfig/bin/bunfig-linux-x64.zip
+      #       packages/bunfig/bin/bunfig-linux-arm64.zip
+      #       packages/bunfig/bin/bunfig-windows-x64.zip
+      #       packages/bunfig/bin/bunfig-darwin-x64.zip
+      #       packages/bunfig/bin/bunfig-darwin-arm64.zip
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

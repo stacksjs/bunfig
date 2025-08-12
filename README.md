@@ -309,6 +309,23 @@ const cfg = await loadConfig<ConfigOf<'app'>>({
 - `ConfigOf<N>` picks the config type for a given `N`.
 - Without the plugin, these fall back to broad types (e.g., `Record<string, any>`), so your code remains type-safe to compile.
 
+### Optional: TypeScript language service plugin (no files, editor/tsc only)
+
+If you want dynamic narrow types without the build plugin and without generating files, enable the bundled TS language service plugin in your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": { "types": ["bunfig"] },
+  "plugins": [
+    { "name": "bunfig/ts-plugin", "configDir": "./config" }
+  ]
+}
+```
+
+- Provides `ConfigNames`, `ConfigByName`, and `ConfigOf<N>` virtually to the editor and tsc.
+- Does not write files.
+- Works without running a bundler. Build output remains unaffected.
+
 ## Testing
 
 ```bash

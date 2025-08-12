@@ -1,4 +1,4 @@
-import { defaultConfigDir, defaultGeneratedDir, generateConfigTypes } from '../src/config'
+import { defaultConfigDir, defaultGeneratedDir, generateConfigTypes } from '../packages/bunfig/src/config'
 
 try {
   generateConfigTypes({

@@ -1,24 +1,38 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "target": "esnext",
+    "lib": ["esnext", "dom"],
     "moduleDetection": "force",
+    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "plugins": [{ "name": "bunfig/ts-plugin" }],
+    "paths": {
+      "bunfig": ["./packages/bunfig/src"],
+      "bunfig/ts-plugin": ["./packages/bunfig/src/ts-plugin"]
+    },
     "resolveJsonModule": true,
-    "types": ["bun"],
     "allowImportingTsExtensions": true,
     "strict": true,
     "strictNullChecks": true,
     "noFallthroughCasesInSwitch": true,
     "declaration": true,
     "noEmit": true,
+    "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedDeclarations": true,
-    "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "packages/bunfig/src/**/*",
+    "packages/bunfig/bin/**/*",
+    "test/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
