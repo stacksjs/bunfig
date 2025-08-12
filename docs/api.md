@@ -162,6 +162,22 @@ or in `tsconfig.json`:
 }
 ```
 
+### `ConfigByName` and `ConfigOf<N>`
+
+With the build plugin active, bunfig exposes a mapping between configuration names and their default export types via a virtual module.
+
+- `ConfigByName`: `{ 'name': typeof import('/abs/path/config/name.ext').default, ... }`
+- `ConfigOf<N extends ConfigNames>`: picks the config type for a given `N`.
+
+These enable narrow typing without generating files:
+
+```ts
+import type { ConfigOf } from 'bunfig'
+const cfg = await loadConfig<ConfigOf<'app'>>({ name: 'app', defaultConfig: { /* ... */ } as ConfigOf<'app'> })
+```
+
+Without the plugin, these types fall back to broad shapes so the code continues to typecheck.
+
 ## Utility Functions
 
 ### `tryLoadConfig<T>`

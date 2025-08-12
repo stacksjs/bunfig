@@ -288,6 +288,27 @@ or in `tsconfig.json`:
 
 You do not import this file directly; it is an ambient declaration that satisfies the `import('virtual:bunfig-types')` type reference when a bundler plugin is not providing the virtual module.
 
+##### Advanced: narrow config types by name (via virtual module)
+
+When the plugin is active, you can map names to their config types and narrow your types:
+
+```ts
+import type { ConfigOf } from 'bunfig'
+import { loadConfig } from 'bunfig'
+
+// If you know the name, you can narrow types for defaultConfig and the return type
+const cfg = await loadConfig<ConfigOf<'app'>>({
+  name: 'app',
+  defaultConfig: {
+    // Type-checked against the default export of config/app.(ts|js|...)
+  } as ConfigOf<'app'>,
+})
+```
+
+- `ConfigByName` is a mapping of discovered names to their default export types.
+- `ConfigOf<N>` picks the config type for a given `N`.
+- Without the plugin, these fall back to broad types (e.g., `Record<string, any>`), so your code remains type-safe to compile.
+
 ## Testing
 
 ```bash

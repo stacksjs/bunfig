@@ -113,6 +113,31 @@ or via `tsconfig.json`:
 
 This file is ambient; do not import it. It only ensures the type reference resolves when the plugin is not active.
 
+### Name-to-type mapping
+
+With the plugin enabled, the virtual module also exposes a mapping from names to config types and a selector type:
+
+```ts
+// Provided virtually at build time
+type ConfigNames = 'app' | 'auth' | 'database'
+interface ConfigByName {
+  app: typeof import('/abs/path/config/app.ts').default
+  auth: typeof import('/abs/path/config/auth.ts').default
+  database: typeof import('/abs/path/config/database.ts').default
+}
+
+type ConfigOf<N extends ConfigNames> = ConfigByName[N]
+```
+
+Usage:
+
+```ts
+import type { ConfigOf } from 'bunfig'
+const appConfig = await loadConfig<ConfigOf<'app'>>({ name: 'app', defaultConfig: { /* ... */ } as ConfigOf<'app'> })
+```
+
+Without the plugin, these types fall back to safe broad types (`Record<string, any>`), so your project still compiles.
+
 ## Best Practices
 
 1. Always define interfaces for your configuration:

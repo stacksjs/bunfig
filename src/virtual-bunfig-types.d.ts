@@ -1,5 +1,7 @@
-// Fallback declaration for the virtual module used to provide dynamic config name types.
+// Fallback declaration for the virtual module used to provide dynamic config name/types.
 // Build tools can override this by supplying the real virtual module via a plugin.
 declare module 'virtual:bunfig-types' {
   export type ConfigNames = string
+  export type ConfigByName = Record<string, any>
+  export type ConfigOf<N extends ConfigNames> = N extends keyof ConfigByName ? ConfigByName[N] : unknown
 }

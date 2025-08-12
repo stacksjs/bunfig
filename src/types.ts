@@ -79,7 +79,7 @@ export type DeepMergeable<T, S> = T extends object
 
 export type ArrayMergeStrategy = 'replace' | 'merge'
 
-// Dynamic config names type
-// If a bundler plugin provides the virtual module, this will resolve to a
-// string-literal union of discovered config names. Otherwise, it falls back to string.
+// Dynamic config types via virtual module
 export type ConfigNames = import('virtual:bunfig-types').ConfigNames
+export type ConfigByName = import('virtual:bunfig-types').ConfigByName
+export type ConfigOf<N extends ConfigNames> = import('virtual:bunfig-types').ConfigOf<N>

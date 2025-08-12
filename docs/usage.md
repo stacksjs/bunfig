@@ -191,6 +191,22 @@ or configure `tsconfig.json`:
 
 See the README section “Dynamic Config Name Types (no files on disk)” for a full example.
 
+## Advanced: narrow by name
+
+For the narrowest types with no on-disk generation, use the plugin and `ConfigOf<N>`:
+
+```ts
+import type { ConfigOf } from 'bunfig'
+import { loadConfig } from 'bunfig'
+
+const cfg = await loadConfig<ConfigOf<'app'>>({
+  name: 'app',
+  defaultConfig: { /* ... defaults ... */ } as ConfigOf<'app'>,
+})
+```
+
+When the plugin is not active, `ConfigOf<N>` falls back to a broad shape so your code still compiles.
+
 ## API Reference
 
 ### `config<T>`(nameOrOptions)
