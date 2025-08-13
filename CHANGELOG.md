@@ -1,4 +1,21 @@
 
+## v0.13.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.13.0...main)
+
+### 🚀 Enhancements
+
+- Add `doctor` command ([4aacfe6](https://github.com/stacksjs/bunfig/commit/4aacfe6))
+
+### 🏡 Chore
+
+- Remove unused package ([d3570b9](https://github.com/stacksjs/bunfig/commit/d3570b9))
+- Adjust file permission ([8db13b2](https://github.com/stacksjs/bunfig/commit/8db13b2))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.12.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.12.0...main)
