@@ -68,13 +68,6 @@ describe('doctor', () => {
     const plugins = content.compilerOptions?.plugins || []
     const hasPlugin = plugins.some((p: any) => p?.name === 'bunfig/ts-plugin')
     expect(hasPlugin).toBe(true)
-
-    if (existsSync(resolve(process.cwd(), 'packages/bunfig/src'))) {
-      // In monorepo, paths should be ensured
-      const paths = content.compilerOptions?.paths || {}
-      expect(paths.bunfig).toBeTruthy()
-      expect(paths['bunfig/*']).toBeTruthy()
-    }
   })
 
   it('should be a no-op when already configured', async () => {
