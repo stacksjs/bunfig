@@ -1,7 +1,7 @@
 {
   "name": "bunfig",
   "type": "module",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "private": true,
   "description": "A smart & fully-typed configuration loader for Bun.",
   "author": "Chris Breuer <chris@stacksjs.org>",

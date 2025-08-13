@@ -1,4 +1,20 @@
 
+## v0.14.0...main
+
+[compare changes](https://github.com/stacksjs/bunfig/compare/v0.14.0...main)
+
+### 🏡 Chore
+
+- Adjust root build ([35971be](https://github.com/stacksjs/bunfig/commit/35971be))
+- Adjust test ([963f10e](https://github.com/stacksjs/bunfig/commit/963f10e))
+- Add `buddy-bot` ([cd3738d](https://github.com/stacksjs/bunfig/commit/cd3738d))
+- Remove private ([9eb1039](https://github.com/stacksjs/bunfig/commit/9eb1039))
+- Adjust bump command ([68c5ed7](https://github.com/stacksjs/bunfig/commit/68c5ed7))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.13.0...main
 
 [compare changes](https://github.com/stacksjs/bunfig/compare/v0.13.0...main)
