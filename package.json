@@ -39,7 +39,7 @@
   },
   "files": ["README.md", "dist"],
   "scripts": {
-    "build": "bun build.ts && bun run compile",
+    "build": "cd packages/bunfig && bun build.ts && bun run compile",
     "compile": "bun build ./packages/bunfig/bin/cli.ts --compile --minify --outfile bin/bunfig",
     "compile:all": "bun run compile:linux-x64 && bun run compile:linux-arm64 && bun run compile:windows-x64 && bun run compile:darwin-x64 && bun run compile:darwin-arm64",
     "compile:linux-x64": "bun build ./packages/bunfig/bin/cli.ts --compile --minify --target=bun-linux-x64 --outfile bin/bunfig-linux-x64",
