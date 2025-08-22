@@ -47,13 +47,15 @@
     "compile:windows-x64": "bun build ./packages/bunfig/bin/cli.ts --compile --minify --target=bun-windows-x64 --outfile bin/bunfig-windows-x64.exe",
     "compile:darwin-x64": "bun build ./packages/bunfig/bin/cli.ts --compile --minify --target=bun-darwin-x64 --outfile bin/bunfig-darwin-x64",
     "compile:darwin-arm64": "bun build ./packages/bunfig/bin/cli.ts --compile --minify --target=bun-darwin-arm64 --outfile bin/bunfig-darwin-arm64",
+    "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
+    "prepublishOnly": "bun --bun run build && bun run compile:all && bun run zip",
+    "test": "bun test",
     "lint": "bunx --bun eslint .",
     "lint:fix": "bunx --bun eslint . --fix",
-    "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
-    "changelog": "bunx changelogen --output CHANGELOG.md",
-    "prepublishOnly": "bun --bun run build && bun run compile:all && bun run zip",
-    "release": "bun run changelog && bunx bumpp -r --all",
-    "test": "bun test",
+    "changelog": "bunx logsmith --verbose",
+    "changelog:generate": "bunx logsmith --output CHANGELOG.md",
+    "release": "bun run changelog:generate && bunx bumpx prompt --recursive",
+    "postinstall": "bunx git-hooks",
     "dev:docs": "bun --bun vitepress dev docs",
     "build:docs": "bun --bun vitepress build docs",
     "preview:docs": "bun --bun vitepress preview docs",
@@ -68,15 +70,16 @@
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^18.0.1",
+    "@stacksjs/bumpx": "^0.1.13",
     "@stacksjs/clarity": "^0.3.15",
     "@stacksjs/docs": "^0.70.23",
     "@stacksjs/eslint-config": "^4.14.0-beta.3",
     "@stacksjs/gitlint": "^0.1.5",
+    "@stacksjs/logsmith": "^0.1.8",
     "@types/bun": "^1.2.20",
-    "bumpp": "^10.2.3",
+    "buddy-bot": "^0.8.8",
     "bun-git-hooks": "^0.2.19",
     "bun-plugin-dtsx": "^0.9.5",
-    "changelogen": "^0.6.2",
     "typescript": "^5.9.2"
   },
   "overrides": {
@@ -88,9 +91,9 @@
   "git-hooks": {
     "pre-commit": {
       "staged-lint": {
-        "*.{js,ts,json,yaml,yml,md}": "bunx --bun eslint . --fix"
+        "*.{js,ts,json,yaml,yml,md}": "bun lint:fix"
       }
     },
-    "commit-msg": "bunx gitlint .git/COMMIT_EDITMSG"
+    "commit-msg": "bunx gitlint --edit $1"
   }
 }
