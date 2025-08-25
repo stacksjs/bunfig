@@ -266,6 +266,30 @@ export async function loadConfig<T>({
     }
   }
 
+  // Also try dotfile configs in user's home directory root (e.g., ~/.<name>.config.*)
+  if (name) {
+    const homeDir = homedir()
+    const homeRootPatterns = [`.${name}.config`]
+
+    if (alias)
+      homeRootPatterns.push(`.${alias}.config`)
+
+    if (verbose)
+      log.info(`Checking user home directory for dotfile configs: ${homeDir}`)
+
+    for (const configPath of homeRootPatterns) {
+      for (const ext of extensions) {
+        const fullPath = resolve(homeDir, `${configPath}${ext}`)
+        const config = await tryLoadConfig(fullPath, configWithEnvVars, arrayStrategy)
+        if (config !== null) {
+          if (verbose)
+            log.success(`Configuration loaded from user home directory: ${fullPath}`)
+          return config
+        }
+      }
+    }
+  }
+
   // Then try package.json (for both name and alias)
   try {
     const pkgPath = resolve(baseDir, 'package.json')

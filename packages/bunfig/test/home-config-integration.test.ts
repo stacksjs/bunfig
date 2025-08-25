@@ -33,6 +33,20 @@ describe('Home Config Directory Integration Tests', () => {
       rmSync(testHomeConfigDir, { recursive: true })
   }
 
+  // Helper to clean up root-level home dotfiles for a specific test name/alias
+  const _cleanupHomeDotfiles = (testName: string, alias?: string) => {
+    const home = homedir()
+    const files = [`.${testName}.config.ts`, `.${testName}.config.js`, `.${testName}.config.mjs`, `.${testName}.config.cjs`, `.${testName}.config.json`]
+    if (alias) {
+      files.push(`.${alias}.config.ts`, `.${alias}.config.js`, `.${alias}.config.mjs`, `.${alias}.config.cjs`, `.${alias}.config.json`)
+    }
+    for (const f of files) {
+      const p = resolve(home, f)
+      if (existsSync(p))
+        rmSync(p)
+    }
+  }
+
   describe('Real home config loading', () => {
     it('should load config from real ~/.config/$name/config.ts', async () => {
       const testName = generateTestName()
@@ -62,7 +76,7 @@ describe('Home Config Directory Integration Tests', () => {
         })
       }
       finally {
-        cleanupHomeConfig(testName)
+        _cleanupHomeDotfiles(testName)
       }
     })
 
