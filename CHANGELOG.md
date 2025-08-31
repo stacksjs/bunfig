@@ -1,3 +1,19 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.14.1...HEAD)
+
+### Contributors
+
+- Adelino Ngomacha <adelinob335@gmail.com>
+- Chris <chrisbreuer93@gmail.com>
+
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.14.1...HEAD)
+
+### Contributors
+
+- Adelino Ngomacha <adelinob335@gmail.com>
+- Chris <chrisbreuer93@gmail.com>
+
+
 
 ## v0.14.0...main
 

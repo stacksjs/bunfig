@@ -1,7 +1,7 @@
 {
   "name": "bunfig",
   "type": "module",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "description": "A smart & fully-typed configuration loader for Bun.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
@@ -13,7 +13,12 @@
   "bugs": {
     "url": "https://github.com/stacksjs/bunfig/issues"
   },
-  "keywords": ["config", "loader", "bun", "bunfig"],
+  "keywords": [
+    "config",
+    "loader",
+    "bun",
+    "bunfig"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -40,7 +45,10 @@
   "bin": {
     "bunfig": "./bin/cli.js"
   },
-  "files": ["README.md", "dist"],
+  "files": [
+    "README.md",
+    "dist"
+  ],
   "scripts": {
     "build": "bun build.ts && bun run compile",
     "compile": "bun build ./bin/cli.ts --compile --minify --outfile bin/bunfig",
