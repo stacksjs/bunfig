@@ -266,13 +266,39 @@ export async function loadConfig<T>({
     }
   }
 
-  // Also try dotfile configs in user's home directory root (e.g., ~/.<name>.config.*)
+  // Try loading dotfile configs from user's home config directory (~/.config/.<name>.config.*)
   if (name) {
-    const homeDir = homedir()
-    const homeRootPatterns = [`.${name}.config`]
+    const homeConfigDir = resolve(homedir(), '.config')
+    const homeConfigDotfilePatterns = [`.${name}.config`]
 
     if (alias)
+      homeConfigDotfilePatterns.push(`.${alias}.config`)
+
+    if (verbose)
+      log.info(`Checking user config directory for dotfile configs: ${homeConfigDir}`)
+
+    for (const configPath of homeConfigDotfilePatterns) {
+      for (const ext of extensions) {
+        const fullPath = resolve(homeConfigDir, `${configPath}${ext}`)
+        const config = await tryLoadConfig(fullPath, configWithEnvVars, arrayStrategy)
+        if (config !== null) {
+          if (verbose)
+            log.success(`Configuration loaded from user config directory dotfile: ${fullPath}`)
+          return config
+        }
+      }
+    }
+  }
+
+  // Also try dotfile configs in user's home directory root (e.g., ~/.<name>.config.* and ~/.<name>.*)
+  if (name) {
+    const homeDir = homedir()
+    const homeRootPatterns = [`.${name}.config`, `.${name}`]
+
+    if (alias) {
       homeRootPatterns.push(`.${alias}.config`)
+      homeRootPatterns.push(`.${alias}`)
+    }
 
     if (verbose)
       log.info(`Checking user home directory for dotfile configs: ${homeDir}`)
