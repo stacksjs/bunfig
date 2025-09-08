@@ -85,7 +85,7 @@
     "@stacksjs/gitlint": "^0.1.5",
     "@stacksjs/logsmith": "^0.1.15",
     "@types/bun": "^1.2.20",
-    "buddy-bot": "^0.9.4",
+    "buddy-bot": "^0.9.5",
     "bun-git-hooks": "^0.2.19",
     "bun-plugin-dtsx": "0.9.5",
     "typescript": "^5.9.2"
