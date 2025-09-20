@@ -78,17 +78,20 @@ describe('Error Handling', () => {
       ).rejects.toThrow(ConfigNotFoundError)
     })
 
-    it('should throw ConfigLoadError for invalid syntax', async () => {
+    it('should gracefully handle ConfigLoadError for invalid syntax', async () => {
       const configPath = resolve(testDir, 'invalid.config.ts')
       writeFileSync(configPath, 'export default { invalid: syntax }')
 
-      await expect(
-        loadConfigWithResult({
-          name: 'invalid',
-          cwd: testDir,
-          defaultConfig: { value: 'default' },
-        })
-      ).rejects.toThrow(ConfigLoadError)
+      // loadConfigWithResult should gracefully handle syntax errors and fall back to defaults
+      const result = await loadConfigWithResult({
+        name: 'invalid',
+        cwd: testDir,
+        defaultConfig: { value: 'default' },
+      })
+
+      expect(result.config.value).toBe('default')
+      expect(result.source.type).toBe('environment') // Falls back to environment/default
+      expect(result.warnings).toContain('Configuration file has syntax errors, using defaults with environment variables')
     })
 
     it('should throw ConfigLoadError for permission denied', async () => {
@@ -217,15 +220,16 @@ describe('Error Handling', () => {
       const configPath = resolve(testDir, 'recovery.config.ts')
       writeFileSync(configPath, 'export default { invalid: syntax }')
 
-      // Note: This would require implementing a recovery option in loadConfigWithResult
-      // For now, we test that errors are properly thrown
-      await expect(
-        loadConfigWithResult({
-          name: 'recovery',
-          cwd: testDir,
-          defaultConfig: { value: 'fallback' },
-        })
-      ).rejects.toThrow()
+      // loadConfigWithResult should gracefully recover from syntax errors
+      const result = await loadConfigWithResult({
+        name: 'recovery',
+        cwd: testDir,
+        defaultConfig: { value: 'fallback' },
+      })
+
+      expect(result.config.value).toBe('fallback')
+      expect(result.source.type).toBe('environment') // Falls back to environment/default
+      expect(result.warnings).toContain('Configuration file has syntax errors, using defaults with environment variables')
     })
 
     it('should handle missing schema file gracefully', async () => {

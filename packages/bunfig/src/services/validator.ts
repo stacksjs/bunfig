@@ -118,16 +118,26 @@ export class ConfigValidator {
       const errors: ValidationError[] = []
       const warnings: ValidationError[] = []
 
+      // Create options object with defaults applied
+      const resolvedOptions: ValidationOptions = {
+        stopOnFirstError,
+        validateRequired,
+        validateTypes,
+        customRules,
+        trackPerformance,
+        verbose
+      }
+
       try {
         if (typeof schema === 'string') {
           // Load schema from file
-          return await this.validateWithSchemaFile(config, schema, options)
+          return await this.validateWithSchemaFile(config, schema, resolvedOptions)
         } else if (Array.isArray(schema)) {
           // Validate with custom rules
-          return this.validateWithRules(config, [...schema, ...customRules], options)
+          return this.validateWithRules(config, [...schema, ...customRules], resolvedOptions)
         } else {
           // Validate with JSON schema
-          return this.validateWithJSONSchema(config, schema, options)
+          return this.validateWithJSONSchema(config, schema, resolvedOptions)
         }
       } catch (error) {
         errors.push({

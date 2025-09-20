@@ -50,7 +50,46 @@ export class ConfigLoader {
       }
 
       // Load configuration through multiple strategies
-      const result = await this.loadConfigurationStrategies(baseOptions, true)
+      let result: ConfigResult<T>
+      try {
+        result = await this.loadConfigurationStrategies(baseOptions, true)
+      } catch (error) {
+        // Handle ConfigLoadError gracefully by falling back to defaults
+        if (error instanceof Error && error.name === 'ConfigLoadError') {
+          // Check if this is a syntax error (recoverable) or permission error (not recoverable)
+          const isPermissionError = error.message.includes('EACCES') ||
+                                   error.message.includes('EPERM') ||
+                                   error.message.includes('permission denied')
+
+          const isSyntaxError = !isPermissionError && (
+                               error.message.includes('syntax') ||
+                               error.message.includes('Expected') ||
+                               error.message.includes('Unexpected') ||
+                               error.message.includes('BuildMessage')
+                               )
+
+
+          if (isSyntaxError) {
+            // Fall back to environment variables + defaults for syntax errors
+            const envResult = await this.applyEnvironmentVariables(
+              baseOptions.name || '',
+              baseOptions.defaultConfig,
+              baseOptions.checkEnv !== false,
+              baseOptions.verbose || false
+            )
+            result = {
+              ...envResult,
+              warnings: [`Configuration file has syntax errors, using defaults with environment variables`],
+            }
+          } else {
+            // Re-throw non-syntax errors (like permission errors)
+            throw error
+          }
+        } else {
+          // Re-throw other errors (like ConfigNotFoundError)
+          throw error
+        }
+      }
 
       // Apply validation if schema or custom validator is provided
       if (schema || customValidator) {
@@ -401,7 +440,9 @@ export class ConfigLoader {
     if (schema) {
       const validationResult = await this.validator.validateConfiguration(config, schema)
       if (!validationResult.isValid) {
-        errors.push(...validationResult.errors.map(e => e.message))
+        errors.push(...validationResult.errors.map(e =>
+          e.path ? `${e.path}: ${e.message}` : e.message
+        ))
       }
     }
 
