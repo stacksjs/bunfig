@@ -52,8 +52,8 @@ const sidebar = [
   {
     text: 'Get Started',
     items: [
-      { text: 'Intro', link: '/intro' },
-      { text: 'Install', link: '/install' },
+      { text: 'Introduction', link: '/intro' },
+      { text: 'Installation', link: '/install' },
       { text: 'Usage', link: '/usage' },
     ],
   },
@@ -61,14 +61,22 @@ const sidebar = [
     text: 'Features',
     items: [
       { text: 'Configuration Loading', link: '/features/configuration-loading' },
+      { text: 'Home Directory Support', link: '/features/home-directory' },
       { text: 'Environment Variables', link: '/features/environment-variables' },
       { text: 'Type Safety', link: '/features/type-safety' },
+      { text: 'Aliases Support', link: '/features/aliases' },
+      { text: 'Multiple Formats', link: '/features/multiple-formats' },
     ],
   },
   {
     text: 'Advanced',
     items: [
       { text: 'Browser Support', link: '/advanced/browser-support' },
+      { text: 'TypeScript Plugin', link: '/advanced/typescript-plugin' },
+      { text: 'Build Plugin', link: '/advanced/build-plugin' },
+      { text: 'CLI Usage', link: '/advanced/cli' },
+      { text: 'Performance', link: '/advanced/performance' },
+      { text: 'Troubleshooting', link: '/advanced/troubleshooting' },
     ],
   },
   { text: 'API Reference', link: '/api' },
