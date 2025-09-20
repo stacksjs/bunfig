@@ -63,6 +63,18 @@ export class ConfigFileLoader {
         const importedConfig = await import(configPath)
         const loadedConfig = importedConfig.default || importedConfig
 
+        // Check if the file is completely empty (no exports)
+        const hasDefaultExport = 'default' in importedConfig
+        const hasNamedExports = Object.keys(importedConfig).length > 0
+
+        if (!hasDefaultExport && !hasNamedExports) {
+          throw new ConfigLoadError(
+            configPath,
+            new Error('Configuration file is empty and exports nothing'),
+            'unknown'
+          )
+        }
+
         // Validate that the loaded config is a valid object
         if (typeof loadedConfig !== 'object' || loadedConfig === null || Array.isArray(loadedConfig)) {
           throw new ConfigLoadError(
@@ -172,14 +184,14 @@ export class ConfigFileLoader {
     // Standard config file names (highest priority for ~/.config/$name/ directories)
     patterns.push('config', '.config')
 
-    // Primary name patterns
+    // Primary name patterns (bare name has higher priority than .config suffix)
     if (configName) {
-      patterns.push(`${configName}.config`, `.${configName}.config`, configName, `.${configName}`)
+      patterns.push(configName, `.${configName}`, `${configName}.config`, `.${configName}.config`)
     }
 
-    // Alias patterns
+    // Alias patterns (bare name has higher priority than .config suffix)
     if (alias) {
-      patterns.push(`${alias}.config`, `.${alias}.config`, alias, `.${alias}`)
+      patterns.push(alias, `.${alias}`, `${alias}.config`, `.${alias}.config`)
 
       // Combined patterns (primary.alias)
       if (configName) {

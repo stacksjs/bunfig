@@ -68,8 +68,12 @@ export class ConfigLoader {
                                error.message.includes('BuildMessage')
                                )
 
+          // Check if this is strict error handling mode (enhanced API)
+          const isStrictMode = (baseOptions as any).__strictErrorHandling
+          const isStructureError = error.message.includes('Configuration must export a valid object') ||
+                                  error.message.includes('Configuration file is empty and exports nothing')
 
-          if (isSyntaxError) {
+          if (isSyntaxError && (!isStrictMode || !isStructureError)) {
             // Fall back to environment variables + defaults for syntax errors
             const envResult = await this.applyEnvironmentVariables(
               baseOptions.name || '',
@@ -82,7 +86,7 @@ export class ConfigLoader {
               warnings: [`Configuration file has syntax errors, using defaults with environment variables`],
             }
           } else {
-            // Re-throw non-syntax errors (like permission errors)
+            // Re-throw non-syntax errors (like permission errors and structure errors)
             throw error
           }
         } else {
@@ -575,10 +579,36 @@ export class ConfigLoader {
 const globalConfigLoader = new ConfigLoader()
 
 /**
+ * Helper function to determine if a ConfigLoadError should be handled gracefully
+ */
+function shouldHandleConfigLoadErrorGracefully(error: Error): boolean {
+  const isPermissionError = error.message.includes('EACCES') ||
+                           error.message.includes('EPERM') ||
+                           error.message.includes('permission denied')
+
+  const isSyntaxError = !isPermissionError && (
+                       error.message.includes('syntax') ||
+                       error.message.includes('Expected') ||
+                       error.message.includes('Unexpected') ||
+                       error.message.includes('BuildMessage')
+                       )
+
+  // For legacy APIs, also handle structure errors gracefully
+  const isStructureError = error.message.includes('Configuration must export a valid object') ||
+                           error.message.includes('Configuration file is empty and exports nothing')
+
+  return isSyntaxError || isStructureError
+}
+
+/**
  * Enhanced configuration loading function that returns full result
  */
 export async function loadConfigWithResult<T>(options: EnhancedConfig<T>): Promise<ConfigResult<T>> {
-  return globalConfigLoader.loadConfig(options)
+  // Enhanced API should not handle structure errors gracefully
+  return globalConfigLoader.loadConfig({
+    ...options,
+    __strictErrorHandling: true
+  } as any)
 }
 
 /**
@@ -588,17 +618,41 @@ export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Pro
   // Check if it's enhanced config by looking for enhanced-specific properties
   const isEnhanced = 'cache' in options || 'performance' in options || 'schema' in options || 'validate' in options
 
-  if (isEnhanced) {
-    const result = await globalConfigLoader.loadConfig(options as EnhancedConfig<T>)
-    return result.config
-  } else {
-    // For backward compatibility, convert Config<T> to EnhancedConfig<T>
-    const result = await globalConfigLoader.loadConfig({
-      ...options,
-      cache: { enabled: true },
-      performance: { enabled: false },
-    } as EnhancedConfig<T>)
-    return result.config
+  try {
+    if (isEnhanced) {
+      const result = await globalConfigLoader.loadConfig(options as EnhancedConfig<T>)
+      return result.config
+    } else {
+      // For backward compatibility, convert Config<T> to EnhancedConfig<T>
+      const result = await globalConfigLoader.loadConfig({
+        ...options,
+        cache: { enabled: true },
+        performance: { enabled: false },
+      } as EnhancedConfig<T>)
+      return result.config
+    }
+  } catch (error) {
+    // For backward compatibility, handle ConfigNotFoundError and some ConfigLoadError gracefully
+    if (error instanceof Error && (error.name === 'ConfigNotFoundError' ||
+        (error.name === 'ConfigLoadError' && shouldHandleConfigLoadErrorGracefully(error)))) {
+      const configOptions = isEnhanced ? options : {
+        ...options,
+        cache: { enabled: true },
+        performance: { enabled: false },
+      } as EnhancedConfig<T>
+
+      // Fall back to environment variables + defaults
+      const envResult = await globalConfigLoader.applyEnvironmentVariables(
+        configOptions.name || '',
+        configOptions.defaultConfig,
+        configOptions.checkEnv !== false,
+        configOptions.verbose || false
+      )
+      return envResult.config
+    }
+
+    // Re-throw other errors
+    throw error
   }
 }
 
@@ -611,25 +665,61 @@ export async function config<T>(
   if (typeof nameOrOptions === 'string') {
     const { cwd } = await import('node:process')
 
-    const result = await globalConfigLoader.loadConfig({
-      name: nameOrOptions,
-      cwd: cwd(),
-      generatedDir: './generated',
-      configDir: './config',
-      defaultConfig: {} as T,
-      checkEnv: true,
-      arrayStrategy: 'replace',
-    })
-    return result.config
+    try {
+      const result = await globalConfigLoader.loadConfig({
+        name: nameOrOptions,
+        cwd: cwd(),
+        generatedDir: './generated',
+        configDir: './config',
+        defaultConfig: {} as T,
+        checkEnv: true,
+        arrayStrategy: 'replace',
+      })
+      return result.config
+    } catch (error) {
+      // For backward compatibility, handle ConfigNotFoundError and some ConfigLoadError gracefully
+      if (error instanceof Error && (error.name === 'ConfigNotFoundError' ||
+          (error.name === 'ConfigLoadError' && shouldHandleConfigLoadErrorGracefully(error)))) {
+        // Fall back to environment variables + defaults
+        const envResult = await globalConfigLoader.applyEnvironmentVariables(
+          nameOrOptions,
+          {} as T,
+          true,
+          false
+        )
+        return envResult.config
+      }
+
+      // Re-throw other errors
+      throw error
+    }
   }
 
-  const result = await globalConfigLoader.loadConfig({
-    ...nameOrOptions,
-    cache: { enabled: true },
-    performance: { enabled: false },
-  })
+  try {
+    const result = await globalConfigLoader.loadConfig({
+      ...nameOrOptions,
+      cache: { enabled: true },
+      performance: { enabled: false },
+    })
 
-  return result.config
+    return result.config
+  } catch (error) {
+    // For backward compatibility, handle ConfigNotFoundError and some ConfigLoadError gracefully
+    if (error instanceof Error && (error.name === 'ConfigNotFoundError' ||
+        (error.name === 'ConfigLoadError' && shouldHandleConfigLoadErrorGracefully(error)))) {
+      // Fall back to environment variables + defaults
+      const envResult = await globalConfigLoader.applyEnvironmentVariables(
+        nameOrOptions.name || '',
+        nameOrOptions.defaultConfig || ({} as T),
+        nameOrOptions.checkEnv !== false,
+        nameOrOptions.verbose || false
+      )
+      return envResult.config
+    }
+
+    // Re-throw other errors
+    throw error
+  }
 }
 
 /**
