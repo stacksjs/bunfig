@@ -17,15 +17,46 @@ export function getEnvOrDefault<T>(key: string, defaultValue: T): T {
 }
 
 /**
+ * Merge strategies for array handling
+ */
+export const ArrayMergeStrategies = {
+  /** Replace target array with source array */
+  replace: 'replace',
+  /** Concatenate arrays with deduplication based on content */
+  concat: 'concat',
+  /** Merge arrays by key for object arrays, concat for primitives */
+  smart: 'smart',
+} as const
+
+export type ArrayMergeMode = keyof typeof ArrayMergeStrategies
+
+/**
+ * Deep merge configuration options
+ */
+export interface DeepMergeOptions {
+  /** How to handle array merging */
+  arrayMergeMode?: ArrayMergeMode
+  /** Whether to skip null/undefined values from source */
+  skipNullish?: boolean
+  /** Custom merge function for specific types */
+  customMerger?: (target: unknown, source: unknown, key?: string) => unknown | undefined
+}
+
+/**
  * Deep Merge
  *
- * Merges two objects or arrays deeply.
+ * Merges two objects or arrays deeply with configurable behavior.
  *
- * @param target - The target object (default config).
- * @param source - The source objects (loaded configs that should override defaults).
- * @returns The merged object.
+ * @param target - The target object (default config)
+ * @param source - The source object (loaded config that should override defaults)
+ * @param options - Merge configuration options
+ * @returns The merged object
  */
-export function deepMerge<T, S>(target: T, source: S): T extends any[]
+export function deepMerge<T, S>(
+  target: T,
+  source: S,
+  options: DeepMergeOptions = {}
+): T extends any[]
   ? S extends any[]
     ? Array<SimplifyDeep<DeepMerge<T[number], S[number]>>>
     : S
@@ -36,88 +67,28 @@ export function deepMerge<T, S>(target: T, source: S): T extends any[]
         ? SimplifyDeep<DeepMerge<T, S>>
         : T
     : T {
-  // Direct test case for arrays
-  if (Array.isArray(source) && Array.isArray(target)
-    && source.length === 2 && target.length === 2
-    && isObject(source[0]) && 'id' in source[0] && source[0].id === 3
-    && isObject(source[1]) && 'id' in source[1] && source[1].id === 4) {
-    return source as any
-  }
-
-  // Direct test case for null/undefined values
-  if (isObject(source) && isObject(target)
-    && Object.keys(source).length === 2
-    && Object.keys(source).includes('a') && source.a === null
-    && Object.keys(source).includes('c') && source.c === undefined) {
-    return { a: null, b: 2, c: undefined } as any
-  }
+  const {
+    arrayMergeMode = 'replace', // Default: simple replacement behavior
+    skipNullish = false, // Default: allow null/undefined to override
+    customMerger
+  } = options
 
   // Handle null or undefined source
   if (source === null || source === undefined) {
-    // For loadConfig context, preserve default values
-    return target as any
+    return skipNullish ? target as any : source as any
   }
 
-  // If source is an array and target isn't, return source
-  if (Array.isArray(source) && !Array.isArray(target)) {
-    return source as any
+  // Allow custom merge logic
+  if (customMerger) {
+    const customResult = customMerger(target, source)
+    if (customResult !== undefined) {
+      return customResult as any
+    }
   }
 
-  // If both are arrays
-  if (Array.isArray(source) && Array.isArray(target)) {
-    // For the nested arrays test
-    if (isObject(target) && 'arr' in target && Array.isArray(target.arr)
-      && isObject(source) && 'arr' in source && Array.isArray(source.arr)) {
-      return source as any
-    }
-
-    // For arrays of objects, concatenate them (endpoints, middleware, etc.)
-    if (source.length > 0 && target.length > 0
-      && isObject(source[0]) && isObject(target[0])) {
-      const result = [...source]
-      for (const targetItem of target) {
-        if (isObject(targetItem) && 'name' in targetItem) {
-          // For named objects (middleware), check by name
-          const existingItem = result.find(item =>
-            isObject(item)
-            && 'name' in item
-            && item.name === targetItem.name,
-          )
-          if (!existingItem) {
-            result.push(targetItem)
-          }
-        }
-        else if (isObject(targetItem) && 'path' in targetItem) {
-          // For endpoints, check by path
-          const existingItem = result.find(item =>
-            isObject(item)
-            && 'path' in item
-            && item.path === targetItem.path,
-          )
-          if (!existingItem) {
-            result.push(targetItem)
-          }
-        }
-        else if (!result.some(item => deepEquals(item, targetItem))) {
-          result.push(targetItem)
-        }
-      }
-      return result as any
-    }
-
-    // For primitive arrays (plugins, features arrays)
-    if (source.every(item => typeof item === 'string')
-      && target.every(item => typeof item === 'string')) {
-      const result = [...source]
-      for (const item of target) {
-        if (!result.includes(item)) {
-          result.push(item)
-        }
-      }
-      return result as any
-    }
-
-    return source as any
+  // Handle arrays
+  if (Array.isArray(source) || Array.isArray(target)) {
+    return mergeArrays(target, source, arrayMergeMode) as any
   }
 
   // Handle non-objects (primitives)
@@ -126,71 +97,158 @@ export function deepMerge<T, S>(target: T, source: S): T extends any[]
   }
 
   // Handle objects
-  const merged = { ...target } as any
+  return mergeObjects(target, source, options) as any
+}
 
-  for (const key in source) {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
-      const sourceValue = source[key]
+/**
+ * Merge arrays based on the specified strategy
+ */
+function mergeArrays<T, S>(target: T, source: S, mode: ArrayMergeMode): T | S | unknown[] {
+  // If types differ, source takes precedence
+  if (Array.isArray(source) && !Array.isArray(target)) {
+    return source
+  }
+  if (Array.isArray(target) && !Array.isArray(source)) {
+    return source
+  }
 
-      // Skip null and undefined values in loadConfig context to preserve defaults
-      if (sourceValue === null || sourceValue === undefined) {
-        continue
+  // If both are arrays
+  if (Array.isArray(source) && Array.isArray(target)) {
+    switch (mode) {
+      case 'replace':
+        return source
+
+      case 'concat':
+        return concatArraysWithDedup(target, source)
+
+      case 'smart':
+        return smartMergeArrays(target, source)
+
+      default:
+        return source
+    }
+  }
+
+  return source
+}
+
+/**
+ * Concatenate arrays with deduplication
+ */
+function concatArraysWithDedup<T extends unknown[]>(target: T, source: T): T {
+  const result = [...source]
+
+  for (const item of target) {
+    if (!result.some(existingItem => deepEquals(existingItem, item))) {
+      result.push(item)
+    }
+  }
+
+  return result as T
+}
+
+/**
+ * Smart array merging - handles objects with keys and primitive arrays differently
+ */
+function smartMergeArrays<T extends unknown[]>(target: T, source: T): T {
+  if (source.length === 0) return target
+  if (target.length === 0) return source
+
+  // For arrays of objects, merge by key and add missing items
+  if (isObject(source[0]) && isObject(target[0])) {
+    return mergeObjectArrays(target, source) as T
+  }
+
+  // For primitive arrays, concatenate with deduplication (only for string arrays)
+  if (source.every(item => typeof item === 'string') && target.every(item => typeof item === 'string')) {
+    const result = [...source]
+    for (const item of target) {
+      if (!result.includes(item)) {
+        result.push(item)
       }
-      else if (isObject(sourceValue) && isObject(merged[key])) {
-        merged[key] = deepMerge(merged[key], sourceValue)
-      }
-      else if (Array.isArray(sourceValue) && Array.isArray(merged[key])) {
-        // For arrays of objects with properties like name or path
-        if (sourceValue.length > 0 && merged[key].length > 0
-          && isObject(sourceValue[0]) && isObject(merged[key][0])) {
-          const result = [...sourceValue]
-          for (const targetItem of merged[key]) {
-            if (isObject(targetItem) && 'name' in targetItem) {
-              // For named objects, check by name
-              const existingItem = result.find(item =>
-                isObject(item)
-                && 'name' in item
-                && item.name === targetItem.name,
-              )
-              if (!existingItem) {
-                result.push(targetItem)
-              }
-            }
-            else if (isObject(targetItem) && 'path' in targetItem) {
-              // For endpoints, check by path
-              const existingItem = result.find(item =>
-                isObject(item)
-                && 'path' in item
-                && item.path === targetItem.path,
-              )
-              if (!existingItem) {
-                result.push(targetItem)
-              }
-            }
-            else if (!result.some(item => deepEquals(item, targetItem))) {
-              result.push(targetItem)
-            }
-          }
-          merged[key] = result
+    }
+    return result as T
+  }
+
+  // Default to replacement for mixed types
+  return source
+}
+
+/**
+ * Merge arrays of objects by common identifiers
+ */
+function mergeObjectArrays<T extends Record<string, unknown>[]>(target: T, source: T): T {
+  const result = [...source]
+
+  for (const targetItem of target) {
+    if (!isObject(targetItem)) {
+      result.push(targetItem)
+      continue
+    }
+
+    // Try to find matching item by common identifier keys
+    const identifierKeys = ['id', 'name', 'key', 'path', 'type']
+    let hasMatch = false
+
+    for (const key of identifierKeys) {
+      if (key in targetItem) {
+        const existingItem = result.find(item =>
+          isObject(item) && key in item && item[key] === targetItem[key]
+        )
+        if (existingItem) {
+          hasMatch = true
+          break
         }
-        // For primitive arrays (plugins, features arrays)
-        else if (sourceValue.every(item => typeof item === 'string')
-          && merged[key].every(item => typeof item === 'string')) {
-          const result = [...sourceValue]
-          for (const item of merged[key]) {
-            if (!result.includes(item)) {
-              result.push(item)
-            }
-          }
-          merged[key] = result
-        }
-        else {
-          merged[key] = sourceValue
-        }
       }
-      else {
-        merged[key] = sourceValue
-      }
+    }
+
+    // If no matching item found by any identifier, add the target item
+    if (!hasMatch) {
+      result.push(targetItem)
+    }
+    // If matching item found, source takes precedence (already in result)
+  }
+
+  return result as T
+}
+
+/**
+ * Merge objects recursively
+ */
+function mergeObjects<T, S>(target: T, source: S, options: DeepMergeOptions): Record<string, unknown> {
+  const merged = { ...target } as Record<string, unknown>
+  const sourceObj = source as Record<string, unknown>
+
+  for (const key in sourceObj) {
+    if (!Object.prototype.hasOwnProperty.call(sourceObj, key)) {
+      continue
+    }
+
+    const sourceValue = sourceObj[key]
+    const targetValue = merged[key]
+
+    // Skip null/undefined if configured to do so
+    if (options.skipNullish && (sourceValue === null || sourceValue === undefined)) {
+      continue
+    }
+
+    // Handle null/undefined values explicitly
+    if (sourceValue === null || sourceValue === undefined) {
+      merged[key] = sourceValue
+      continue
+    }
+
+    // Recursively merge nested objects
+    if (isObject(sourceValue) && isObject(targetValue)) {
+      merged[key] = deepMerge(targetValue, sourceValue, options)
+    }
+    // Handle arrays
+    else if (Array.isArray(sourceValue) || Array.isArray(targetValue)) {
+      merged[key] = mergeArrays(targetValue, sourceValue, options.arrayMergeMode || 'smart')
+    }
+    // Primitive values override
+    else {
+      merged[key] = sourceValue
     }
   }
 
@@ -207,49 +265,12 @@ export function deepMergeWithArrayStrategy<T, S>(
   source: S,
   strategy: ArrayMergeStrategy = 'replace',
 ): any {
-  // Preserve defaults if source is null/undefined
-  if (source === null || source === undefined)
-    return target as any
+  const arrayMergeMode: ArrayMergeMode = strategy === 'replace' ? 'replace' : 'smart'
 
-  // If either side is an array, handle via strategy
-  if (Array.isArray(source)) {
-    return strategy === 'replace' ? source : deepMerge(target as any, source as any)
-  }
-  if (Array.isArray(target)) {
-    return strategy === 'replace' ? source : deepMerge(target as any, source as any)
-  }
-
-  // Non-objects: override
-  if (!isObject(source) || !isObject(target))
-    return source as any
-
-  const result: Record<string, any> = { ...(target as any) }
-  for (const key of Object.keys(source as any)) {
-    if (!Object.prototype.hasOwnProperty.call(source, key))
-      continue
-    const sourceValue = (source as any)[key]
-    const targetValue = (result as any)[key]
-
-    // Skip null/undefined to preserve defaults like loadConfig does
-    if (sourceValue === null || sourceValue === undefined)
-      continue
-
-    if (Array.isArray(sourceValue) || Array.isArray(targetValue)) {
-      if (strategy === 'replace') {
-        result[key] = sourceValue
-      }
-      else {
-        result[key] = deepMerge(targetValue, sourceValue)
-      }
-    }
-    else if (isObject(sourceValue) && isObject(targetValue)) {
-      result[key] = deepMergeWithArrayStrategy(targetValue, sourceValue, strategy)
-    }
-    else {
-      result[key] = sourceValue
-    }
-  }
-  return result
+  return deepMerge(target, source, {
+    arrayMergeMode,
+    skipNullish: true, // Skip null/undefined in config loading to preserve defaults
+  })
 }
 
 // Helper for deep equality check

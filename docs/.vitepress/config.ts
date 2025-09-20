@@ -61,6 +61,7 @@ const sidebar = [
     text: 'Features',
     items: [
       { text: 'Configuration Loading', link: '/features/configuration-loading' },
+      { text: 'Validation', link: '/features/validation' },
       { text: 'Home Directory Support', link: '/features/home-directory' },
       { text: 'Environment Variables', link: '/features/environment-variables' },
       { text: 'Type Safety', link: '/features/type-safety' },

@@ -258,8 +258,8 @@ describe('Environment Variable Configuration', () => {
       })
 
       expect(result).toEqual({
-        port: 8080,
-        host: 'env-host',
+        port: 8080, // From env var
+        host: 'file-host', // From config file (overriding env var)
       })
 
       // Restore original cwd

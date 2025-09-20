@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { resolve } from 'node:path'
 import process from 'node:process'
-import { loadConfig } from 'bunfig'
+import { loadConfig } from '../src'
 
 describe('Home Config Directory Integration Tests', () => {
   const testCwd = resolve(process.cwd(), 'test/tmp/home-config-integration')

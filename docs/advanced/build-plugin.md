@@ -1,19 +1,17 @@
 # Build Plugin
 
-bunfig provides a build plugin that integrates with your bundler to generate runtime type information for configuration files. This enables dynamic, type-safe configuration loading in your applications.
+bunfig provides a build plugin that integrates with Bun to generate runtime type information for configuration files. This enables dynamic, type-safe configuration loading in your applications.
 
 ## Overview
 
 The build plugin:
 
 - **Generates virtual modules** with configuration type information
-- **Integrates with bundlers** like Bun, Vite, and Webpack
+- **Integrates seamlessly with Bun's build system**
 - **Provides runtime types** for dynamic configuration loading
 - **Enables type safety** for dynamically resolved configuration names
 
 ## Installation
-
-### Bun
 
 ```ts
 // build.ts
@@ -29,38 +27,6 @@ await Bun.build({
     }),
   ],
 })
-```
-
-### Vite
-
-```ts
-// vite.config.ts
-import { defineConfig } from 'vite'
-import { bunfigPlugin } from 'bunfig'
-
-export default defineConfig({
-  plugins: [
-    bunfigPlugin({
-      configDir: './config',
-    }),
-  ],
-})
-```
-
-### Webpack
-
-```js
-// webpack.config.js
-const { bunfigPlugin } = require('bunfig')
-
-module.exports = {
-  // ... other config
-  plugins: [
-    bunfigPlugin({
-      configDir: './config',
-    }),
-  ],
-}
 ```
 
 ## Plugin Options
@@ -390,6 +356,8 @@ const plugins = [
 
 await Bun.build({
   entrypoints: ['src/index.ts'],
+  outdir: './dist',
+  target: 'bun',
   plugins,
 })
 ```
@@ -409,23 +377,22 @@ bunfigPlugin({
 
 ## Development Workflow
 
-### Hot Module Replacement
-
-The plugin supports HMR for configuration changes:
+The plugin integrates with Bun's development workflow:
 
 ```ts
-// vite.config.ts
-export default defineConfig({
+// build.ts
+import { bunfigPlugin } from 'bunfig'
+
+await Bun.build({
+  entrypoints: ['src/index.ts'],
+  outdir: './dist',
+  target: 'bun',
   plugins: [
     bunfigPlugin({
       configDir: './config',
+      generateTypes: true, // Generate types for development
     }),
   ],
-  server: {
-    watch: {
-      include: ['config/**/*'], // Watch config directory
-    },
-  },
 })
 ```
 
@@ -445,7 +412,7 @@ bunfigPlugin({
 })
 
 // Run TypeScript compiler with generated types
-// tsc --noEmit --project tsconfig.json
+// bun tsc --noEmit --project tsconfig.json
 ```
 
 ## Performance Optimization
@@ -487,23 +454,19 @@ registry.register('database', () => import('./configs/database').then(m => m.def
 const appConfig = await registry.get('app')
 ```
 
-### Bundle Splitting
+### Bundle Optimization
 
-Split configurations into separate chunks:
+Optimize configuration bundles with Bun:
 
 ```ts
-// vite.config.ts
-export default defineConfig({
+// build.ts
+await Bun.build({
+  entrypoints: ['src/index.ts'],
+  outdir: './dist',
+  target: 'bun',
   plugins: [bunfigPlugin({ configDir: './config' })],
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          configs: ['virtual:bunfig-types'],
-        },
-      },
-    },
-  },
+  splitting: true, // Enable code splitting
+  format: 'esm',
 })
 ```
 
@@ -511,7 +474,7 @@ export default defineConfig({
 
 ### Plugin Not Working
 
-1. **Check bundler compatibility**: Ensure your bundler supports virtual modules
+1. **Check Bun version**: Ensure you're using a compatible version of Bun
 2. **Verify configuration**: Check plugin options and file paths
 3. **Restart build**: Clear cache and restart the build process
 
@@ -523,7 +486,7 @@ export default defineConfig({
 
 ### Runtime Errors
 
-1. **Virtual module resolution**: Ensure your bundler resolves virtual modules
+1. **Virtual module resolution**: Ensure Bun resolves virtual modules correctly
 2. **Type imports**: Check import statements and module resolution
 3. **Build output**: Verify the plugin output in build logs
 

@@ -1,6 +1,6 @@
 # Configuration Loading
 
-bunfig provides a powerful and flexible configuration loading system that automatically finds and loads your configuration files from multiple possible locations and formats.
+bunfig provides a powerful and flexible configuration loading system that automatically finds and loads your configuration files from multiple possible locations and formats. It includes enhanced features like caching, performance monitoring, validation, and structured error handling.
 
 ## Configuration Resolution Order
 
@@ -207,6 +207,146 @@ const config = await loadConfig<MyConfig>({
 
 This allows you to organize your configuration files in a dedicated directory structure. Note that this only affects local configuration file resolution - home directory resolution always uses `~/.config/$name/`.
 
+## Enhanced Features
+
+### Basic Usage
+
+```ts
+import { loadConfig } from 'bunfig'
+
+// Standard usage - returns just the config
+const config = await loadConfig({
+  name: 'app',
+  defaultConfig: {
+    port: 3000,
+    host: 'localhost'
+  }
+})
+
+// Enhanced usage with full result
+import { loadConfigWithResult } from 'bunfig'
+
+const result = await loadConfigWithResult({
+  name: 'app',
+  defaultConfig: { port: 3000 },
+  cache: { enabled: true },
+  performance: { enabled: true }
+})
+
+console.log(result.config) // Loaded configuration
+console.log(result.source) // Source information
+console.log(result.metrics) // Performance metrics
+```
+
+### Caching
+
+Enable intelligent caching for improved performance:
+
+```ts
+const result = await loadConfigWithResult({
+  name: 'app',
+  defaultConfig: { port: 3000 },
+  cache: {
+    enabled: true,
+    ttl: 5000, // 5 seconds
+    checkModified: true, // Check file modification time
+  }
+})
+```
+
+### Performance Monitoring
+
+Track loading performance and get detailed metrics:
+
+```ts
+const result = await loadConfigWithResult({
+  name: 'app',
+  defaultConfig: { port: 3000 },
+  performance: {
+    enabled: true,
+    onMetrics: (metrics) => {
+      console.log(`Config loaded in ${metrics.duration}ms`)
+      console.log(`Cache hit: ${metrics.cacheHit}`)
+    }
+  }
+})
+```
+
+### Schema Validation
+
+Validate configurations against JSON Schema:
+
+```ts
+const schema = {
+  type: 'object',
+  properties: {
+    port: { type: 'number', minimum: 1, maximum: 65535 },
+    host: { type: 'string', minLength: 1 },
+    ssl: { type: 'boolean' }
+  },
+  required: ['port', 'host']
+}
+
+const result = await loadConfigWithResult({
+  name: 'server',
+  defaultConfig: { port: 3000, host: 'localhost' },
+  schema
+})
+```
+
+### Custom Validation
+
+Use custom validation functions for complex rules:
+
+```ts
+const customValidator = (config: any) => {
+  const errors: string[] = []
+
+  if (config.port && config.port === 22) {
+    errors.push('Port 22 is reserved for SSH')
+  }
+
+  if (config.ssl && !config.cert) {
+    errors.push('SSL requires a certificate configuration')
+  }
+
+  return errors.length > 0 ? errors : undefined
+}
+
+const result = await loadConfigWithResult({
+  name: 'server',
+  defaultConfig: { port: 3000 },
+  validate: customValidator
+})
+```
+
+### Error Handling
+
+The enhanced API provides structured error handling:
+
+```ts
+import {
+  ConfigNotFoundError,
+  ConfigLoadError,
+  ValidationError
+} from 'bunfig'
+
+try {
+  const result = await loadConfigWithResult({
+    name: 'missing-config',
+    defaultConfig: {}
+  })
+} catch (error) {
+  if (error instanceof ConfigNotFoundError) {
+    console.log('Config not found:', error.context.searchPaths)
+  } else if (error instanceof ConfigLoadError) {
+    console.log('Load error:', error.context.filePath)
+  } else if (error instanceof ValidationError) {
+    console.log('Validation errors:', error.context.errors)
+  }
+}
+```
+
 ## Disabling Features
 
 You can disable certain features of the configuration loader if needed:
@@ -218,3 +358,9 @@ const config = await loadConfig<MyConfig>({
   checkEnv: false, // Disable environment variable loading
 })
 ```
+
+## Related Features
+
+- [Validation](./validation.md) - Detailed schema and custom validation
+- [Performance](../advanced/performance.md) - Performance optimization
+- [Error Handling](./error-handling.md) - Structured error handling

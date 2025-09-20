@@ -79,6 +79,94 @@ export type DeepMergeable<T, S> = T extends object
 
 export type ArrayMergeStrategy = 'replace' | 'merge'
 
+/**
+ * Configuration cache options
+ */
+export interface CacheOptions {
+  /** Enable file system cache */
+  enabled?: boolean
+  /** Cache TTL in milliseconds */
+  ttl?: number
+  /** Maximum cache size */
+  maxSize?: number
+  /** Cache key prefix */
+  keyPrefix?: string
+}
+
+/**
+ * Performance monitoring options
+ */
+export interface PerformanceOptions {
+  /** Enable performance tracking */
+  enabled?: boolean
+  /** Warn on slow operations (ms) */
+  slowThreshold?: number
+  /** Callback for performance metrics */
+  onMetrics?: (metrics: PerformanceMetrics) => void
+}
+
+/**
+ * Performance metrics data
+ */
+export interface PerformanceMetrics {
+  /** Operation name */
+  operation: string
+  /** Duration in milliseconds */
+  duration: number
+  /** Cache hit/miss */
+  cacheHit?: boolean
+  /** File path involved */
+  path?: string
+  /** Config name */
+  configName?: string
+  /** Timestamp */
+  timestamp: Date
+}
+
+/**
+ * Enhanced configuration options with caching and performance monitoring
+ */
+export interface EnhancedConfig<T> extends Config<T> {
+  /** Cache configuration */
+  cache?: CacheOptions
+  /** Performance monitoring */
+  performance?: PerformanceOptions
+  /** Schema validation */
+  schema?: string | object
+  /** Custom validation function */
+  validate?: (config: T) => string[] | void
+}
+
+/**
+ * Configuration loading result with metadata
+ */
+export interface ConfigResult<T> {
+  /** The loaded configuration */
+  config: T
+  /** Source of the configuration */
+  source: ConfigSource
+  /** Path to the configuration file */
+  path?: string
+  /** Performance metrics */
+  metrics?: PerformanceMetrics
+  /** Any validation warnings */
+  warnings?: string[]
+}
+
+/**
+ * Configuration source information
+ */
+export interface ConfigSource {
+  /** Type of source */
+  type: 'file' | 'package.json' | 'environment' | 'default' | 'cache'
+  /** Source path or identifier */
+  path?: string
+  /** Priority level (higher = more important) */
+  priority: number
+  /** Timestamp when loaded */
+  timestamp: Date
+}
+
 // Dynamic config types via virtual module
 export type ConfigNames = import('virtual:bunfig-types').ConfigNames
 export type ConfigByName = import('virtual:bunfig-types').ConfigByName
