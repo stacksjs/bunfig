@@ -17,7 +17,7 @@ The validation system offers:
 Use standard JSON Schema for type and structure validation:
 
 ```ts
-import { loadConfigEnhanced } from 'bunfig'
+import { loadConfig } from 'bunfig'
 
 const schema = {
   type: 'object',
@@ -43,7 +43,7 @@ const schema = {
   required: ['server']
 }
 
-const result = await loadConfigEnhanced({
+const result = await loadConfig({
   name: 'app',
   defaultConfig: {},
   schema
@@ -154,10 +154,10 @@ const schema = {
 
 ## Custom Validation Rules
 
-Use bunfig's custom rule system for more flexible validation:
+Use bunfig's built-in rule system for more flexible validation:
 
 ```ts
-import { loadConfigEnhanced } from 'bunfig'
+import { loadConfig } from 'bunfig'
 
 const rules = [
   {
@@ -191,7 +191,7 @@ const rules = [
   }
 ]
 
-const result = await loadConfigEnhanced({
+const result = await loadConfig({
   name: 'app',
   defaultConfig: {},
   schema: rules
@@ -267,7 +267,7 @@ function customValidator(config: any) {
   return errors.length > 0 ? errors : undefined
 }
 
-const result = await loadConfigEnhanced({
+const result = await loadConfig({
   name: 'app',
   defaultConfig: {},
   validate: customValidator
@@ -418,7 +418,7 @@ Validation errors provide detailed information for debugging:
 import { ValidationError } from 'bunfig'
 
 try {
-  const result = await loadConfigEnhanced({
+  const result = await loadConfig({
     name: 'app',
     defaultConfig: {},
     schema: validationRules
@@ -460,7 +460,7 @@ interface ValidationError {
 Validation results are automatically cached based on configuration content:
 
 ```ts
-const result = await loadConfigEnhanced({
+const result = await loadConfig({
   name: 'app',
   defaultConfig: {},
   schema: validationSchema,
@@ -592,7 +592,7 @@ Implement graceful error recovery:
 ```ts
 async function loadConfigWithFallback(name: string, fallbackConfig: any) {
   try {
-    return await loadConfigEnhanced({
+    return await loadConfig({
       name,
       defaultConfig: {},
       schema: validationSchema
@@ -612,6 +612,6 @@ async function loadConfigWithFallback(name: string, fallbackConfig: any) {
 ## Related Features
 
 - [Configuration Loading](./configuration-loading.md) - Complete configuration loading API
-- [Error Handling](../api.md#error-handling) - Structured error handling
+- [Error Handling](./error-handling.md) - Structured error handling
 - [Type Safety](./type-safety.md) - TypeScript integration
 - [Performance](../advanced/performance.md) - Performance optimization

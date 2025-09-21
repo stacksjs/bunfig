@@ -1,6 +1,6 @@
 # Configuration Loading
 
-bunfig provides a powerful and flexible configuration loading system that automatically finds and loads your configuration files from multiple possible locations and formats. It includes enhanced features like caching, performance monitoring, validation, and structured error handling.
+bunfig provides a powerful and flexible configuration loading system that automatically finds and loads your configuration files from multiple possible locations and formats. It includes built-in features like caching, performance monitoring, validation, and structured error handling.
 
 ## Configuration Resolution Order
 
@@ -207,7 +207,7 @@ const config = await loadConfig<MyConfig>({
 
 This allows you to organize your configuration files in a dedicated directory structure. Note that this only affects local configuration file resolution - home directory resolution always uses `~/.config/$name/`.
 
-## Enhanced Features
+## Advanced Features
 
 ### Basic Usage
 
@@ -320,7 +320,7 @@ const result = await loadConfigWithResult({
 
 ### Error Handling
 
-The enhanced API provides structured error handling:
+The configuration API provides structured error handling:
 
 ```ts
 import {
@@ -364,4 +364,4 @@ const config = await loadConfig<MyConfig>({
 
 - [Validation](./validation.md) - Detailed schema and custom validation
 - [Performance](../advanced/performance.md) - Performance optimization
-- [Error Handling](../api.md#error-handling) - Structured error handling
+- [Error Handling](./error-handling.md) - Structured error handling
