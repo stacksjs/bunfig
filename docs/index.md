@@ -66,19 +66,19 @@ console.log(`Server starting on ${server.host}:${server.port}`)
 
 <div class="feature-comparison">
 
-| Feature | bunfig | dotenv | node-config | cosmiconfig | rc |
-|---------|--------|--------|-------------|-------------|-----|
-| TypeScript First | ✅ | ❌ | ❌ | ⚠️ | ❌ |
-| Zero Dependencies | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Auto Env Vars | ✅ | ⚠️ | ⚠️ | ❌ | ⚠️ |
+| Feature | bunfig | c12 | node-config | cosmiconfig | rc |
+|---------|--------|-----|-------------|-------------|-----|
+| TypeScript First | ✅ | ⚠️ | ❌ | ⚠️ | ❌ |
+| Zero Dependencies | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Auto Env Vars | ✅ | ✅ | ⚠️ | ❌ | ⚠️ |
 | Built-in Validation | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Multiple Sources | ✅ | ❌ | ✅ | ✅ | ✅ |
-| Home Directory (~/.config) | ✅ | ❌ | ❌ | ⚠️ | ⚠️ |
-| Hot Reload | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Multiple Sources | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Home Directory (~/.config) | ✅ | ✅ | ❌ | ⚠️ | ⚠️ |
+| Hot Reload | ✅ | ⚠️ | ❌ | ❌ | ❌ |
 | Error Recovery | ✅ | ❌ | ⚠️ | ❌ | ❌ |
 | Performance Caching | ✅ | ❌ | ⚠️ | ❌ | ❌ |
-| Smart Type Conversion | ✅ | ❌ | ⚠️ | ❌ | ❌ |
-| Package.json Support | ✅ | ❌ | ❌ | ✅ | ✅ |
+| Smart Type Conversion | ✅ | ⚠️ | ⚠️ | ❌ | ❌ |
+| Package.json Support | ✅ | ✅ | ❌ | ✅ | ✅ |
 | Bun Optimized | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
 
 </div>
@@ -180,11 +180,13 @@ const config = await loadConfig({ name: env, cwd: './config' })
 <div class="getting-started-steps">
 
 1. **Install bunfig**
+
    ```bash
    bun add bunfig
    ```
 
 2. **Create a config file**
+
    ```ts
    // app.config.ts
    export default {
@@ -194,6 +196,7 @@ const config = await loadConfig({ name: env, cwd: './config' })
    ```
 
 3. **Load and use**
+
    ```ts
    import { config } from 'bunfig'
    const { port, host } = await config({ name: 'app' })
@@ -201,7 +204,7 @@ const config = await loadConfig({ name: env, cwd: './config' })
 
 </div>
 
-## What Developers Say
+<!-- ## What Developers Say
 
 > "bunfig made our configuration management so much simpler. The automatic environment variable detection is a game-changer."
 >
@@ -213,6 +216,6 @@ const config = await loadConfig({ name: env, cwd: './config' })
 
 > "Zero dependencies and lightning fast. Perfect for our microservices architecture."
 >
-> — **Alex Kumar**, Platform Architect
+> — **Alex Kumar**, Platform Architect -->
 
 <Home />
