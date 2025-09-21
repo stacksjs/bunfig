@@ -15,7 +15,8 @@ import { ConfigNotFoundError } from 'bunfig'
 
 try {
   const config = await loadConfig({ name: 'my-app' })
-} catch (error) {
+}
+catch (error) {
   if (error instanceof ConfigNotFoundError) {
     console.log(`Configuration "${error.context.configName}" not found`)
     console.log(`Searched ${error.context.searchPathCount} locations:`)
@@ -33,7 +34,8 @@ import { ConfigLoadError } from 'bunfig'
 
 try {
   const config = await loadConfig({ name: 'my-app' })
-} catch (error) {
+}
+catch (error) {
   if (error instanceof ConfigLoadError) {
     console.log(`Failed to load config from: ${error.context.configPath}`)
     console.log(`Error: ${error.context.originalMessage}`)
@@ -41,7 +43,8 @@ try {
     // Check specific error types
     if (error.message.includes('syntax error')) {
       console.log('Fix the syntax in your configuration file')
-    } else if (error.message.includes('must export')) {
+    }
+    else if (error.message.includes('must export')) {
       console.log('Ensure your config file exports a default object')
     }
   }
@@ -60,14 +63,17 @@ try {
     name: 'my-app',
     schema: validationSchema
   })
-} catch (error) {
+}
+catch (error) {
   if (error instanceof ValidationError) {
     console.log(`Validation failed: ${error.context.errors.length} errors found`)
 
-    error.context.errors.forEach(err => {
+    error.context.errors.forEach((err) => {
       console.log(`❌ ${err.path}: ${err.message}`)
-      if (err.expected) console.log(`   Expected: ${err.expected}`)
-      if (err.actual !== undefined) console.log(`   Actual: ${err.actual}`)
+      if (err.expected)
+        console.log(`   Expected: ${err.expected}`)
+      if (err.actual !== undefined)
+        console.log(`   Actual: ${err.actual}`)
     })
   }
 }
@@ -82,7 +88,8 @@ import { FileSystemError } from 'bunfig'
 
 try {
   const config = await loadConfig({ name: 'my-app' })
-} catch (error) {
+}
+catch (error) {
   if (error instanceof FileSystemError) {
     console.log(`File system error: ${error.message}`)
     console.log(`Operation: ${error.context.operation}`)
@@ -90,7 +97,8 @@ try {
 
     if (error.message.includes('EACCES')) {
       console.log('Permission denied - check file permissions')
-    } else if (error.message.includes('ENOSPC')) {
+    }
+    else if (error.message.includes('ENOSPC')) {
       console.log('No space left on device')
     }
   }
@@ -133,7 +141,8 @@ async function loadConfigWithFallback<T>(
       defaultConfig: fallbackConfig
     })
     return result
-  } catch (error) {
+  }
+  catch (error) {
     if (error instanceof ConfigNotFoundError) {
       console.warn(`No ${name} config found, using defaults`)
       return fallbackConfig
@@ -165,7 +174,7 @@ Load configuration with partial error recovery:
 async function loadConfigPartial<T>(
   name: string,
   defaultConfig: T
-): Promise<{ config: T; warnings: string[] }> {
+): Promise<{ config: T, warnings: string[] }> {
   const warnings: string[] = []
 
   try {
@@ -192,12 +201,13 @@ async function loadConfigPartial<T>(
     })
 
     return { config: result, warnings }
-  } catch (error) {
+  }
+  catch (error) {
     if (error instanceof ValidationError) {
       // Fix what we can, warn about the rest
       const config = { ...defaultConfig }
 
-      error.context.errors?.forEach(err => {
+      error.context.errors?.forEach((err) => {
         warnings.push(`${err.path}: ${err.message}`)
       })
 
@@ -216,7 +226,7 @@ Implement retry logic for transient errors:
 ```ts
 async function loadConfigWithRetry<T>(
   name: string,
-  options: { maxRetries?: number; retryDelay?: number } = {}
+  options: { maxRetries?: number, retryDelay?: number } = {}
 ): Promise<T> {
   const { maxRetries = 3, retryDelay = 1000 } = options
   let lastError: Error
@@ -224,18 +234,19 @@ async function loadConfigWithRetry<T>(
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await loadConfig({ name })
-    } catch (error) {
+    }
+    catch (error) {
       lastError = error as Error
 
       // Don't retry for permanent errors
-      if (error instanceof ConfigNotFoundError ||
-          error instanceof ValidationError) {
+      if (error instanceof ConfigNotFoundError
+        || error instanceof ValidationError) {
         throw error
       }
 
       // Retry for file system or temporary errors
-      if (error instanceof FileSystemError ||
-          error instanceof ConfigLoadError) {
+      if (error instanceof FileSystemError
+        || error instanceof ConfigLoadError) {
         if (attempt < maxRetries) {
           console.warn(`Config load attempt ${attempt} failed, retrying in ${retryDelay}ms`)
           await new Promise(resolve => setTimeout(resolve, retryDelay))
@@ -247,7 +258,8 @@ async function loadConfigWithRetry<T>(
     }
   }
 
-  throw lastError!
+  // Ensure we're throwing an Error object
+  throw lastError instanceof Error ? lastError : new Error(`Unknown error: ${String(lastError)}`)
 }
 ```
 
@@ -265,7 +277,8 @@ async function loadConfigDev<T>(name: string): Promise<T> {
       verbose: true, // Enable detailed logging
       trackPerformance: true
     })
-  } catch (error) {
+  }
+  catch (error) {
     // Detailed error reporting for development
     console.error('🚨 Configuration Loading Failed')
     console.error('================================')
@@ -279,16 +292,18 @@ async function loadConfigDev<T>(name: string): Promise<T> {
       console.error(`  • ${name}.config.ts`)
       console.error(`  • ${name}.config.js`)
       console.error(`  • .${name}.config.ts`)
-    } else if (error instanceof ConfigLoadError) {
+    }
+    else if (error instanceof ConfigLoadError) {
       console.error(`File: ${error.context.configPath}`)
       console.error(`Error: ${error.context.originalMessage}`)
       console.error('\nCommon fixes:')
       console.error('  • Check file syntax')
       console.error('  • Ensure default export exists')
       console.error('  • Verify all imports are valid')
-    } else if (error instanceof ValidationError) {
+    }
+    else if (error instanceof ValidationError) {
       console.error('Validation errors:')
-      error.context.errors?.forEach(err => {
+      error.context.errors?.forEach((err) => {
         console.error(`  ❌ ${err.path}: ${err.message}`)
       })
     }
@@ -312,9 +327,10 @@ async function loadConfigProd<T>(
     return await loadConfig({
       name,
       verbose: false, // Disable verbose logging
-      checkEnv: true  // Enable env var fallbacks
+      checkEnv: true // Enable env var fallbacks
     })
-  } catch (error) {
+  }
+  catch (error) {
     // Secure logging - don't expose file paths or system details
     const errorId = Math.random().toString(36).substring(7)
 
@@ -348,7 +364,8 @@ class ConfigErrorTracker {
   async loadConfigWithTracking<T>(name: string): Promise<T> {
     try {
       return await loadConfig({ name })
-    } catch (error) {
+    }
+    catch (error) {
       this.trackError(name, error)
       throw error
     }
@@ -410,15 +427,17 @@ async function checkConfigHealth(configName: string): Promise<{
       issues.push('Using empty configuration (possible fallback)')
       status = 'degraded'
     }
-
-  } catch (error) {
+  }
+  catch (error) {
     if (error instanceof ConfigNotFoundError) {
       issues.push('Configuration file not found')
       status = 'degraded'
-    } else if (error instanceof ValidationError) {
+    }
+    else if (error instanceof ValidationError) {
       issues.push(`Validation failed: ${error.context.errors?.length} errors`)
       status = 'unhealthy'
-    } else {
+    }
+    else {
       issues.push(`Loading failed: ${error.message}`)
       status = 'unhealthy'
     }
@@ -437,7 +456,7 @@ async function checkConfigHealth(configName: string): Promise<{
 ### Unit Testing Error Handling
 
 ```ts
-import { describe, it, expect } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 import { ConfigNotFoundError, ValidationError } from 'bunfig'
 
 describe('Config Error Handling', () => {
@@ -473,7 +492,8 @@ describe('Config Error Handling', () => {
           required: ['port']
         }
       })
-    } catch (error) {
+    }
+    catch (error) {
       expect(error).toBeInstanceOf(ValidationError)
       expect(error.context.errors).toHaveLength(1)
       expect(error.context.errors[0].path).toBe('port')
@@ -493,12 +513,15 @@ const config = await loadConfig({ name: 'app' })
 // ✅ Handle expected error scenarios
 try {
   const config = await loadConfig({ name: 'app' })
-} catch (error) {
+}
+catch (error) {
   if (error instanceof ConfigNotFoundError) {
     // Handle missing config
-  } else if (error instanceof ValidationError) {
+  }
+  else if (error instanceof ValidationError) {
     // Handle validation errors
-  } else {
+  }
+  else {
     // Re-throw unexpected errors
     throw error
   }
@@ -550,7 +573,8 @@ class ConfigCircuitBreaker {
       const result = await loadConfig({ name })
       this.onSuccess()
       return result
-    } catch (error) {
+    }
+    catch (error) {
       this.onFailure()
       throw error
     }

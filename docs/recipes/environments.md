@@ -161,16 +161,16 @@ export default {
 
   server: {
     ...base.server,
-    port: parseInt(process.env.PORT || '3000'),
+    port: Number.parseInt(process.env.PORT || '3000'),
     host: '0.0.0.0',
     cluster: true,
-    workers: parseInt(process.env.WEB_CONCURRENCY || '2')
+    workers: Number.parseInt(process.env.WEB_CONCURRENCY || '2')
   },
 
   database: {
     ...base.database,
     url: process.env.DATABASE_URL!,
-    pool: parseInt(process.env.DB_POOL_SIZE || '20'),
+    pool: Number.parseInt(process.env.DB_POOL_SIZE || '20'),
     ssl: true,
     sslMode: 'require',
     debug: false
@@ -248,7 +248,7 @@ export default {
 
   server: {
     ...production.server,
-    port: parseInt(process.env.PORT || '3000'),
+    port: Number.parseInt(process.env.PORT || '3000'),
     workers: 1 // Single worker for staging
   },
 
@@ -373,7 +373,8 @@ export async function loadEnvironmentConfig() {
       name: environment,
       cwd: './config'
     })
-  } catch (error) {
+  }
+  catch (error) {
     // Fallback to base configuration
     console.warn(`No ${environment} config found, using base configuration`)
     return await config({
@@ -497,7 +498,7 @@ async function loadValidatedConfig() {
     name: environment,
     cwd: './config',
     schema: environmentSchema,
-    validate: (cfg) => validateEnvironmentConfig(cfg, environment)
+    validate: cfg => validateEnvironmentConfig(cfg, environment)
   })
 
   console.log(`🌍 Loaded ${environment} configuration`)
@@ -524,7 +525,8 @@ export async function loadSecrets() {
   if (environment === 'production') {
     // Load from AWS Secrets Manager, Azure Key Vault, etc.
     return await loadFromSecretsManager()
-  } else {
+  }
+  else {
     // Load from environment variables
     return {
       databaseUrl: process.env.DATABASE_URL,
@@ -651,7 +653,8 @@ export class ConfigurationMonitor {
           this.notifyWatchers(currentConfig)
           this.lastConfig = currentConfig
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.error('❌ Failed to reload configuration:', error)
       }
     }, 30000) // Check every 30 seconds
@@ -662,10 +665,11 @@ export class ConfigurationMonitor {
   }
 
   private notifyWatchers(config: any) {
-    this.watchers.forEach(watcher => {
+    this.watchers.forEach((watcher) => {
       try {
         watcher(config)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('❌ Configuration watcher failed:', error)
       }
     })
@@ -722,7 +726,7 @@ services:
     env_file:
       - .env.development
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - .:/app
       - /app/node_modules
@@ -734,7 +738,7 @@ services:
     env_file:
       - .env.staging
     ports:
-      - "3001:3000"
+      - '3001:3000'
 
   app-prod:
     build: .
@@ -743,7 +747,7 @@ services:
     env_file:
       - .env.production
     ports:
-      - "3002:3000"
+      - '3002:3000'
     restart: unless-stopped
 ```
 
@@ -751,7 +755,7 @@ services:
 
 ```ts
 // tests/config.test.ts
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 import { config } from 'bunfig'
 
 describe('Environment Configuration', () => {

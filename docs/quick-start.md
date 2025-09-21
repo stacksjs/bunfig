@@ -92,7 +92,8 @@ bun run server.ts
 ```
 
 You should see:
-```
+
+```text
 Starting server on 0.0.0.0:8080
 Server running at http://0.0.0.0:8080
 ```
@@ -112,6 +113,7 @@ bun run server.ts
 ```
 
 bunfig will automatically use:
+
 - `SERVER_PORT=9000` for `serverConfig.port`
 - `SERVER_DATABASE_URL=postgresql://prod-db:5432/myapp` for `serverConfig.database.url`
 
@@ -485,20 +487,22 @@ server.ts
 ### Environment Variables Not Working
 
 Environment variables must follow the naming pattern: `{NAME}_{PATH}` where:
+
 - `NAME` is your configuration name in UPPERCASE
 - `PATH` is the property path with underscores
 
-```ts
-// For config name 'app' and property path 'server.port'
+```bash
+# For config name 'app' and property path 'server.port'
 export APP_SERVER_PORT=8080
 
-// For nested properties use underscores
+# For nested properties use underscores
 export APP_DATABASE_POOL_SIZE=20
 ```
 
 ### Validation Errors
 
 If validation fails, check:
+
 1. **Property types** match the schema
 2. **Required properties** are present
 3. **Value ranges** are within specified limits

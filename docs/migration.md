@@ -9,11 +9,11 @@ If you're using dotenv (`.env` files), bunfig can automatically read environment
 ### Before (dotenv)
 
 ```js
-// .env
-PORT=3000
-HOST=localhost
-DATABASE_URL=postgresql://localhost:5432/myapp
-REDIS_URL=redis://localhost:6379
+// .env file content
+// PORT=3000
+// HOST=localhost
+// DATABASE_URL=postgresql://localhost:5432/myapp
+// REDIS_URL=redis://localhost:6379
 
 // app.js
 require('dotenv').config()
@@ -34,6 +34,9 @@ const config = {
 
 ```ts
 // app.config.ts
+// app.ts
+import { config } from 'bunfig'
+
 export default {
   port: 3000,
   host: 'localhost',
@@ -45,9 +48,6 @@ export default {
   }
 }
 
-// app.ts
-import { config } from 'bunfig'
-
 const appConfig = await config({
   name: 'app',
   // Environment variables automatically override config values
@@ -56,6 +56,7 @@ const appConfig = await config({
 ```
 
 **Migration Benefits:**
+
 - ✅ Automatic environment variable detection
 - ✅ Type safety with TypeScript
 - ✅ No manual `process.env` parsing
@@ -68,7 +69,7 @@ The `config` npm package uses directory-based configuration files.
 
 ### Before (node-config)
 
-```js
+```json
 // config/default.json
 {
   "server": {
@@ -81,7 +82,9 @@ The `config` npm package uses directory-based configuration files.
     "name": "myapp"
   }
 }
+```
 
+```json
 // config/production.json
 {
   "server": {
@@ -93,7 +96,9 @@ The `config` npm package uses directory-based configuration files.
     "ssl": true
   }
 }
+```
 
+```js
 // app.js
 const config = require('config')
 
@@ -104,7 +109,13 @@ const database = config.get('database')
 ### After (bunfig)
 
 ```ts
+// app.ts
+import { config } from 'bunfig'
+
 // config/base.config.ts
+// config/production.config.ts
+import base from './base.config'
+
 export default {
   server: {
     port: 3000,
@@ -117,9 +128,6 @@ export default {
     ssl: false
   }
 }
-
-// config/production.config.ts
-import base from './base.config'
 
 export default {
   ...base,
@@ -135,9 +143,6 @@ export default {
   }
 }
 
-// app.ts
-import { config } from 'bunfig'
-
 const environment = process.env.NODE_ENV || 'base'
 const appConfig = await config({
   name: environment,
@@ -146,6 +151,7 @@ const appConfig = await config({
 ```
 
 **Migration Benefits:**
+
 - ✅ Better TypeScript support
 - ✅ More flexible file formats (TS, JS, JSON)
 - ✅ Built-in environment variable integration
@@ -158,8 +164,7 @@ RC configuration libraries use dotfiles with JSON configuration.
 
 ### Before (rc)
 
-```js
-// .myapprc
+```json
 {
   "port": 3000,
   "host": "localhost",
@@ -167,10 +172,14 @@ RC configuration libraries use dotfiles with JSON configuration.
     "url": "postgresql://localhost:5432/myapp"
   }
 }
+```
 
+```js
 // app.js
 const rc = require('rc')
-const config = rc('myapp', {
+
+// Load config with defaults
+const rcResult = rc('myapp', {
   port: 3000,
   host: 'localhost',
   database: {
@@ -183,6 +192,8 @@ const config = rc('myapp', {
 
 ```ts
 // .myapp.config.ts
+import { config } from 'bunfig'
+
 export default {
   port: 3000,
   host: 'localhost',
@@ -190,9 +201,6 @@ export default {
     url: 'postgresql://localhost:5432/myapp'
   }
 }
-
-// app.ts
-import { config } from 'bunfig'
 
 const appConfig = await config({
   name: 'myapp',
@@ -207,6 +215,7 @@ const appConfig = await config({
 ```
 
 **Migration Benefits:**
+
 - ✅ TypeScript support for better development experience
 - ✅ More file format options
 - ✅ Better error handling and validation
@@ -219,27 +228,35 @@ Cosmiconfig searches for configuration files in various formats.
 
 ### Before (cosmiconfig)
 
-```js
+```json
 // package.json
 {
+  "name": "my-project",
+  "version": "1.0.0",
   "myapp": {
     "port": 3000,
     "host": "localhost"
   }
 }
+```
 
-// or .myapprc.json
+```json
+// .myapprc.json
 {
   "port": 3000,
   "host": "localhost"
 }
+```
 
-// or myapp.config.js
+```js
+// myapp.config.js
 module.exports = {
   port: 3000,
   host: 'localhost'
 }
+```
 
+```js
 // app.js
 const { cosmiconfigSync } = require('cosmiconfig')
 
@@ -258,18 +275,19 @@ const config = result ? result.config : {}
 // - package.json (with "myapp" field)
 
 // myapp.config.ts
+// app.ts
+import { config } from 'bunfig'
+
 export default {
   port: 3000,
   host: 'localhost'
 }
 
-// app.ts
-import { config } from 'bunfig'
-
 const appConfig = await config({ name: 'myapp' })
 ```
 
 **Migration Benefits:**
+
 - ✅ Built-in support for all common file locations
 - ✅ TypeScript and modern ES modules
 - ✅ Environment variable integration
@@ -286,17 +304,17 @@ If you're only using environment variables, bunfig makes it easier to organize a
 // app.js
 const config = {
   server: {
-    port: parseInt(process.env.PORT) || 3000,
+    port: Number.parseInt(process.env.PORT) || 3000,
     host: process.env.HOST || 'localhost'
   },
   database: {
     url: process.env.DATABASE_URL || 'postgresql://localhost:5432/default',
-    pool: parseInt(process.env.DB_POOL) || 5,
+    pool: Number.parseInt(process.env.DB_POOL) || 5,
     ssl: process.env.DB_SSL === 'true'
   },
   redis: {
     url: process.env.REDIS_URL || 'redis://localhost:6379',
-    db: parseInt(process.env.REDIS_DB) || 0
+    db: Number.parseInt(process.env.REDIS_DB) || 0
   },
   features: {
     enableCache: process.env.ENABLE_CACHE === 'true',
@@ -317,6 +335,9 @@ if (config.server.port < 1 || config.server.port > 65535) {
 
 ```ts
 // app.config.ts
+// app.ts
+import { config } from 'bunfig'
+
 export default {
   server: {
     port: 3000,
@@ -336,9 +357,6 @@ export default {
     enableMetrics: false
   }
 }
-
-// app.ts
-import { config } from 'bunfig'
 
 const appConfig = await config({
   name: 'app',
@@ -373,6 +391,7 @@ const appConfig = await config({
 ```
 
 **Migration Benefits:**
+
 - ✅ Automatic type conversion (string → number, string → boolean)
 - ✅ Built-in validation with JSON Schema
 - ✅ Default values in configuration files
@@ -414,11 +433,11 @@ touch config/database.config.ts
 
 ```ts
 // Before
-const config = require('config')
-const port = process.env.PORT || config.get('server.port')
-
 // After
 import { config } from 'bunfig'
+
+const config = require('config')
+const port = process.env.PORT || config.get('server.port')
 const { server } = await config({ name: 'app' })
 const port = server.port // Already includes env var overrides
 ```
@@ -459,7 +478,7 @@ const appConfig = await config({
 
 ```ts
 // Create a test to verify migration
-import { describe, it, expect } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 import { config } from 'bunfig'
 
 describe('Configuration Migration', () => {
@@ -521,14 +540,14 @@ process.env.APP_DATABASE_POOL_SIZE = '10'
 
 ```ts
 // ❌ Manual conversion needed before
-const port = parseInt(process.env.PORT) || 3000
+const port = Number.parseInt(process.env.PORT) || 3000
 const enabled = process.env.ENABLE_FEATURE === 'true'
 
 // ✅ Automatic conversion with bunfig
 // Set defaults with correct types in config file:
 export default {
-  port: 3000,        // number type
-  enabled: false     // boolean type
+  port: 3000, // number type
+  enabled: false // boolean type
 }
 
 // Environment variables automatically converted:
@@ -542,14 +561,17 @@ export default {
 
 ```ts
 // ❌ Wrong: files in wrong location or wrong name
-config/default.json
-.env
-.myapprc
+// These files won't be detected by bunfig:
+// config/default.json
+// .env
+// .myapprc
 
 // ✅ Correct: bunfig file patterns
-app.config.ts        // Primary
-.app.config.ts       // Alternative
-config/app.config.ts // In subdirectory
+const correctPatterns = [
+  'app.config.ts', // Primary
+  '.app.config.ts', // Alternative
+  'config/app.config.ts' // In subdirectory
+]
 ```
 
 ## Advanced Migration Patterns
@@ -669,14 +691,14 @@ echo "🧪 Run tests to verify the migration."
 
 ```js
 // migration-scripts/convert-env.js
-const fs = require('fs')
+const fs = require('node:fs')
 
 // Read .env file
 const envContent = fs.readFileSync('.env', 'utf8')
 const envVars = envContent
   .split('\n')
   .filter(line => line.trim() && !line.startsWith('#'))
-  .map(line => {
+  .map((line) => {
     const [key, value] = line.split('=')
     return { key: key.trim(), value: value.trim() }
   })
@@ -686,7 +708,7 @@ const config = {}
 envVars.forEach(({ key, value }) => {
   // Convert PORT=3000 to { port: 3000 }
   const configKey = key.toLowerCase()
-  const configValue = isNaN(value) ? value : parseInt(value)
+  const configValue = Number.isNaN(value) ? value : Number.parseInt(value)
   config[configKey] = configValue
 })
 

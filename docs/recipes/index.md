@@ -48,6 +48,10 @@ More recipes are being developed to cover common configuration patterns:
 ```ts
 // Base configuration that other configs extend
 // config/base.config.ts
+// Environment-specific configuration
+// config/production.config.ts
+import base from './base.config'
+
 export default {
   app: {
     name: 'MyApp',
@@ -58,10 +62,6 @@ export default {
     enableConsole: true
   }
 }
-
-// Environment-specific configuration
-// config/production.config.ts
-import base from './base.config'
 
 export default {
   ...base,
@@ -174,11 +174,11 @@ export const databaseSchema = {
 
 ```ts
 // Use descriptive, consistent names
-await config({ name: 'server' })     // server.config.ts
-await config({ name: 'database' })   // database.config.ts
-await config({ name: 'auth' })       // auth.config.ts
-await config({ name: 'cache' })      // cache.config.ts
-await config({ name: 'logging' })    // logging.config.ts
+await config({ name: 'server' }) // server.config.ts
+await config({ name: 'database' }) // database.config.ts
+await config({ name: 'auth' }) // auth.config.ts
+await config({ name: 'cache' }) // cache.config.ts
+await config({ name: 'logging' }) // logging.config.ts
 ```
 
 ### Environment Variable Patterns

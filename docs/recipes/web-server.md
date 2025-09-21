@@ -127,9 +127,9 @@ export interface ServerConfig {
 ## Server Implementation
 
 ```ts
+import type { ServerConfig } from './types/server'
 // server.ts
 import { config } from 'bunfig'
-import type { ServerConfig } from './types/server'
 
 const serverConfig = await config<ServerConfig>({
   name: 'server',
@@ -223,11 +223,12 @@ const serverConfig = await config<ServerConfig>({
 })
 
 // Rate limiting store
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
+const rateLimitStore = new Map<string, { count: number, resetTime: number }>()
 
 // CORS helper
 function handleCors(request: Request): Record<string, string> {
-  if (!serverConfig.cors.enabled) return {}
+  if (!serverConfig.cors.enabled)
+    return {}
 
   const origin = request.headers.get('origin')
   const headers: Record<string, string> = {}
@@ -252,7 +253,8 @@ function handleCors(request: Request): Record<string, string> {
 
 // Rate limiting helper
 function checkRateLimit(clientIP: string): boolean {
-  if (!serverConfig.rateLimit.enabled) return true
+  if (!serverConfig.rateLimit.enabled)
+    return true
 
   const now = Date.now()
   const key = clientIP
@@ -289,7 +291,7 @@ function securityHeaders(): Record<string, string> {
     }
 
     if (serverConfig.security.helmet.contentSecurityPolicy) {
-      headers['Content-Security-Policy'] = "default-src 'self'"
+      headers['Content-Security-Policy'] = 'default-src \'self\''
     }
   }
 
@@ -357,8 +359,8 @@ const server = Bun.serve({
         statusText: response.statusText,
         headers
       })
-
-    } catch (error) {
+    }
+    catch (error) {
       // Error logging
       if (serverConfig.logging.errors) {
         console.error(`Error handling ${method} ${url.pathname}:`, error)
@@ -510,12 +512,13 @@ const metrics = {
 // Track metrics
 function updateMetrics(duration: number, isError: boolean) {
   metrics.requests++
-  if (isError) metrics.errors++
+  if (isError)
+    metrics.errors++
 
   // Calculate rolling average
   const alpha = 0.1
-  metrics.averageResponseTime =
-    alpha * duration + (1 - alpha) * metrics.averageResponseTime
+  metrics.averageResponseTime
+    = alpha * duration + (1 - alpha) * metrics.averageResponseTime
 }
 
 // Metrics endpoint
@@ -534,7 +537,7 @@ if (url.pathname === '/metrics') {
 
 ```ts
 // server.test.ts
-import { describe, it, expect, beforeAll, afterAll } from 'bun:test'
+import { afterAll, beforeAll, describe, expect, it } from 'bun:test'
 import { config } from 'bunfig'
 
 describe('Server Configuration', () => {
