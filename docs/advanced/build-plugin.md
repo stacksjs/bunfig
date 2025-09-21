@@ -56,7 +56,7 @@ interface PluginOptions {
 ### Default Configuration
 
 ```ts
-{
+const defaultConfig = {
   configDir: './config',
   extensions: ['.ts', '.js', '.mjs', '.cjs', '.json'],
   exclude: ['**/*.test.*', '**/*.spec.*', '**/node_modules/**'],
@@ -77,10 +77,10 @@ The plugin generates a virtual module that exports type information about your c
 export type ConfigNames = 'app' | 'database' | 'auth' | 'logging'
 
 export interface ConfigByName {
-  'app': AppConfigType
-  'database': DatabaseConfigType
-  'auth': AuthConfigType
-  'logging': LoggingConfigType
+  app: AppConfigType
+  database: DatabaseConfigType
+  auth: AuthConfigType
+  logging: LoggingConfigType
 }
 
 export type ConfigOf<T extends ConfigNames> = ConfigByName[T]
@@ -235,7 +235,7 @@ export class ConfigManager {
     names: T
   ): Promise<{ [K in T[number]]: ConfigOf<K> }> {
     const configs = await Promise.all(
-      names.map(async (name) => [name, await this.load(name)] as const)
+      names.map(async name => [name, await this.load(name)] as const)
     )
 
     return Object.fromEntries(configs) as any
@@ -264,10 +264,10 @@ import type { ConfigNames, ConfigOf } from 'virtual:bunfig-types'
 import { loadConfig } from 'bunfig'
 
 export interface ConfigFactory {
-  create<T extends ConfigNames>(
+  create: <T extends ConfigNames>(
     name: T,
     overrides?: Partial<ConfigOf<T>>
-  ): Promise<ConfigOf<T>>
+  ) => Promise<ConfigOf<T>>
 }
 
 export class DefaultConfigFactory implements ConfigFactory {
@@ -304,13 +304,13 @@ Use custom virtual module names for organization:
 
 ```ts
 // build.ts
+// Usage
+import type { ConfigNames } from 'virtual:my-app-configs'
+
 bunfigPlugin({
   configDir: './config',
   virtualModuleName: 'virtual:my-app-configs',
 })
-
-// Usage
-import type { ConfigNames } from 'virtual:my-app-configs'
 ```
 
 ### Physical Type Generation

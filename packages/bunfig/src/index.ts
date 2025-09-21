@@ -1,30 +1,30 @@
+export * from './cache'
 /// <reference path="./virtual-bunfig-types.d.ts" />
 // Export configuration functions explicitly to avoid conflicts
 export {
-  loadConfig,
-  loadConfigWithResult,
-  config,
-  tryLoadConfig,
   applyEnvVarsToConfig,
-  generateConfigTypes,
+  config,
   ConfigLoader,
   defaultConfigDir,
-  defaultGeneratedDir
+  defaultGeneratedDir,
+  generateConfigTypes,
+  loadConfig,
+  loadConfigWithResult,
+  tryLoadConfig,
 } from './config'
-export * from './plugin'
-export * from './types'
-export * from './utils'
 export * from './errors'
-export * from './cache'
-export * from './services/file-loader'
-export * from './services/env-processor'
-export * from './services/validator'
-
 // Export specific error classes that tests need
 export {
   ConfigValidationError,
   SchemaValidationError,
 } from './errors'
-
+export * from './plugin'
+export * from './services/env-processor'
+export * from './services/file-loader'
+export * from './services/validator'
 // Export validation interfaces from validator
-export type { ValidationError, ValidationRule, ValidationOptions, ValidationResult } from './services/validator'
+export type { ValidationError, ValidationOptions, ValidationResult, ValidationRule } from './services/validator'
+
+export * from './types'
+
+export * from './utils'

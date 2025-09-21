@@ -53,7 +53,7 @@ export class ConfigNotFoundError extends BunfigError {
   constructor(
     configName: string,
     searchPaths: string[],
-    alias?: string
+    alias?: string,
   ) {
     const aliasStr = alias ? ` or alias "${alias}"` : ''
     super(
@@ -63,7 +63,7 @@ export class ConfigNotFoundError extends BunfigError {
         alias,
         searchPaths,
         searchPathCount: searchPaths.length,
-      }
+      },
     )
   }
 }
@@ -77,7 +77,7 @@ export class ConfigLoadError extends BunfigError {
   constructor(
     configPath: string,
     cause: Error,
-    configName?: string
+    configName?: string,
   ) {
     super(
       `Failed to load configuration from "${configPath}": ${cause.message}`,
@@ -86,7 +86,7 @@ export class ConfigLoadError extends BunfigError {
         configName,
         originalError: cause.name,
         originalMessage: cause.message,
-      }
+      },
     )
 
     // Preserve the original error as the cause
@@ -103,7 +103,7 @@ export class ConfigValidationError extends BunfigError {
   constructor(
     configPath: string,
     validationErrors: string[],
-    configName?: string
+    configName?: string,
   ) {
     super(
       `Configuration validation failed for "${configPath}"`,
@@ -112,7 +112,7 @@ export class ConfigValidationError extends BunfigError {
         configName,
         validationErrors,
         errorCount: validationErrors.length,
-      }
+      },
     )
   }
 }
@@ -127,7 +127,7 @@ export class ConfigMergeError extends BunfigError {
     sourcePath: string,
     targetPath: string,
     cause: Error,
-    configName?: string
+    configName?: string,
   ) {
     super(
       `Failed to merge configuration from "${sourcePath}" with "${targetPath}": ${cause.message}`,
@@ -137,7 +137,7 @@ export class ConfigMergeError extends BunfigError {
         configName,
         originalError: cause.name,
         originalMessage: cause.message,
-      }
+      },
     )
 
     this.cause = cause
@@ -154,7 +154,7 @@ export class EnvVarError extends BunfigError {
     envKey: string,
     envValue: string,
     expectedType: string,
-    configName?: string
+    configName?: string,
   ) {
     super(
       `Failed to parse environment variable "${envKey}" with value "${envValue}" as ${expectedType}`,
@@ -163,7 +163,7 @@ export class EnvVarError extends BunfigError {
         envValue,
         expectedType,
         configName,
-      }
+      },
     )
   }
 }
@@ -177,7 +177,7 @@ export class FileSystemError extends BunfigError {
   constructor(
     operation: string,
     path: string,
-    cause: Error
+    cause: Error,
   ) {
     super(
       `File system ${operation} failed for "${path}": ${cause.message}`,
@@ -186,7 +186,7 @@ export class FileSystemError extends BunfigError {
         path,
         originalError: cause.name,
         originalMessage: cause.message,
-      }
+      },
     )
 
     this.cause = cause
@@ -202,7 +202,7 @@ export class TypeGenerationError extends BunfigError {
   constructor(
     configDir: string,
     outputPath: string,
-    cause: Error
+    cause: Error,
   ) {
     super(
       `Failed to generate types from "${configDir}" to "${outputPath}": ${cause.message}`,
@@ -211,7 +211,7 @@ export class TypeGenerationError extends BunfigError {
         outputPath,
         originalError: cause.name,
         originalMessage: cause.message,
-      }
+      },
     )
 
     this.cause = cause
@@ -226,8 +226,8 @@ export class SchemaValidationError extends BunfigError {
 
   constructor(
     schemaPath: string,
-    validationErrors: Array<{ path: string; message: string }>,
-    configName?: string
+    validationErrors: Array<{ path: string, message: string }>,
+    configName?: string,
   ) {
     super(
       `Schema validation failed${configName ? ` for config "${configName}"` : ''}`,
@@ -236,7 +236,7 @@ export class SchemaValidationError extends BunfigError {
         configName,
         validationErrors,
         errorCount: validationErrors.length,
-      }
+      },
     )
   }
 }
@@ -251,7 +251,7 @@ export class BrowserConfigError extends BunfigError {
     endpoint: string,
     status: number,
     statusText: string,
-    configName?: string
+    configName?: string,
   ) {
     super(
       `Failed to fetch configuration from "${endpoint}": ${status} ${statusText}`,
@@ -260,7 +260,7 @@ export class BrowserConfigError extends BunfigError {
         status,
         statusText,
         configName,
-      }
+      },
     )
   }
 }
@@ -274,7 +274,7 @@ export class PluginError extends BunfigError {
   constructor(
     pluginName: string,
     operation: string,
-    cause: Error
+    cause: Error,
   ) {
     super(
       `Plugin "${pluginName}" failed during ${operation}: ${cause.message}`,
@@ -283,7 +283,7 @@ export class PluginError extends BunfigError {
         operation,
         originalError: cause.name,
         originalMessage: cause.message,
-      }
+      },
     )
 
     this.cause = cause
@@ -339,8 +339,8 @@ export const ErrorFactory = {
 
   schemaValidation(
     schemaPath: string,
-    errors: Array<{ path: string; message: string }>,
-    configName?: string
+    errors: Array<{ path: string, message: string }>,
+    configName?: string,
   ): SchemaValidationError {
     return new SchemaValidationError(schemaPath, errors, configName)
   },
@@ -373,21 +373,23 @@ export interface ErrorRecoveryOptions {
  */
 export async function withErrorRecovery<T>(
   fn: () => Promise<T>,
-  options: ErrorRecoveryOptions = {}
+  options: ErrorRecoveryOptions = {},
 ): Promise<T> {
   const {
     maxRetries = 3,
     retryDelay = 1000,
     isRetryable = () => true,
-    fallback
+    fallback,
   } = options
 
-  let lastError: Error
+  // Initialize lastError to ensure it's always defined
+  let lastError: Error = new Error('Unknown error occurred')
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn()
-    } catch (error) {
+    }
+    catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
 
       // Don't retry on the last attempt or if error is not retryable
@@ -407,7 +409,8 @@ export async function withErrorRecovery<T>(
     return fallback as T
   }
 
-  throw lastError!
+  // Ensure we're throwing an Error object to satisfy no-throw-literal rule
+  throw lastError instanceof Error ? lastError : new Error(`Unknown error: ${String(lastError)}`)
 }
 
 /**
@@ -446,6 +449,6 @@ export function isRetryableError(error: Error): boolean {
   ]
 
   return retryableMessages.some(msg =>
-    error.message.toLowerCase().includes(msg.toLowerCase())
+    error.message.toLowerCase().includes(msg.toLowerCase()),
   )
 }

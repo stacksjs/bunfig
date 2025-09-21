@@ -1,7 +1,7 @@
-import { describe, expect, it, beforeEach, afterEach } from 'bun:test'
-import { existsSync, mkdirSync, rmSync, writeFileSync, chmodSync } from 'node:fs'
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
+import { chmodSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { loadConfigWithResult, ErrorFactory, ConfigNotFoundError, ConfigLoadError, ConfigValidationError, SchemaValidationError } from '../src'
+import { ConfigLoadError, ConfigNotFoundError, ConfigValidationError, ErrorFactory, loadConfigWithResult, SchemaValidationError } from '../src'
 
 describe('Error Handling', () => {
   const testDir = resolve(process.cwd(), 'test-errors')
@@ -44,7 +44,7 @@ describe('Error Handling', () => {
 
     it('should create ValidationError with context', () => {
       const validationErrors = [
-        'Invalid port'
+        'Invalid port',
       ]
       const error = ErrorFactory.configValidation('my-config', validationErrors, 'my-config')
 
@@ -56,7 +56,7 @@ describe('Error Handling', () => {
 
     it('should create SchemaValidationError with context', () => {
       const schemaErrors = [
-        { path: 'host', message: 'Required field missing' }
+        { path: 'host', message: 'Required field missing' },
       ]
       const error = ErrorFactory.schemaValidation('/schema.json', schemaErrors)
 
@@ -74,7 +74,7 @@ describe('Error Handling', () => {
           name: 'nonexistent',
           cwd: testDir,
           defaultConfig: { value: 'default' },
-        })
+        }),
       ).rejects.toThrow(ConfigNotFoundError)
     })
 
@@ -107,7 +107,7 @@ describe('Error Handling', () => {
             name: 'restricted',
             cwd: testDir,
             defaultConfig: { value: 'default' },
-          })
+          }),
         ).rejects.toThrow()
 
         // Restore permissions for cleanup
@@ -155,7 +155,7 @@ describe('Error Handling', () => {
           cwd: testDir,
           defaultConfig: { port: 3000 },
           schema,
-        })
+        }),
       ).rejects.toThrow(ConfigValidationError)
     })
 
@@ -177,7 +177,7 @@ describe('Error Handling', () => {
           cwd: testDir,
           defaultConfig: { apiKey: 'default-key' },
           validate: customValidator,
-        })
+        }),
       ).rejects.toThrow(ConfigValidationError)
     })
 
@@ -202,7 +202,8 @@ describe('Error Handling', () => {
           schema,
         })
         expect(true).toBe(false) // Should not reach here
-      } catch (error) {
+      }
+      catch (error) {
         expect(error).toBeInstanceOf(ConfigValidationError)
         const validationError = error as ConfigValidationError
         expect(validationError.context.validationErrors).toHaveLength(2)
@@ -241,7 +242,7 @@ describe('Error Handling', () => {
           cwd: testDir,
           defaultConfig: { port: 8080 },
           schema: nonExistentSchemaPath,
-        })
+        }),
       ).rejects.toThrow(ConfigValidationError)
     })
   })

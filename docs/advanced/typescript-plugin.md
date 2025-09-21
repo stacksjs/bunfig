@@ -244,7 +244,8 @@ function createDatabaseConfig<T extends 'postgres' | 'mysql'>(
       ssl: false,
       pool: 10,
     } as any
-  } else {
+  }
+  else {
     return {
       type: 'mysql',
       host: 'localhost',
@@ -267,6 +268,9 @@ Organize configurations with namespaces:
 
 ```ts
 // config/api.ts
+// Usage with type safety
+import type { ConfigOf } from 'bunfig'
+
 export default {
   server: {
     port: 3000,
@@ -281,9 +285,6 @@ export default {
     max: 100,
   },
 }
-
-// Usage with type safety
-import type { ConfigOf } from 'bunfig'
 
 type ApiConfig = ConfigOf<'api'>
 // TypeScript knows: { server: {...}, cors: {...}, rateLimit: {...} }
@@ -342,9 +343,9 @@ If you see errors about missing `virtual:bunfig-types`:
 /// <reference types="bunfig" />
 
 // Or add to tsconfig.json
-{
-  "compilerOptions": {
-    "types": ["bunfig"]
+const tsconfig = {
+  compilerOptions: {
+    types: ['bunfig']
   }
 }
 ```

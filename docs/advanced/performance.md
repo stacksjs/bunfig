@@ -16,7 +16,7 @@ bunfig is built with performance as a core principle:
 
 ### Configuration Loading Performance
 
-```
+```text
 Benchmark: Loading 100 configuration files
 ├── bunfig:    ~2.1ms  (zero dependencies)
 ├── cosmiconfig: ~15.3ms (with dependencies)
@@ -36,7 +36,7 @@ Benchmark: Type checking overhead
 
 ### Memory Usage
 
-```
+```text
 Memory footprint for typical applications:
 ├── Basic usage:     ~1-2MB heap
 ├── 50 configs:      ~3-4MB heap
@@ -95,7 +95,7 @@ const appConfig = await manager.get('app', {})
 
 Structure your configuration files for optimal performance:
 
-```ts
+```text
 // Good: Flat structure for faster discovery
 config/
 ├── app.ts
@@ -140,6 +140,9 @@ export default {
 Leverage build-time type generation to eliminate runtime overhead:
 
 ```ts
+// Runtime - Use pre-generated types (no runtime type checking)
+import type { ConfigOf } from './generated/config-types'
+
 // build.ts - Generate types at build time
 import { bunfigPlugin } from 'bunfig'
 
@@ -152,9 +155,6 @@ await Bun.build({
     }),
   ],
 })
-
-// Runtime - Use pre-generated types (no runtime type checking)
-import type { ConfigOf } from './generated/config-types'
 
 const config = await loadConfig<ConfigOf<'app'>>({
   name: 'app',
@@ -170,7 +170,7 @@ const config = await loadConfig<ConfigOf<'app'>>({
 bunfig provides built-in performance monitoring:
 
 ```ts
-import { loadConfig, getPerformanceMetrics } from 'bunfig'
+import { getPerformanceMetrics, loadConfig } from 'bunfig'
 
 const config = await loadConfig({
   name: 'app',
@@ -196,7 +196,8 @@ class PerformanceTracker {
     const start = performance.now()
     try {
       return await fn()
-    } finally {
+    }
+    finally {
       const duration = performance.now() - start
       if (!this.metrics.has(operation)) {
         this.metrics.set(operation, [])
@@ -220,8 +221,7 @@ const tracker = new PerformanceTracker()
 
 // Track configuration loading performance
 const config = await tracker.track('config-load', () =>
-  loadConfig({ name: 'app', defaultConfig: {} })
-)
+  loadConfig({ name: 'app', defaultConfig: {} }))
 
 console.log('Config loading stats:', tracker.getStats('config-load'))
 ```
@@ -233,7 +233,7 @@ Monitor memory usage during configuration loading:
 ```ts
 import { memoryUsage } from 'node:process'
 
-function measureMemory<T>(fn: () => T): { result: T; memoryDelta: number } {
+function measureMemory<T>(fn: () => T): { result: T, memoryDelta: number } {
   const before = memoryUsage().heapUsed
   const result = fn()
   const after = memoryUsage().heapUsed
@@ -384,7 +384,8 @@ class HotReloadConfigManager {
           this.configs.set(name, newConfig)
 
           console.log(`🔄 Configuration '${name}' reloaded`)
-        } catch (error) {
+        }
+        catch (error) {
           console.error(`❌ Failed to reload configuration '${name}':`, error)
         }
       })
@@ -464,9 +465,9 @@ const appConfig = getConfig<AppConfig>('app')
 Optimize bundles by eliminating unused configurations:
 
 ```ts
+import { bunfigPlugin } from 'bunfig'
 // vite.config.ts
 import { defineConfig } from 'vite'
-import { bunfigPlugin } from 'bunfig'
 
 export default defineConfig({
   plugins: [
@@ -526,7 +527,8 @@ class BrowserConfigLoader {
       })
 
       return config
-    } catch (error) {
+    }
+    catch (error) {
       console.warn(`Failed to load config '${name}', using defaults:`, error)
       return defaultConfig
     }
@@ -558,7 +560,7 @@ if (process.env.NODE_ENV === 'development') {
   config = await loadConfig({
     name: 'app',
     cache: false, // Disable cache for hot reloading
-    watch: true,  // Enable file watching
+    watch: true, // Enable file watching
     defaultConfig: {},
   })
 }
@@ -567,7 +569,7 @@ if (process.env.NODE_ENV === 'development') {
 if (process.env.NODE_ENV === 'production') {
   config = await loadConfig({
     name: 'app',
-    cache: true,     // Enable aggressive caching
+    cache: true, // Enable aggressive caching
     immutable: true, // Treat config as immutable
     defaultConfig: {},
   })
@@ -596,7 +598,8 @@ async function monitoredLoadConfig<T>(options: any): Promise<T> {
     }
 
     return config
-  } catch (error) {
+  }
+  catch (error) {
     console.error(`❌ Configuration loading failed: ${options.name}`, error)
     throw error
   }

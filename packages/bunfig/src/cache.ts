@@ -1,5 +1,4 @@
 import type { CacheOptions, PerformanceMetrics } from './types'
-import { FileSystemError } from './errors'
 import { existsSync, statSync } from 'node:fs'
 
 /**
@@ -70,7 +69,8 @@ export class ConfigCache {
   private estimateSize(value: unknown): number {
     try {
       return JSON.stringify(value).length
-    } catch {
+    }
+    catch {
       return 1000 // Fallback estimate for non-serializable values
     }
   }
@@ -101,7 +101,7 @@ export class ConfigCache {
     configName: string,
     value: T,
     configPath?: string,
-    customTtl?: number
+    customTtl?: number,
   ): void {
     if (!this.options.enabled) {
       return
@@ -163,7 +163,8 @@ export class ConfigCache {
 
       const stats = statSync(configPath)
       return stats.mtime > cachedTimestamp
-    } catch (error) {
+    }
+    catch {
       // If we can't check the file, assume it's modified
       return true
     }
@@ -173,7 +174,7 @@ export class ConfigCache {
    * Get cache entry with file modification check
    */
   getWithFileCheck<T>(configName: string, configPath: string): T | undefined {
-    const cached = this.get<{ value: T; fileTimestamp: Date }>(configName, configPath)
+    const cached = this.get<{ value: T, fileTimestamp: Date }>(configName, configPath)
 
     if (!cached) {
       return undefined
@@ -200,9 +201,10 @@ export class ConfigCache {
         configName,
         { value, fileTimestamp },
         configPath,
-        customTtl
+        customTtl,
       )
-    } catch (error) {
+    }
+    catch {
       // If we can't get file stats, cache without file check
       this.set(configName, value, configPath, customTtl)
     }
@@ -311,7 +313,7 @@ export class PerformanceMonitor {
   async track<T>(
     operation: string,
     fn: () => Promise<T>,
-    context: Partial<PerformanceMetrics> = {}
+    context: Partial<PerformanceMetrics> = {},
   ): Promise<T> {
     const start = performance.now()
     const startTime = new Date()
@@ -328,7 +330,8 @@ export class PerformanceMonitor {
       })
 
       return result
-    } catch (error) {
+    }
+    catch (error) {
       const duration = performance.now() - start
 
       this.recordMetric({
@@ -418,8 +421,8 @@ export class PerformanceMonitor {
 /**
  * Global cache and performance monitor instances
  */
-export const globalCache = new ConfigCache()
-export const globalPerformanceMonitor = new PerformanceMonitor()
+export const globalCache: ConfigCache = new ConfigCache()
+export const globalPerformanceMonitor: PerformanceMonitor = new PerformanceMonitor()
 
 /**
  * Utility functions for cache management
@@ -440,7 +443,8 @@ export const CacheUtils = {
   isEquivalent(a: unknown, b: unknown): boolean {
     try {
       return JSON.stringify(a) === JSON.stringify(b)
-    } catch {
+    }
+    catch {
       return a === b
     }
   },

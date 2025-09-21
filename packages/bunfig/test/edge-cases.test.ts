@@ -1,7 +1,7 @@
-import { describe, expect, it, beforeEach, afterEach } from 'bun:test'
-import { existsSync, mkdirSync, rmSync, writeFileSync, symlinkSync, lstatSync } from 'node:fs'
-import { resolve, join } from 'node:path'
-import { loadConfigWithResult, deepMerge, globalCache } from '../src'
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
+import { existsSync, mkdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { deepMerge, globalCache, loadConfigWithResult } from '../src'
 
 describe('Edge Cases and Corner Cases', () => {
   const testDir = resolve(process.cwd(), 'test-edge-cases')
@@ -38,11 +38,13 @@ describe('Edge Cases and Corner Cases', () => {
         })
 
         expect(result.config.source).toBe('real')
-      } catch (error) {
+      }
+      catch (error) {
         // Skip test if symlinks are not supported
         if (process.platform === 'win32') {
           expect(true).toBe(true) // Skip on Windows
-        } else {
+        }
+        else {
           throw error
         }
       }
@@ -74,7 +76,7 @@ describe('Edge Cases and Corner Cases', () => {
           name: 'empty',
           cwd: testDir,
           defaultConfig: { value: 'default' },
-        })
+        }),
       ).rejects.toThrow()
     })
 
@@ -91,7 +93,7 @@ describe('Edge Cases and Corner Cases', () => {
           name: 'comments',
           cwd: testDir,
           defaultConfig: { value: 'default' },
-        })
+        }),
       ).rejects.toThrow()
     })
 
@@ -105,13 +107,12 @@ describe('Edge Cases and Corner Cases', () => {
           name: 'concurrent',
           cwd: testDir,
           defaultConfig: { concurrent: false },
-        })
-      )
+        }))
 
       const results = await Promise.all(promises)
 
       // All results should be the same
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.config.concurrent).toBe(true)
       })
     })
@@ -146,7 +147,8 @@ describe('Edge Cases and Corner Cases', () => {
 
     it('should handle very deeply nested objects', () => {
       const createDeepObject = (depth: number, value: any): any => {
-        if (depth === 0) return value
+        if (depth === 0)
+          return value
         return { nested: createDeepObject(depth - 1, value) }
       }
 
@@ -354,8 +356,8 @@ describe('Edge Cases and Corner Cases', () => {
             cwd: testDir,
             defaultConfig: { index: -1 },
             cache: { enabled: false }, // Disable cache to test memory usage
-          })
-        )
+          }),
+        ),
       )
 
       // Verify all configs loaded correctly

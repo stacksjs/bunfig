@@ -212,7 +212,8 @@ This allows you to organize your configuration files in a dedicated directory st
 ### Basic Usage
 
 ```ts
-import { loadConfig } from 'bunfig'
+// Import both functions from bunfig
+import { loadConfig, loadConfigWithResult } from 'bunfig'
 
 // Standard usage - returns just the config
 const config = await loadConfig({
@@ -222,9 +223,6 @@ const config = await loadConfig({
     host: 'localhost'
   }
 })
-
-// Enhanced usage with full result
-import { loadConfigWithResult } from 'bunfig'
 
 const result = await loadConfigWithResult({
   name: 'app',
@@ -299,7 +297,7 @@ const result = await loadConfigWithResult({
 Use custom validation functions for complex rules:
 
 ```ts
-const customValidator = (config: any) => {
+function customValidator(config: any) {
   const errors: string[] = []
 
   if (config.port && config.port === 22) {
@@ -326,8 +324,8 @@ The enhanced API provides structured error handling:
 
 ```ts
 import {
-  ConfigNotFoundError,
   ConfigLoadError,
+  ConfigNotFoundError,
   ValidationError
 } from 'bunfig'
 
@@ -336,12 +334,15 @@ try {
     name: 'missing-config',
     defaultConfig: {}
   })
-} catch (error) {
+}
+catch (error) {
   if (error instanceof ConfigNotFoundError) {
     console.log('Config not found:', error.context.searchPaths)
-  } else if (error instanceof ConfigLoadError) {
+  }
+  else if (error instanceof ConfigLoadError) {
     console.log('Load error:', error.context.filePath)
-  } else if (error instanceof ValidationError) {
+  }
+  else if (error instanceof ValidationError) {
     console.log('Validation errors:', error.context.errors)
   }
 }

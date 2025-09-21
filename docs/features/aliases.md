@@ -139,7 +139,8 @@ async function loadConfigWithMultipleAliases<T>(
         alias,
         defaultConfig,
       })
-    } catch (error) {
+    }
+    catch (error) {
       // Continue to next alias
       if (alias === aliases[aliases.length - 1]) {
         throw error // Rethrow if last alias also fails
@@ -205,13 +206,13 @@ Choose aliases that clearly indicate their purpose:
 
 ```ts
 // Good
-{
+const config1 = {
   name: 'bundler-v2',
   alias: 'bundler-v1'
 }
 
 // Better
-{
+const config2 = {
   name: 'esbuild-config',
   alias: 'webpack-config'
 }

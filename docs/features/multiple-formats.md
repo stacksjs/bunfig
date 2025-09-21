@@ -181,8 +181,8 @@ bunfig supports JSON with comments when using appropriate tooling:
   },
 
   "features": [
-    "auth",     // Authentication module
-    "logging"   // Logging module
+    "auth", // Authentication module
+    "logging" // Logging module
   ]
 }
 ```
@@ -380,13 +380,13 @@ Use consistent naming patterns across your project:
 
 ```ts
 // Good - consistent pattern
-my-app.config.ts
-my-api.config.ts
-my-cli.config.ts
+my - app.config.ts
+my - api.config.ts
+my - cli.config.ts
 
 // Avoid - mixed patterns
-my-app.config.ts
-api-config.js
+my - app.config.ts
+api - config.js
 cli.json
 ```
 
@@ -396,6 +396,9 @@ When using TypeScript, define and use interfaces:
 
 ```ts
 // config-types.ts
+// my-app.config.ts
+import type { AppConfig } from './config-types.ts'
+
 export interface AppConfig {
   port: number
   host: string
@@ -406,9 +409,6 @@ export interface DatabaseConfig {
   url: string
   pool: number
 }
-
-// my-app.config.ts
-import type { AppConfig } from './config-types.ts'
 
 const config: AppConfig = {
   port: 3000,

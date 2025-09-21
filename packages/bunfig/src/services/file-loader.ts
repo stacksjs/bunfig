@@ -1,9 +1,9 @@
-import type { ArrayMergeStrategy, ConfigSource, PerformanceMetrics } from '../types'
-import { ConfigLoadError, ErrorFactory, FileSystemError, withErrorRecovery } from '../errors'
-import { globalCache, globalPerformanceMonitor } from '../cache'
-import { deepMergeWithArrayStrategy } from '../utils'
+import type { ArrayMergeStrategy, ConfigSource } from '../types'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { globalCache, globalPerformanceMonitor } from '../cache'
+import { ConfigLoadError, ErrorFactory, withErrorRecovery } from '../errors'
+import { deepMergeWithArrayStrategy } from '../utils'
 
 /**
  * File loading options
@@ -33,24 +33,25 @@ export class ConfigFileLoader {
   async loadFromPath<T>(
     configPath: string,
     defaultConfig: T,
-    options: FileLoadOptions = {}
-  ): Promise<{ config: T; source: ConfigSource } | null> {
+    options: FileLoadOptions = {},
+  ): Promise<{ config: T, source: ConfigSource } | null> {
     const {
       arrayStrategy = 'replace',
       useCache = true,
       cacheTtl,
       trackPerformance = true,
-      verbose = false
+      verbose = false,
     } = options
 
     // Check cache first
     if (useCache) {
-      const cached = globalCache.getWithFileCheck<{ config: T; source: ConfigSource }>(
+      const cached = globalCache.getWithFileCheck<{ config: T, source: ConfigSource }>(
         'file',
-        configPath
+        configPath,
       )
       if (cached) {
         if (verbose) {
+          // eslint-disable-next-line no-console
           console.log(`Configuration loaded from cache: ${configPath}`)
         }
         return cached
@@ -76,7 +77,7 @@ export class ConfigFileLoader {
           throw new ConfigLoadError(
             configPath,
             new Error('Configuration file is empty and exports nothing'),
-            'unknown'
+            'unknown',
           )
         }
 
@@ -85,7 +86,7 @@ export class ConfigFileLoader {
           throw new ConfigLoadError(
             configPath,
             new Error('Configuration must export a valid object'),
-            'unknown'
+            'unknown',
           )
         }
 
@@ -93,7 +94,7 @@ export class ConfigFileLoader {
         const mergedConfig = deepMergeWithArrayStrategy(
           defaultConfig,
           loadedConfig,
-          arrayStrategy
+          arrayStrategy,
         ) as T
 
         const source: ConfigSource = {
@@ -111,7 +112,8 @@ export class ConfigFileLoader {
         }
 
         return result
-      } catch (error) {
+      }
+      catch (error) {
         const bunfigError = error instanceof Error
           ? ErrorFactory.configLoad(configPath, error)
           : ErrorFactory.configLoad(configPath, new Error(String(error)))
@@ -124,7 +126,7 @@ export class ConfigFileLoader {
       return globalPerformanceMonitor.track(
         'loadFromPath',
         loadOperation,
-        { path: configPath }
+        { path: configPath },
       )
     }
 
@@ -137,15 +139,16 @@ export class ConfigFileLoader {
   async tryLoadFromPaths<T>(
     configPaths: string[],
     defaultConfig: T,
-    options: FileLoadOptions = {}
-  ): Promise<{ config: T; source: ConfigSource } | null> {
+    options: FileLoadOptions = {},
+  ): Promise<{ config: T, source: ConfigSource } | null> {
     for (const configPath of configPaths) {
       try {
         const result = await this.loadFromPath(configPath, defaultConfig, options)
         if (result) {
           return result
         }
-      } catch (error) {
+      }
+      catch (error) {
         // Re-throw ConfigLoadError since it indicates a file was found but has issues
         if (error instanceof Error && error.name === 'ConfigLoadError') {
           throw error
@@ -166,7 +169,7 @@ export class ConfigFileLoader {
   generateConfigPaths(
     configName: string,
     directory: string,
-    alias?: string
+    alias?: string,
   ): string[] {
     const patterns = this.generateNamePatterns(configName, alias)
     const paths: string[] = []
@@ -219,7 +222,7 @@ export class ConfigFileLoader {
         maxRetries: 2,
         retryDelay: 100,
         fallback: false,
-      }
+      },
     )
   }
 
@@ -229,7 +232,7 @@ export class ConfigFileLoader {
   async discoverConfigFiles(
     directory: string,
     configName?: string,
-    alias?: string
+    alias?: string,
   ): Promise<string[]> {
     const discoveredFiles: string[] = []
 
@@ -249,7 +252,8 @@ export class ConfigFileLoader {
           }
         }
       }
-    } else {
+    }
+    else {
       // Discover all potential config files
       try {
         const { readdirSync } = await import('node:fs')
@@ -264,7 +268,8 @@ export class ConfigFileLoader {
             }
           }
         }
-      } catch (error) {
+      }
+      catch {
         // Directory read failed, return empty array
         return []
       }
@@ -304,9 +309,11 @@ export class ConfigFileLoader {
 
       if (config === undefined) {
         errors.push('Configuration file must export a default value or named exports')
-      } else if (typeof config !== 'object' || config === null) {
+      }
+      else if (typeof config !== 'object' || config === null) {
         errors.push('Configuration must be an object')
-      } else if (Array.isArray(config)) {
+      }
+      else if (Array.isArray(config)) {
         errors.push('Configuration cannot be an array at the root level')
       }
 
@@ -316,11 +323,13 @@ export class ConfigFileLoader {
           const { readFileSync } = await import('node:fs')
           const content = readFileSync(filePath, 'utf8')
           JSON.parse(content)
-        } catch (jsonError) {
+        }
+        catch (jsonError) {
           errors.push(`Invalid JSON syntax: ${jsonError}`)
         }
       }
-    } catch (error) {
+    }
+    catch (error) {
       errors.push(`Failed to load configuration file: ${error}`)
     }
 
@@ -335,7 +344,8 @@ export class ConfigFileLoader {
       const { statSync } = await import('node:fs')
       const stats = statSync(filePath)
       return stats.mtime
-    } catch (error) {
+    }
+    catch {
       return null
     }
   }
@@ -345,7 +355,7 @@ export class ConfigFileLoader {
    */
   async preloadConfigurations(
     configPaths: string[],
-    options: FileLoadOptions = {}
+    options: FileLoadOptions = {},
   ): Promise<Map<string, unknown>> {
     const preloaded = new Map<string, unknown>()
 
@@ -356,13 +366,14 @@ export class ConfigFileLoader {
           if (result) {
             preloaded.set(path, result.config)
           }
-        } catch (error) {
+        }
+        catch (error) {
           // Preloading failures are non-critical
           if (options.verbose) {
             console.warn(`Failed to preload ${path}:`, error)
           }
         }
-      })
+      }),
     )
 
     return preloaded

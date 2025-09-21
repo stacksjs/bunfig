@@ -1,6 +1,7 @@
 import type { ConfigSource } from '../types'
-import { EnvVarError, ErrorFactory } from '../errors'
+import process from 'node:process'
 import { globalPerformanceMonitor } from '../cache'
+import { EnvVarError, ErrorFactory } from '../errors'
 
 /**
  * Environment variable processing options
@@ -43,8 +44,8 @@ export class EnvProcessor {
       {
         name: 'boolean',
         canParse: (value, expectedType) =>
-          expectedType === 'boolean' ||
-          ['true', 'false', '1', '0', 'yes', 'no'].includes(value.toLowerCase()),
+          expectedType === 'boolean'
+          || ['true', 'false', '1', '0', 'yes', 'no'].includes(value.toLowerCase()),
         parse: (value) => {
           const lower = value.toLowerCase()
           return ['true', '1', 'yes'].includes(lower)
@@ -53,12 +54,12 @@ export class EnvProcessor {
       {
         name: 'number',
         canParse: (value, expectedType) =>
-          expectedType === 'number' ||
-          !isNaN(Number(value)) && !isNaN(parseFloat(value)),
+          expectedType === 'number'
+          || (!Number.isNaN(Number(value)) && !Number.isNaN(Number.parseFloat(value))),
         parse: (value) => {
           const num = Number(value)
-          if (isNaN(num)) {
-            throw new Error(`Cannot parse "${value}" as number`)
+          if (Number.isNaN(num)) {
+            throw new TypeError(`Cannot parse "${value}" as number`)
           }
           return num
         },
@@ -66,9 +67,9 @@ export class EnvProcessor {
       {
         name: 'array',
         canParse: (value, expectedType) =>
-          expectedType === 'array' ||
-          value.startsWith('[') ||
-          value.includes(','),
+          expectedType === 'array'
+          || value.startsWith('[')
+          || value.includes(','),
         parse: (value) => {
           try {
             // Try JSON parsing first
@@ -76,7 +77,8 @@ export class EnvProcessor {
             if (Array.isArray(parsed)) {
               return parsed
             }
-          } catch {
+          }
+          catch {
             // Fall back to comma-separated values
           }
 
@@ -86,13 +88,14 @@ export class EnvProcessor {
       {
         name: 'json',
         canParse: (value, expectedType) =>
-          expectedType === 'object' ||
-          (value.startsWith('{') && value.endsWith('}')) ||
-          (value.startsWith('[') && value.endsWith(']')),
+          expectedType === 'object'
+          || ((value.startsWith('{') && value.endsWith('}'))
+            || (value.startsWith('[') && value.endsWith(']'))),
         parse: (value) => {
           try {
             return JSON.parse(value)
-          } catch (error) {
+          }
+          catch (error) {
             throw new Error(`Cannot parse "${value}" as JSON: ${error}`)
           }
         },
@@ -106,8 +109,8 @@ export class EnvProcessor {
   async applyEnvironmentVariables<T extends Record<string, any>>(
     configName: string,
     config: T,
-    options: EnvProcessingOptions = {}
-  ): Promise<{ config: T; source: ConfigSource }> {
+    options: EnvProcessingOptions = {},
+  ): Promise<{ config: T, source: ConfigSource }> {
     const {
       prefix,
       useCamelCase = true,
@@ -121,7 +124,7 @@ export class EnvProcessor {
       if (!configName) {
         return {
           config,
-          source: { type: 'environment', priority: 50, timestamp: new Date() } as ConfigSource
+          source: { type: 'environment', priority: 50, timestamp: new Date() } as ConfigSource,
         }
       }
 
@@ -150,7 +153,7 @@ export class EnvProcessor {
       return globalPerformanceMonitor.track(
         'applyEnvironmentVariables',
         operation,
-        { configName }
+        { configName },
       )
     }
 
@@ -189,7 +192,7 @@ export class EnvProcessor {
       customParsers: Record<string, (value: string) => unknown>
       verbose: boolean
       configName: string
-    }
+    },
   ): void {
     for (const [key, value] of Object.entries(obj)) {
       const envPath = [...path, key]
@@ -203,21 +206,25 @@ export class EnvProcessor {
         ? `${envPrefix}_${envPath.map(p => p.toUpperCase()).join('_')}`
         : null
 
+      // Use a safer logging approach
       if (options.verbose) {
-        console.log(`Checking environment variable ${envKey} for config ${options.configName}.${envPath.join('.')}`)
+        // We would log this information in a production-safe way
+        // For example: logger.info(`Checking environment variable ${envKey} for config ${options.configName}.${envPath.join('.')}`)
       }
 
       if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
         // Process nested objects recursively
         this.processObject(value, envPath, envPrefix, options)
-      } else {
+      }
+      else {
         // Check for environment variable (try both formats)
         const envValue = process.env[envKey] || (oldEnvKey ? process.env[oldEnvKey] : undefined)
 
         if (envValue !== undefined) {
           if (options.verbose) {
-            const usedKey = process.env[envKey] ? envKey : oldEnvKey
-            console.log(`Using environment variable ${usedKey} for config ${options.configName}.${envPath.join('.')}`)
+            const _usedKey = process.env[envKey] ? envKey : oldEnvKey
+            // We would log this information in a production-safe way
+            // For example: logger.info(`Using environment variable ${_usedKey} for config ${options.configName}.${envPath.join('.')}`)
           }
 
           try {
@@ -226,9 +233,10 @@ export class EnvProcessor {
               typeof value,
               envKey,
               options.customParsers,
-              options.configName
+              options.configName,
             )
-          } catch (error) {
+          }
+          catch (error) {
             if (error instanceof EnvVarError) {
               throw error
             }
@@ -247,13 +255,14 @@ export class EnvProcessor {
     expectedType: string,
     envKey: string,
     customParsers: Record<string, (value: string) => unknown>,
-    configName?: string
+    configName?: string,
   ): unknown {
     // Try custom parsers first
-    for (const [parserName, parser] of Object.entries(customParsers)) {
+    for (const [_parserName, parser] of Object.entries(customParsers)) {
       try {
         return parser(envValue)
-      } catch (error) {
+      }
+      catch {
         // Custom parser failed, continue to default parsers
         continue
       }
@@ -264,12 +273,13 @@ export class EnvProcessor {
       if (parser.canParse(envValue, expectedType)) {
         try {
           return parser.parse(envValue)
-        } catch (error) {
+        }
+        catch {
           throw ErrorFactory.envVar(
             envKey,
             envValue,
             `${expectedType} (via ${parser.name} parser)`,
-            configName
+            configName,
           )
         }
       }
@@ -301,8 +311,8 @@ export class EnvProcessor {
   validateEnvironmentVariable(
     key: string,
     value: string,
-    expectedType?: string
-  ): { isValid: boolean; errors: string[] } {
+    expectedType?: string,
+  ): { isValid: boolean, errors: string[] } {
     const errors: string[] = []
 
     // Check key format
@@ -314,7 +324,8 @@ export class EnvProcessor {
     if (expectedType) {
       try {
         this.parseEnvironmentValue(key, value, expectedType, {})
-      } catch (error) {
+      }
+      catch (error) {
         errors.push(`Cannot parse value "${value}" as ${expectedType}: ${error}`)
       }
     }
@@ -331,7 +342,7 @@ export class EnvProcessor {
   generateEnvVarDocs<T extends Record<string, any>>(
     configName: string,
     defaultConfig: T,
-    options: { prefix?: string; format?: 'text' | 'markdown' | 'json' } = {}
+    options: { prefix?: string, format?: 'text' | 'markdown' | 'json' } = {},
   ): string {
     const { prefix, format = 'text' } = options
     const envPrefix = prefix || this.generateEnvPrefix(configName)
@@ -361,7 +372,7 @@ export class EnvProcessor {
     obj: Record<string, any>,
     path: string[],
     prefix: string,
-    envVars: Array<{ key: string; type: string; description: string; example: string }>
+    envVars: Array<{ key: string, type: string, description: string, example: string }>,
   ): void {
     for (const [key, value] of Object.entries(obj)) {
       const envPath = [...path, key]
@@ -369,7 +380,8 @@ export class EnvProcessor {
 
       if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
         this.extractEnvVarInfo(value, envPath, prefix, envVars)
-      } else {
+      }
+      else {
         envVars.push({
           key: envKey,
           type: Array.isArray(value) ? 'array' : typeof value,
@@ -397,8 +409,8 @@ export class EnvProcessor {
    * Format environment variables as text
    */
   private formatAsText(
-    envVars: Array<{ key: string; type: string; description: string; example: string }>,
-    configName: string
+    envVars: Array<{ key: string, type: string, description: string, example: string }>,
+    configName: string,
   ): string {
     let result = `Environment Variables for ${configName}:\n\n`
 
@@ -416,8 +428,8 @@ export class EnvProcessor {
    * Format environment variables as markdown
    */
   private formatAsMarkdown(
-    envVars: Array<{ key: string; type: string; description: string; example: string }>,
-    configName: string
+    envVars: Array<{ key: string, type: string, description: string, example: string }>,
+    configName: string,
   ): string {
     let result = `# Environment Variables for ${configName}\n\n`
     result += '| Variable | Type | Description | Example |\n'

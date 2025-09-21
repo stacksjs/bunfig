@@ -1,7 +1,6 @@
-import type { ConfigSource } from '../types'
-import { ConfigValidationError, SchemaValidationError, ErrorFactory } from '../errors'
-import { globalPerformanceMonitor } from '../cache'
 import { existsSync } from 'node:fs'
+import { globalPerformanceMonitor } from '../cache'
+import { SchemaValidationError } from '../errors'
 
 /**
  * Validation rule for configuration properties
@@ -103,7 +102,7 @@ export class ConfigValidator {
   async validateConfiguration<T>(
     config: T,
     schema: string | JSONSchema | ValidationRule[],
-    options: ValidationOptions = {}
+    options: ValidationOptions = {},
   ): Promise<ValidationResult> {
     const {
       stopOnFirstError = false,
@@ -125,21 +124,24 @@ export class ConfigValidator {
         validateTypes,
         customRules,
         trackPerformance,
-        verbose
+        verbose,
       }
 
       try {
         if (typeof schema === 'string') {
           // Load schema from file
           return await this.validateWithSchemaFile(config, schema, resolvedOptions)
-        } else if (Array.isArray(schema)) {
+        }
+        else if (Array.isArray(schema)) {
           // Validate with custom rules
           return this.validateWithRules(config, [...schema, ...customRules], resolvedOptions)
-        } else {
+        }
+        else {
           // Validate with JSON schema
           return this.validateWithJSONSchema(config, schema, resolvedOptions)
         }
-      } catch (error) {
+      }
+      catch (error) {
         errors.push({
           path: '',
           message: `Validation failed: ${error}`,
@@ -153,7 +155,7 @@ export class ConfigValidator {
     if (trackPerformance) {
       const result = await globalPerformanceMonitor.track(
         'validateConfiguration',
-        operation
+        operation,
       )
       return result
     }
@@ -167,13 +169,13 @@ export class ConfigValidator {
   private async validateWithSchemaFile<T>(
     config: T,
     schemaPath: string,
-    options: ValidationOptions
+    options: ValidationOptions,
   ): Promise<ValidationResult> {
     try {
       if (!existsSync(schemaPath)) {
         throw new SchemaValidationError(
           schemaPath,
-          [{ path: '', message: 'Schema file does not exist' }]
+          [{ path: '', message: 'Schema file does not exist' }],
         )
       }
 
@@ -182,13 +184,15 @@ export class ConfigValidator {
 
       if (Array.isArray(schema)) {
         return this.validateWithRules(config, schema, options)
-      } else {
+      }
+      else {
         return this.validateWithJSONSchema(config, schema, options)
       }
-    } catch (error) {
+    }
+    catch (error) {
       throw new SchemaValidationError(
         schemaPath,
-        [{ path: '', message: `Failed to load schema: ${error}` }]
+        [{ path: '', message: `Failed to load schema: ${error}` }],
       )
     }
   }
@@ -199,7 +203,7 @@ export class ConfigValidator {
   private validateWithJSONSchema<T>(
     config: T,
     schema: JSONSchema,
-    options: ValidationOptions
+    options: ValidationOptions,
   ): ValidationResult {
     const errors: ValidationError[] = []
     const warnings: ValidationError[] = []
@@ -222,7 +226,7 @@ export class ConfigValidator {
     path: string,
     errors: ValidationError[],
     warnings: ValidationError[],
-    options: ValidationOptions
+    options: ValidationOptions,
   ): void {
     // Type validation
     if (options.validateTypes && schema.type) {
@@ -238,7 +242,8 @@ export class ConfigValidator {
           rule: 'type',
         })
 
-        if (options.stopOnFirstError) return
+        if (options.stopOnFirstError)
+          return
       }
     }
 
@@ -252,7 +257,8 @@ export class ConfigValidator {
         rule: 'enum',
       })
 
-      if (options.stopOnFirstError) return
+      if (options.stopOnFirstError)
+        return
     }
 
     // String validations
@@ -324,10 +330,11 @@ export class ConfigValidator {
           itemPath,
           errors,
           warnings,
-          options
+          options,
         )
 
-        if (options.stopOnFirstError && errors.length > 0) return
+        if (options.stopOnFirstError && errors.length > 0)
+          return
       }
     }
 
@@ -346,7 +353,8 @@ export class ConfigValidator {
               rule: 'required',
             })
 
-            if (options.stopOnFirstError) return
+            if (options.stopOnFirstError)
+              return
           }
         }
       }
@@ -362,10 +370,11 @@ export class ConfigValidator {
               propPath,
               errors,
               warnings,
-              options
+              options,
             )
 
-            if (options.stopOnFirstError && errors.length > 0) return
+            if (options.stopOnFirstError && errors.length > 0)
+              return
           }
         }
       }
@@ -392,7 +401,7 @@ export class ConfigValidator {
   private validateWithRules<T>(
     config: T,
     rules: ValidationRule[],
-    options: ValidationOptions
+    options: ValidationOptions,
   ): ValidationResult {
     const errors: ValidationError[] = []
     const warnings: ValidationError[] = []
@@ -407,7 +416,8 @@ export class ConfigValidator {
         if (options.stopOnFirstError && errors.length > 0) {
           break
         }
-      } catch (error) {
+      }
+      catch (error) {
         errors.push({
           path: rule.path,
           message: `Rule validation failed: ${error}`,
@@ -461,9 +471,11 @@ export class ConfigValidator {
 
     // Min/Max validation
     if (rule.min !== undefined) {
-      const length = Array.isArray(value) ? value.length :
-                   typeof value === 'string' ? value.length :
-                   typeof value === 'number' ? value : 0
+      const length = Array.isArray(value)
+        ? value.length
+        : typeof value === 'string'
+          ? value.length
+          : typeof value === 'number' ? value : 0
 
       if (length < rule.min) {
         errors.push({
@@ -477,9 +489,11 @@ export class ConfigValidator {
     }
 
     if (rule.max !== undefined) {
-      const length = Array.isArray(value) ? value.length :
-                   typeof value === 'string' ? value.length :
-                   typeof value === 'number' ? value : 0
+      const length = Array.isArray(value)
+        ? value.length
+        : typeof value === 'string'
+          ? value.length
+          : typeof value === 'number' ? value : 0
 
       if (length > rule.max) {
         errors.push({
@@ -535,7 +549,8 @@ export class ConfigValidator {
    * Get value by dot notation path
    */
   private getValueByPath(obj: unknown, path: string): unknown {
-    if (!path) return obj
+    if (!path)
+      return obj
 
     const keys = path.split('.')
     let current = obj
@@ -543,7 +558,8 @@ export class ConfigValidator {
     for (const key of keys) {
       if (current && typeof current === 'object' && key in current) {
         current = (current as Record<string, unknown>)[key]
-      } else {
+      }
+      else {
         return undefined
       }
     }

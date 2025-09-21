@@ -173,7 +173,7 @@ const rules = [
     required: true,
     type: 'string' as const,
     min: 1,
-    pattern: /^[a-zA-Z0-9.-]+$/,
+    pattern: /^[a-z0-9.-]+$/i,
     message: 'Host must contain only letters, numbers, dots, and hyphens'
   },
   {
@@ -236,7 +236,7 @@ interface ValidationRule {
 For complex validation logic, use custom validation functions:
 
 ```ts
-const customValidator = (config: any) => {
+function customValidator(config: any) {
   const errors: string[] = []
 
   // Business logic validation
@@ -423,12 +423,13 @@ try {
     defaultConfig: {},
     schema: validationRules
   })
-} catch (error) {
+}
+catch (error) {
   if (error instanceof ValidationError) {
     console.log(`Validation failed for ${error.context.configName}`)
     console.log(`Total errors: ${error.context.errors.length}`)
 
-    error.context.errors.forEach(err => {
+    error.context.errors.forEach((err) => {
       console.log(`- ${err.path}: ${err.message}`)
       console.log(`  Expected: ${err.expected}`)
       console.log(`  Actual: ${err.actual}`)
@@ -444,11 +445,11 @@ Validation errors include comprehensive context:
 
 ```ts
 interface ValidationError {
-  path: string        // Property path where error occurred
-  message: string     // Human-readable error message
-  expected?: string   // Expected value or type
-  actual?: unknown    // Actual value that failed
-  rule?: string       // Validation rule that failed
+  path: string // Property path where error occurred
+  message: string // Human-readable error message
+  expected?: string // Expected value or type
+  actual?: unknown // Actual value that failed
+  rule?: string // Validation rule that failed
 }
 ```
 
@@ -596,7 +597,8 @@ async function loadConfigWithFallback(name: string, fallbackConfig: any) {
       defaultConfig: {},
       schema: validationSchema
     })
-  } catch (error) {
+  }
+  catch (error) {
     if (error instanceof ValidationError) {
       console.warn(`Validation failed for ${name}, using fallback config`)
       console.warn('Validation errors:', error.context.errors)

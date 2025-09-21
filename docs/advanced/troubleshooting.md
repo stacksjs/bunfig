@@ -41,8 +41,8 @@ Error: Configuration 'app' not found
 
 4. **Use absolute paths for debugging**:
    ```ts
+   import { resolve } from 'node:path'
    import { loadConfig } from 'bunfig'
-   import { resolve } from 'path'
 
    const config = await loadConfig({
      name: 'app',
@@ -141,8 +141,8 @@ Property 'port' is missing in type
    ```ts
    // ✅ Safe type assertion with validation
    const port = Number(process.env.PORT)
-   if (isNaN(port)) {
-     throw new Error('PORT must be a valid number')
+   if (Number.isNaN(port)) {
+     throw new TypeError('PORT must be a valid number')
    }
 
    const config = {
@@ -212,9 +212,9 @@ Property 'port' is missing in type
 
 3. **Test home directory loading**:
    ```ts
+   import { homedir } from 'node:os'
+   import { join } from 'node:path'
    import { loadConfig } from 'bunfig'
-   import { homedir } from 'os'
-   import { join } from 'path'
 
    // Debug home directory
    console.log('Home directory:', homedir())
@@ -324,7 +324,8 @@ async function testConfig() {
     })
 
     console.log('✅ Configuration loaded successfully:', config)
-  } catch (error) {
+  }
+  catch (error) {
     console.error('❌ Configuration loading failed:', error)
 
     // Additional debugging
@@ -341,8 +342,8 @@ testConfig()
 ### File System Debugging
 
 ```ts
-import { existsSync, readFileSync } from 'fs'
-import { resolve } from 'path'
+import { existsSync, readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 function debugFileSystem(configName: string) {
   const paths = [
@@ -362,7 +363,8 @@ function debugFileSystem(configName: string) {
       try {
         const content = readFileSync(fullPath, 'utf8')
         console.log(`    Size: ${content.length} bytes`)
-      } catch (error) {
+      }
+      catch (error) {
         console.log(`    Error reading: ${error.message}`)
       }
     }
@@ -426,7 +428,7 @@ debugFileSystem('app')
 
 **Debugging**:
 ```ts
-import { performance } from 'perf_hooks'
+import { performance } from 'node:perf_hooks'
 
 const start = performance.now()
 const config = await loadConfig({
@@ -455,7 +457,7 @@ if (end - start > 100) {
 
 **Debugging**:
 ```ts
-import { memoryUsage } from 'process'
+import { memoryUsage } from 'node:process'
 
 function logMemoryUsage(label: string) {
   const usage = memoryUsage()
@@ -558,7 +560,7 @@ const config = await loadConfig({
   name: 'app',
   endpoint: '/api/config',
   timeout: 5000, // 5 second timeout
-  retries: 3,    // Retry failed requests
+  retries: 3, // Retry failed requests
   defaultConfig: {
     // Fallback configuration
     port: 3000,

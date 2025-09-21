@@ -1,7 +1,7 @@
-import { describe, expect, it, beforeEach, afterEach } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { loadConfigWithResult, ConfigLoader, ErrorFactory, globalCache, globalPerformanceMonitor } from '../src'
+import { ConfigLoader, ErrorFactory, globalCache, globalPerformanceMonitor, loadConfigWithResult } from '../src'
 
 describe('Enhanced Configuration Loading', () => {
   const testDir = resolve(process.cwd(), 'test-enhanced')
@@ -115,7 +115,7 @@ describe('Enhanced Configuration Loading', () => {
           cwd: testDir,
           defaultConfig: { port: 8080, host: 'default' },
           schema,
-        })
+        }),
       ).rejects.toThrow()
     })
 
@@ -165,7 +165,7 @@ describe('Enhanced Configuration Loading', () => {
           cwd: testDir,
           defaultConfig: { apiKey: '', timeout: 3000 },
           validate: customValidator,
-        })
+        }),
       ).rejects.toThrow()
     })
 
@@ -215,7 +215,8 @@ describe('Enhanced Configuration Loading', () => {
         expect(error.context.configName).toBe('missing-config')
         expect(error.context.alias).toBe('alias')
         expect(error.context.searchPaths).toEqual(['/path1', '/path2'])
-      } catch (error) {
+      }
+      catch {
         // This should not throw in normal cases
         expect(true).toBe(false)
       }

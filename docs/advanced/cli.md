@@ -73,9 +73,9 @@ The generate command creates type-safe interfaces based on your configuration fi
 export type ConfigNames = 'app' | 'database' | 'auth'
 
 export interface ConfigByName {
-  'app': AppConfig
-  'database': DatabaseConfig
-  'auth': AuthConfig
+  app: AppConfig
+  database: DatabaseConfig
+  auth: AuthConfig
 }
 
 export interface AppConfig {
@@ -495,11 +495,11 @@ Use bunfig CLI programmatically:
 ```ts
 import { cli } from 'bunfig/cli'
 
-// Run CLI command programmatically
-await cli.run(['generate', '--config-dir', './config'])
-
 // Use individual commands
 import { generateCommand } from 'bunfig/cli/commands'
+
+// Run CLI command programmatically
+await cli.run(['generate', '--config-dir', './config'])
 
 await generateCommand.action({
   configDir: './config',
