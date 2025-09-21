@@ -8,24 +8,24 @@
 
 # Bunfig
 
-> Smart configuration loader for libraries, apps, and CLIs built utilizing Bun.
+> TypeScript-first configuration loader with automatic environment variable detection, validation, and zero dependencies.
 
 ## Features
 
-- 🔄 **Smart Config**: _intelligent configuration loading with multiple sources_
-- 🏠 **Home Directory Support**: _global configurations via `~/.config/$name/`_
-- 🌐 **Universal**: _optimized for both Bun & browser environments_
-- 🪶 **Lightweight**: _zero dependencies, built on native modules_
-- 💪 **Type-Safe**: _fully typed configurations with generated or dynamic type definitions_
-- 🌍 **Environment Variables**: _automatic environment variable support based on config name_
-- 🛠️ **CLI Tools**: _powerful & easy-to-use CLI_
-- 📦 **Flexible**: _supports multiple config file formats (.ts, .js, .mjs, .cjs, .json, .mts, .cts)_
-- 🔄 **Aliases**: _support for alternative configuration file names_
+- 🎯 **Zero Configuration Setup**: _Works instantly out of the box with intelligent defaults_
+- 🌍 **Environment Variable Magic**: _Automatically detects and merges environment variables with smart naming conventions_
+- 🔍 **TypeScript First**: _Full TypeScript support with intelligent type inference and autocompletion_
+- 📁 **Smart File Discovery**: _Finds configuration files anywhere - project root, home directory, or package.json_
+- ✅ **Bulletproof Validation**: _JSON Schema validation with detailed error reporting_
+- ⚡ **Lightning Fast**: _Zero dependencies, intelligent caching, optimized for Bun's performance_
+- 🏠 **XDG Standards Compliant**: _Global configurations via `~/.config/$name/` following XDG standards_
+- 🔄 **Hot Reload Ready**: _Watch for configuration changes and reload automatically_
+- 🛡️ **Production Ready**: _Comprehensive error handling, fallback strategies, and monitoring built-in_
 
 ## Install
 
 ```bash
-bun install -d bunfig
+bun add bunfig
 ```
 
 ## Get Started
