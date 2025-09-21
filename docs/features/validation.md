@@ -611,7 +611,7 @@ async function loadConfigWithFallback(name: string, fallbackConfig: any) {
 
 ## Related Features
 
-- [Enhanced Loading](./enhanced-loading.md) - Complete enhanced API
-- [Error Handling](./error-handling.md) - Structured error handling
+- [Configuration Loading](./configuration-loading.md) - Complete configuration loading API
+- [Error Handling](../api.md#error-handling) - Structured error handling
 - [Type Safety](./type-safety.md) - TypeScript integration
 - [Performance](../advanced/performance.md) - Performance optimization

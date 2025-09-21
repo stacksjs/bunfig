@@ -364,4 +364,4 @@ const config = await loadConfig<MyConfig>({
 
 - [Validation](./validation.md) - Detailed schema and custom validation
 - [Performance](../advanced/performance.md) - Performance optimization
-- [Error Handling](./error-handling.md) - Structured error handling
+- [Error Handling](../api.md#error-handling) - Structured error handling
