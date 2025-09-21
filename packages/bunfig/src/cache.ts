@@ -58,7 +58,10 @@ export class ConfigCache {
    * Check if cache entry is expired
    */
   private isExpired(entry: CacheEntry): boolean {
-    return Date.now() - entry.timestamp.getTime() > entry.ttl
+    const now = Date.now()
+    const age = now - entry.timestamp.getTime()
+    const expired = age > entry.ttl
+    return expired
   }
 
   /**
@@ -144,7 +147,6 @@ export class ConfigCache {
 
     // Update access statistics
     entry.hits++
-    entry.timestamp = new Date()
     this.totalHits++
 
     return entry.value as T

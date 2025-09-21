@@ -5,7 +5,7 @@ import process from 'node:process'
 import { applyEnvVarsToConfig, config, getEnvOrDefault, loadConfig } from '../src'
 
 describe('Environment Variable Configuration', () => {
-  const testConfigDir = resolve(process.cwd(), 'test/tmp/config')
+  const testConfigDir = resolve(process.cwd(), 'test/tmp/env-variables-config')
 
   // Store original environment
   const originalEnv = { ...process.env }
@@ -23,6 +23,12 @@ describe('Environment Variable Configuration', () => {
     // Cleanup test directories
     if (existsSync(testConfigDir))
       rmSync(testConfigDir, { recursive: true })
+
+    // Clean up all test environment variables - be comprehensive
+    Object.keys(process.env).forEach((key) => {
+      if (key.startsWith('TEST_APP_') || key.startsWith('COMPLEX_APP_') || key.startsWith('TEST_'))
+        delete process.env[key]
+    })
 
     // Restore original environment
     process.env = { ...originalEnv }

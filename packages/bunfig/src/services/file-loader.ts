@@ -13,6 +13,8 @@ export interface FileLoadOptions {
   arrayStrategy?: ArrayMergeStrategy
   /** Enable caching */
   useCache?: boolean
+  /** Cache TTL in milliseconds */
+  cacheTtl?: number
   /** Enable performance monitoring */
   trackPerformance?: boolean
   /** Verbose logging */
@@ -36,6 +38,7 @@ export class ConfigFileLoader {
     const {
       arrayStrategy = 'replace',
       useCache = true,
+      cacheTtl,
       trackPerformance = true,
       verbose = false
     } = options
@@ -60,7 +63,9 @@ export class ConfigFileLoader {
       }
 
       try {
-        const importedConfig = await import(configPath)
+        // Add cache busting for dynamic imports to ensure fresh file content
+        const cacheBuster = `?t=${Date.now()}`
+        const importedConfig = await import(configPath + cacheBuster)
         const loadedConfig = importedConfig.default || importedConfig
 
         // Check if the file is completely empty (no exports)
@@ -102,7 +107,7 @@ export class ConfigFileLoader {
 
         // Cache the result
         if (useCache) {
-          globalCache.setWithFileCheck('file', result, configPath)
+          globalCache.setWithFileCheck('file', result, configPath, cacheTtl)
         }
 
         return result
@@ -184,14 +189,14 @@ export class ConfigFileLoader {
     // Standard config file names (highest priority for ~/.config/$name/ directories)
     patterns.push('config', '.config')
 
-    // Primary name patterns (bare name has higher priority than .config suffix)
+    // Primary name patterns (.config suffix has higher priority than bare name for dotfiles)
     if (configName) {
-      patterns.push(configName, `.${configName}`, `${configName}.config`, `.${configName}.config`)
+      patterns.push(configName, `.${configName}.config`, `${configName}.config`, `.${configName}`)
     }
 
-    // Alias patterns (bare name has higher priority than .config suffix)
+    // Alias patterns (.config suffix has higher priority than bare name for dotfiles)
     if (alias) {
-      patterns.push(alias, `.${alias}`, `${alias}.config`, `.${alias}.config`)
+      patterns.push(alias, `.${alias}.config`, `${alias}.config`, `.${alias}`)
 
       // Combined patterns (primary.alias)
       if (configName) {

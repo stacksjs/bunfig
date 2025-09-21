@@ -5,8 +5,11 @@ import process from 'node:process'
 import { config, deepMerge, generateConfigTypes, loadConfig } from '../src'
 
 describe('bunfig', () => {
-  const testConfigDir = resolve(process.cwd(), 'test/tmp/config')
+  const testConfigDir = resolve(process.cwd(), 'test/tmp/bunfig-config')
   const testGeneratedDir = resolve(process.cwd(), 'test/tmp/generated')
+
+  // Store original environment to restore later
+  const originalEnv = { ...process.env }
 
   beforeEach(() => {
     // Clean up test directories
@@ -18,6 +21,10 @@ describe('bunfig', () => {
     // Create test directories
     mkdirSync(testConfigDir, { recursive: true })
     mkdirSync(testGeneratedDir, { recursive: true })
+
+    // Clean up environment variables from previous tests
+    delete process.env.TEST_APP_PORT
+    delete process.env.TEST_APP_HOST
   })
 
   afterEach(() => {
@@ -26,6 +33,9 @@ describe('bunfig', () => {
       rmSync(testConfigDir, { recursive: true })
     if (existsSync(testGeneratedDir))
       rmSync(testGeneratedDir, { recursive: true })
+
+    // Restore original environment
+    process.env = { ...originalEnv }
   })
 
   describe('loadConfig', () => {
@@ -619,15 +629,15 @@ describe('bunfig', () => {
       const packageJsonPath = resolve(testConfigDir, 'package.json')
       const packageJsonContent = JSON.stringify({
         name: 'test-package',
-        tlsx: null, // This should be ignored
-        tls: { domain: 'from-package.json' },
+        primary: null, // This should be ignored
+        secondary: { domain: 'from-package.json' },
       })
 
       writeFileSync(packageJsonPath, packageJsonContent)
 
       const result = await loadConfig({
-        name: 'tlsx',
-        alias: 'tls',
+        name: 'primary',
+        alias: 'secondary',
         cwd: testConfigDir,
         defaultConfig: { domain: 'default.com', port: 443 },
       })

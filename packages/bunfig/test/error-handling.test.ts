@@ -116,26 +116,23 @@ describe('Error Handling', () => {
     })
 
     it('should handle circular dependencies gracefully', async () => {
-      const config1Path = resolve(testDir, 'circular1.config.ts')
-      const config2Path = resolve(testDir, 'circular2.config.ts')
+      const configPath = resolve(testDir, 'circular.config.ts')
 
-      writeFileSync(config1Path, `
-        import('./circular2.config.ts')
-        export default { name: 'circular1' }
-      `)
-      writeFileSync(config2Path, `
-        import('./circular1.config.ts')
-        export default { name: 'circular2' }
+      // Create a config with circular object references
+      writeFileSync(configPath, `
+        const config = { name: 'circular' }
+        config.self = config
+        export default config
       `)
 
-      // This should not throw due to circular dependencies
+      // This should not throw due to circular object references
       const result = await loadConfigWithResult({
-        name: 'circular1',
+        name: 'circular',
         cwd: testDir,
         defaultConfig: { name: 'default' },
       })
 
-      expect(result.config.name).toBe('circular1')
+      expect(result.config.name).toBe('circular')
     })
   })
 

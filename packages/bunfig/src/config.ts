@@ -52,7 +52,7 @@ export class ConfigLoader {
       // Load configuration through multiple strategies
       let result: ConfigResult<T>
       try {
-        result = await this.loadConfigurationStrategies(baseOptions, true)
+        result = await this.loadConfigurationStrategies(baseOptions, true, cache)
       } catch (error) {
         // Handle ConfigLoadError gracefully by falling back to defaults
         if (error instanceof Error && error.name === 'ConfigLoadError') {
@@ -65,7 +65,8 @@ export class ConfigLoader {
                                error.message.includes('syntax') ||
                                error.message.includes('Expected') ||
                                error.message.includes('Unexpected') ||
-                               error.message.includes('BuildMessage')
+                               error.message.includes('BuildMessage') ||
+                               error.message.includes('errors building')
                                )
 
           // Check if this is strict error handling mode (enhanced API)
@@ -102,7 +103,7 @@ export class ConfigLoader {
 
       // Cache the result if caching is enabled
       if (cache?.enabled && result) {
-        this.cacheResult(baseOptions.name || '', result, cache)
+        this.cacheResult(baseOptions.name || '', result, cache, baseOptions)
       }
 
       // Record performance metrics
@@ -136,7 +137,7 @@ export class ConfigLoader {
   /**
    * Load configuration using multiple strategies in priority order
    */
-  private async loadConfigurationStrategies<T>(options: Config<T>, throwOnNotFound = false): Promise<ConfigResult<T>> {
+  private async loadConfigurationStrategies<T>(options: Config<T>, throwOnNotFound = false, cacheOptions?: NonNullable<EnhancedConfig<T>['cache']>): Promise<ConfigResult<T>> {
     const {
       name = '',
       alias,
@@ -160,7 +161,8 @@ export class ConfigLoader {
       defaultConfig,
       arrayStrategy,
       verbose,
-      checkEnv
+      checkEnv,
+      cacheOptions
     )
 
     if (localResult) {
@@ -230,7 +232,8 @@ export class ConfigLoader {
     defaultConfig: T,
     arrayStrategy: ArrayMergeStrategy,
     verbose: boolean,
-    checkEnv: boolean
+    checkEnv: boolean,
+    cacheOptions?: NonNullable<EnhancedConfig<T>['cache']>
   ): Promise<{ config: T; source: ConfigSource } | null> {
     // Apply environment variables to default config before merging with file config
     // This ensures file config has higher priority than environment variables
@@ -249,7 +252,12 @@ export class ConfigLoader {
       const result = await this.fileLoader.tryLoadFromPaths(
         configPaths,
         envDefaultConfig,
-        { arrayStrategy, verbose }
+        {
+          arrayStrategy,
+          verbose,
+          cacheTtl: cacheOptions?.ttl,
+          useCache: !cacheOptions?.ttl || cacheOptions.ttl > 100 // Disable file cache for very short TTL
+        }
       )
 
       if (result) {
@@ -414,6 +422,8 @@ export class ConfigLoader {
   ): Promise<ConfigResult<T>> {
     // Environment variables should be applied before file config merging
     // to ensure file configs have higher priority
+    // The result already contains the file config merged with defaults,
+    // so we don't need to apply env vars again as they would override file config
     return {
       config: result.config,
       source: result.source,
@@ -464,7 +474,8 @@ export class ConfigLoader {
    */
   private checkCache<T>(configName: string, options: Config<T>): ConfigResult<T> | null {
     const cacheKey = this.generateCacheKey(configName, options)
-    return globalCache.get<ConfigResult<T>>(cacheKey)
+    const result = globalCache.get<ConfigResult<T>>(cacheKey)
+    return result
   }
 
   /**
@@ -473,9 +484,10 @@ export class ConfigLoader {
   private cacheResult<T>(
     configName: string,
     result: ConfigResult<T>,
-    cacheOptions: NonNullable<EnhancedConfig<T>['cache']>
+    cacheOptions: NonNullable<EnhancedConfig<T>['cache']>,
+    options: Config<T>
   ): void {
-    const cacheKey = this.generateCacheKey(configName, {})
+    const cacheKey = this.generateCacheKey(configName, options)
     globalCache.set(cacheKey, result, undefined, cacheOptions.ttl)
   }
 
@@ -698,6 +710,7 @@ export async function config<T>(
   try {
     const result = await globalConfigLoader.loadConfig({
       ...nameOrOptions,
+      cwd: nameOrOptions.cwd || process.cwd(),
       cache: { enabled: true },
       performance: { enabled: false },
     })

@@ -1,14 +1,20 @@
-import { describe, expect, it } from 'bun:test'
+import { afterEach, describe, expect, it } from 'bun:test'
 import process from 'node:process'
 import { applyEnvVarsToConfig } from '../src'
 
 describe('applyEnvVarsToConfig unit test', () => {
   const originalEnv = { ...process.env }
 
-  it('should apply basic environment variables', () => {
-    // Clean environment for this test
-    process.env = {}
+  afterEach(() => {
+    // Clean up test environment variables
+    delete process.env.TEST_APP_PORT
+    delete process.env.TEST_APP_HOST
 
+    // Restore original environment
+    process.env = { ...originalEnv }
+  })
+
+  it('should apply basic environment variables', () => {
     // Set environment variables
     process.env.TEST_APP_PORT = '8080'
     process.env.TEST_APP_HOST = 'env-host'
@@ -30,8 +36,5 @@ describe('applyEnvVarsToConfig unit test', () => {
       port: 8080,
       host: 'env-host',
     })
-
-    // Restore original environment
-    process.env = { ...originalEnv }
   })
 })

@@ -67,6 +67,17 @@ export function deepMerge<T, S>(
         ? SimplifyDeep<DeepMerge<T, S>>
         : T
     : T {
+  // Initialize circular reference tracking if not already done
+  const visited = new WeakMap()
+  return deepMergeWithVisited(target, source, options, visited) as any
+}
+
+function deepMergeWithVisited<T, S>(
+  target: T,
+  source: S,
+  options: DeepMergeOptions,
+  visited: WeakMap<object, any>
+): any {
   const {
     arrayMergeMode = 'replace', // Default: simple replacement behavior
     skipNullish = false, // Default: allow null/undefined to override
@@ -88,7 +99,7 @@ export function deepMerge<T, S>(
 
   // Handle arrays
   if (Array.isArray(source) || Array.isArray(target)) {
-    return mergeArrays(target, source, arrayMergeMode) as any
+    return mergeArraysWithVisited(target, source, arrayMergeMode, visited) as any
   }
 
   // Handle non-objects (primitives)
@@ -96,14 +107,19 @@ export function deepMerge<T, S>(
     return source as any
   }
 
-  // Handle objects
-  return mergeObjects(target, source, options) as any
+  // Handle objects with circular reference detection
+  return mergeObjectsWithVisited(target, source, options, visited) as any
 }
 
 /**
  * Merge arrays based on the specified strategy
  */
 function mergeArrays<T, S>(target: T, source: S, mode: ArrayMergeMode): T | S | unknown[] {
+  const visited = new WeakMap()
+  return mergeArraysWithVisited(target, source, mode, visited)
+}
+
+function mergeArraysWithVisited<T, S>(target: T, source: S, mode: ArrayMergeMode, visited: WeakMap<object, any>): T | S | unknown[] {
   // If types differ, source takes precedence
   if (Array.isArray(source) && !Array.isArray(target)) {
     return source
@@ -122,7 +138,7 @@ function mergeArrays<T, S>(target: T, source: S, mode: ArrayMergeMode): T | S | 
         return concatArraysWithDedup(target, source)
 
       case 'smart':
-        return smartMergeArrays(target, source)
+        return smartMergeArraysWithVisited(target, source, visited)
 
       default:
         return source
@@ -151,12 +167,17 @@ function concatArraysWithDedup<T extends unknown[]>(target: T, source: T): T {
  * Smart array merging - handles objects with keys and primitive arrays differently
  */
 function smartMergeArrays<T extends unknown[]>(target: T, source: T): T {
+  const visited = new WeakMap()
+  return smartMergeArraysWithVisited(target, source, visited)
+}
+
+function smartMergeArraysWithVisited<T extends unknown[]>(target: T, source: T, visited: WeakMap<object, any>): T {
   if (source.length === 0) return target
   if (target.length === 0) return source
 
   // For arrays of objects, merge by key and add missing items
   if (isObject(source[0]) && isObject(target[0])) {
-    return mergeObjectArrays(target, source) as T
+    return mergeObjectArraysWithVisited(target, source, visited) as T
   }
 
   // For primitive arrays, concatenate with deduplication (only for string arrays)
@@ -212,12 +233,66 @@ function mergeObjectArrays<T extends Record<string, unknown>[]>(target: T, sourc
   return result as T
 }
 
+function mergeObjectArraysWithVisited<T extends Record<string, unknown>[]>(target: T, source: T, visited: WeakMap<object, any>): T {
+  const result = [...source]
+
+  for (const targetItem of target) {
+    if (!isObject(targetItem)) {
+      result.push(targetItem)
+      continue
+    }
+
+    // Try to find matching item by common identifier keys
+    const identifierKeys = ['id', 'name', 'key', 'path', 'type']
+    let hasMatch = false
+
+    for (const key of identifierKeys) {
+      if (key in targetItem) {
+        const existingItem = result.find(item =>
+          isObject(item) && key in item && item[key] === targetItem[key]
+        )
+        if (existingItem) {
+          hasMatch = true
+          break
+        }
+      }
+    }
+
+    // If no matching item found by any identifier, add the target item
+    if (!hasMatch) {
+      result.push(targetItem)
+    }
+    // If matching item found, source takes precedence (already in result)
+  }
+
+  return result as T
+}
+
 /**
  * Merge objects recursively
  */
 function mergeObjects<T, S>(target: T, source: S, options: DeepMergeOptions): Record<string, unknown> {
-  const merged = { ...target } as Record<string, unknown>
+  const visited = new WeakMap()
+  return mergeObjectsWithVisited(target, source, options, visited)
+}
+
+/**
+ * Merge objects recursively with circular reference detection
+ */
+function mergeObjectsWithVisited<T, S>(target: T, source: S, options: DeepMergeOptions, visited: WeakMap<object, any>): Record<string, unknown> {
   const sourceObj = source as Record<string, unknown>
+
+  // Check for circular reference in source
+  if (isObject(sourceObj) && visited.has(sourceObj)) {
+    return visited.get(sourceObj)
+  }
+
+  const merged = { ...target } as Record<string, unknown>
+
+  // Mark source as visited
+  if (isObject(sourceObj)) {
+    visited.set(sourceObj, merged)
+  }
 
   for (const key in sourceObj) {
     if (!Object.prototype.hasOwnProperty.call(sourceObj, key)) {
@@ -240,11 +315,11 @@ function mergeObjects<T, S>(target: T, source: S, options: DeepMergeOptions): Re
 
     // Recursively merge nested objects
     if (isObject(sourceValue) && isObject(targetValue)) {
-      merged[key] = deepMerge(targetValue, sourceValue, options)
+      merged[key] = deepMergeWithVisited(targetValue, sourceValue, options, visited)
     }
     // Handle arrays
     else if (Array.isArray(sourceValue) || Array.isArray(targetValue)) {
-      merged[key] = mergeArrays(targetValue, sourceValue, options.arrayMergeMode || 'smart')
+      merged[key] = mergeArraysWithVisited(targetValue, sourceValue, options.arrayMergeMode || 'smart', visited)
     }
     // Primitive values override
     else {
