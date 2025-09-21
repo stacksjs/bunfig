@@ -66,20 +66,20 @@ console.log(`Server starting on ${server.host}:${server.port}`)
 
 <div class="feature-comparison">
 
-| Feature | bunfig | c12 | node-config | cosmiconfig | rc |
-|---------|--------|-----|-------------|-------------|-----|
-| TypeScript First | ✅ | ⚠️ | ❌ | ⚠️ | ❌ |
-| Zero Dependencies | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Auto Env Vars | ✅ | ✅ | ⚠️ | ❌ | ⚠️ |
-| Built-in Validation | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Multiple Sources | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Home Directory (~/.config) | ✅ | ✅ | ❌ | ⚠️ | ⚠️ |
-| Hot Reload | ✅ | ⚠️ | ❌ | ❌ | ❌ |
-| Error Recovery | ✅ | ❌ | ⚠️ | ❌ | ❌ |
-| Performance Caching | ✅ | ❌ | ⚠️ | ❌ | ❌ |
-| Smart Type Conversion | ✅ | ⚠️ | ⚠️ | ❌ | ❌ |
-| Package.json Support | ✅ | ✅ | ❌ | ✅ | ✅ |
-| Bun Optimized | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
+| Feature | bunfig | c12 | dotenv | node-config | cosmiconfig | rc |
+|---------|--------|-----|--------|-------------|-------------|-----|
+| TypeScript First | ✅ | ⚠️ | ❌ | ❌ | ⚠️ | ❌ |
+| Zero Dependencies | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| Auto Env Vars | ✅ | ✅ | ⚠️ | ⚠️ | ❌ | ⚠️ |
+| Built-in Validation | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Multiple Sources | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Home Directory (~/.config) | ✅ | ✅ | ❌ | ❌ | ⚠️ | ⚠️ |
+| Hot Reload | ✅ | ⚠️ | ❌ | ❌ | ❌ | ❌ |
+| Error Recovery | ✅ | ❌ | ❌ | ⚠️ | ❌ | ❌ |
+| Performance Caching | ✅ | ❌ | ❌ | ⚠️ | ❌ | ❌ |
+| Smart Type Conversion | ✅ | ⚠️ | ❌ | ⚠️ | ❌ | ❌ |
+| Package.json Support | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| Bun Optimized | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
 
 </div>
 
