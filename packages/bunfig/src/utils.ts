@@ -127,10 +127,10 @@ function mergeArraysWithVisited<T, S>(target: T, source: S, mode: ArrayMergeMode
         return source
 
       case 'concat':
-        return concatArraysWithDedup(target, source)
+        return concatArraysWithDedup(target as any, source as any)
 
       case 'smart':
-        return smartMergeArraysWithVisited(target, source, visited)
+        return smartMergeArraysWithVisited(target as any, source as any, visited)
 
       default:
         return source
@@ -163,7 +163,7 @@ function smartMergeArraysWithVisited<T extends unknown[]>(target: T, source: T, 
 
   // For arrays of objects, merge by key and add missing items
   if (isObject(source[0]) && isObject(target[0])) {
-    return mergeObjectArraysWithVisited(target, source, visited) as T
+    return mergeObjectArraysWithVisited(target as any, source as any, visited) as T
   }
 
   // For primitive arrays, concatenate with deduplication (only for string arrays)
