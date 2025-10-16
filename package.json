@@ -75,14 +75,11 @@
     "zip:darwin-x64": "zip -j bin/bunfig-darwin-x64.zip bin/bunfig-darwin-x64",
     "zip:darwin-arm64": "zip -j bin/bunfig-darwin-arm64.zip bin/bunfig-darwin-arm64"
   },
-  "dependencies": {
-    "cac": "^6.7.14"
-  },
   "devDependencies": {
     "@happy-dom/global-registrator": "^18.0.1",
     "@stacksjs/docs": "^0.70.23",
     "@stacksjs/eslint-config": "^4.14.0-beta.3",
-    "better-dx": "^0.1.4"
+    "better-dx": "^0.1.5"
   },
   "overrides": {
     "unconfig": "0.3.10"
