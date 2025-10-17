@@ -1,11 +1,11 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
-import { CAC } from 'cac'
+import { CLI } from '@stacksjs/clapp'
 import { version } from '../package.json'
 import { config, defaultConfigDir, defaultGeneratedDir, generateConfigTypes } from '../src/config'
 
-const cli = new CAC('bunfig')
+const cli = new CLI('bunfig')
 
 // Define CLI options interface to match our core types
 interface CLIOptions {

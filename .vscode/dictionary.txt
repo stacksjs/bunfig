@@ -7,6 +7,7 @@ bunfig
 bunx
 changelogen
 changelogithub
+clapp
 codecov
 commitlint
 commitlintrc
