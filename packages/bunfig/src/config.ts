@@ -386,7 +386,7 @@ export class ConfigLoader {
   /**
    * Apply environment variables to configuration
    */
-  private async applyEnvironmentVariables<T>(
+  public async applyEnvironmentVariables<T>(
     name: string,
     config: T,
     checkEnv: boolean,
@@ -457,7 +457,7 @@ export class ConfigLoader {
 
     // Schema validation
     if (schema) {
-      const validationResult = await this.validator.validateConfiguration(config, schema)
+      const validationResult = await this.validator.validateConfiguration(config, schema as any)
       if (!validationResult.isValid) {
         errors.push(...validationResult.errors.map(e =>
           e.path ? `${e.path}: ${e.message}` : e.message,
@@ -480,7 +480,7 @@ export class ConfigLoader {
   private checkCache<T>(configName: string, options: Config<T>): ConfigResult<T> | null {
     const cacheKey = this.generateCacheKey(configName, options)
     const result = globalCache.get<ConfigResult<T>>(cacheKey)
-    return result
+    return result || null
   }
 
   /**
