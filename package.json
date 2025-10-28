@@ -1,7 +1,7 @@
 {
   "name": "bunfig",
   "type": "module",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "private": true,
   "description": "A smart & fully-typed configuration loader for Bun.",
   "author": "Chris Breuer <chris@stacksjs.org>",
@@ -62,7 +62,7 @@
     "lint:fix": "bunx --bun eslint . --fix",
     "changelog": "bunx logsmith --verbose",
     "changelog:generate": "bunx logsmith --output CHANGELOG.md",
-    "release": "bun run changelog:generate && bunx bumpx prompt --recursive",
+    "release": "bun run changelog:generate && bunx --bun bumpx prompt --recursive",
     "dev:docs": "bun --bun vitepress dev docs",
     "build:docs": "bun --bun vitepress build docs",
     "preview:docs": "bun --bun vitepress preview docs",

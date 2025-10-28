@@ -1,3 +1,21 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.0...v0.15.1)
+
+### Contributors
+
+- Chris <chrisbreuer93@gmail.com>
+- cab-mikee <mike.cabz32@gmail.com>
+- glennmichael123 <gtorregosa@gmail.com>
+
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.0...HEAD)
+
+### Contributors
+
+- Chris <chrisbreuer93@gmail.com>
+- cab-mikee <mike.cabz32@gmail.com>
+- glennmichael123 <gtorregosa@gmail.com>
+
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.14.1...HEAD)
 
 ### Contributors
