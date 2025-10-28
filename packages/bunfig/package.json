@@ -72,6 +72,9 @@
     "zip:darwin-x64": "zip -j bin/bunfig-darwin-x64.zip bin/bunfig-darwin-x64",
     "zip:darwin-arm64": "zip -j bin/bunfig-darwin-arm64.zip bin/bunfig-darwin-arm64"
   },
+  "dependencies": {
+    "@stacksjs/clapp": "^0.2.0"
+  },
   "devDependencies": {
     "@happy-dom/global-registrator": "^18.0.1",
     "@stacksjs/clarity": "^0.3.15",
