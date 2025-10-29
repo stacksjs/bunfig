@@ -5,6 +5,7 @@ export {
   applyEnvVarsToConfig,
   config,
   ConfigLoader,
+  createLibraryConfig,
   defaultConfigDir,
   defaultGeneratedDir,
   generateConfigTypes,

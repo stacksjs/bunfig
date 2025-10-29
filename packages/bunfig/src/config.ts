@@ -132,7 +132,7 @@ export class ConfigLoader {
     }
     catch (error) {
       const duration = Date.now() - startTime
-      log.error(`Configuration loading failed after ${duration}ms:`, error)
+      log.error(`Configuration loading failed after ${duration}ms:`, [error instanceof Error ? error : new Error(String(error))])
       throw error
     }
   }
@@ -376,7 +376,7 @@ export class ConfigLoader {
     }
     catch (error) {
       if (verbose) {
-        log.warn(`Failed to load package.json:`, error)
+        log.warn(`Failed to load package.json:`, [error instanceof Error ? error : new Error(String(error))])
       }
     }
 
@@ -891,4 +891,92 @@ export type ConfigNames = ${files.length ? `'${files.join('\' | \'')}'` : 'strin
 `
 
   writeFileSync(outputFile, content, { mode: 0o666 })
+}
+
+/**
+ * Creates a library-safe configuration export that is never undefined
+ *
+ * This helper is designed for library authors who want to export a config object
+ * that can be used with top-level await without causing undefined exports.
+ *
+ * The returned object immediately provides default values synchronously, then
+ * asynchronously loads the actual configuration in the background and updates
+ * the object when ready.
+ *
+ * @example
+ * ```ts
+ * export const config = createLibraryConfig({
+ *   name: 'query-builder',
+ *   defaultConfig: { verbose: true }
+ * })
+ * ```
+ *
+ * @param options - Configuration options for loading
+ * @returns A Proxy object that provides immediate defaults and updates when loaded
+ */
+export function createLibraryConfig<T extends Record<string, any>>(
+  options: Config<T> | EnhancedConfig<T>,
+): T {
+  let configCache: T | null = null
+  let loadPromise: Promise<T> | null = null
+
+  // Start loading immediately
+  const startLoading = () => {
+    if (!loadPromise) {
+      loadPromise = loadConfig(options).then(
+        (loadedConfig) => {
+          configCache = loadedConfig
+          return loadedConfig
+        },
+        (error) => {
+          // On error, ensure we still have defaults
+          const defaultConfig = 'defaultConfig' in options ? options.defaultConfig : ({} as T)
+          configCache = defaultConfig
+
+          // Only log in verbose mode or if checkEnv is enabled
+          const verbose = 'verbose' in options && options.verbose
+          if (verbose) {
+            log.warn(`Config loading failed, using defaults:`, [error instanceof Error ? error : new Error(String(error))])
+          }
+
+          return defaultConfig
+        },
+      )
+    }
+    return loadPromise
+  }
+
+  // Initialize with defaults immediately
+  const defaultConfig = 'defaultConfig' in options ? options.defaultConfig : ({} as T)
+  configCache = defaultConfig
+  startLoading() // Trigger async load in background
+
+  return new Proxy({} as T, {
+    get(target, prop) {
+      // If we have cached config, use it
+      if (configCache) {
+        return configCache[prop as keyof T]
+      }
+      // Otherwise, return from defaults and trigger load if needed
+      const value = defaultConfig[prop as keyof T]
+      startLoading()
+      return value
+    },
+    has(target, prop) {
+      return prop in (configCache || defaultConfig)
+    },
+    ownKeys() {
+      return Object.keys(configCache || defaultConfig)
+    },
+    getOwnPropertyDescriptor(target, prop) {
+      return Object.getOwnPropertyDescriptor(configCache || defaultConfig, prop)
+    },
+    set(target, prop, value) {
+      if (!configCache) {
+        configCache = { ...defaultConfig } as T
+      }
+      ;(configCache as any)[prop] = value
+      return true
+    },
+  })
 }
