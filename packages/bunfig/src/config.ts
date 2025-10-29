@@ -54,8 +54,29 @@ export class ConfigLoader {
         result = await this.loadConfigurationStrategies(baseOptions, true, cache)
       }
       catch (error) {
+        // Check if this is strict error handling mode (enhanced API)
+        const isStrictMode = (baseOptions as any).__strictErrorHandling
+        
+        // Handle ConfigNotFoundError
+        if (error instanceof Error && error.name === 'ConfigNotFoundError') {
+          // In strict mode (enhanced API), re-throw ConfigNotFoundError
+          if (isStrictMode) {
+            throw error
+          }
+          // Otherwise, fall back to defaults gracefully
+          const envResult = await this.applyEnvironmentVariables(
+            baseOptions.name || '',
+            baseOptions.defaultConfig,
+            baseOptions.checkEnv !== false,
+            baseOptions.verbose || false,
+          )
+          result = {
+            ...envResult,
+            warnings: [`No configuration file found for "${baseOptions.name || 'config'}", using defaults with environment variables`],
+          }
+        }
         // Handle ConfigLoadError gracefully by falling back to defaults
-        if (error instanceof Error && error.name === 'ConfigLoadError') {
+        else if (error instanceof Error && error.name === 'ConfigLoadError') {
           // Check if this is a syntax error (recoverable) or permission error (not recoverable)
           const isPermissionError = error.message.includes('EACCES')
             || error.message.includes('EPERM')
@@ -69,10 +90,13 @@ export class ConfigLoader {
             || error.message.includes('errors building')
           )
 
-          // Check if this is strict error handling mode (enhanced API)
-          const isStrictMode = (baseOptions as any).__strictErrorHandling
           const isStructureError = error.message.includes('Configuration must export a valid object')
             || error.message.includes('Configuration file is empty and exports nothing')
+
+          // In strict mode, throw structure errors and permission errors
+          if (isStrictMode && (isStructureError || isPermissionError)) {
+            throw error
+          }
 
           if (isSyntaxError && (!isStrictMode || !isStructureError)) {
             // Fall back to environment variables + defaults for syntax errors
@@ -87,14 +111,36 @@ export class ConfigLoader {
               warnings: [`Configuration file has syntax errors, using defaults with environment variables`],
             }
           }
+          else if (!isStrictMode) {
+            // For permission errors and structure errors in non-strict mode, fall back to defaults
+            const envResult = await this.applyEnvironmentVariables(
+              baseOptions.name || '',
+              baseOptions.defaultConfig,
+              baseOptions.checkEnv !== false,
+              baseOptions.verbose || false,
+            )
+            result = {
+              ...envResult,
+              warnings: [`Configuration loading error, using defaults: ${error.message}`],
+            }
+          }
           else {
-            // Re-throw non-syntax errors (like permission errors and structure errors)
+            // Should not reach here, but re-throw if we do
             throw error
           }
         }
         else {
-          // Re-throw other errors (like ConfigNotFoundError)
-          throw error
+          // For any other error, fall back to defaults gracefully
+          const envResult = await this.applyEnvironmentVariables(
+            baseOptions.name || '',
+            baseOptions.defaultConfig,
+            baseOptions.checkEnv !== false,
+            baseOptions.verbose || false,
+          )
+          result = {
+            ...envResult,
+            warnings: [`Configuration loading failed, using defaults: ${error instanceof Error ? error.message : String(error)}`],
+          }
         }
       }
 
@@ -634,50 +680,72 @@ export async function loadConfigWithResult<T>(options: EnhancedConfig<T>): Promi
 
 /**
  * Standard configuration loading function that returns just the config (backward compatible)
+ * 
+ * NOTE: This function will ALWAYS return at least defaultConfig values, never null or undefined.
+ * If config loading fails for any reason, it gracefully falls back to defaults.
  */
 export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Promise<T> {
+  // Ensure defaultConfig exists - if not provided, use empty object as fallback
+  const defaultConfig = 'defaultConfig' in options && options.defaultConfig !== undefined
+    ? options.defaultConfig
+    : ({} as T)
+
   // Check if it's enhanced config by looking for enhanced-specific properties
   const isEnhanced = 'cache' in options || 'performance' in options || 'schema' in options || 'validate' in options
 
   try {
+    let result: ConfigResult<T>
+    
     if (isEnhanced) {
-      const result = await globalConfigLoader.loadConfig(options as EnhancedConfig<T>)
-      return result.config
+      result = await globalConfigLoader.loadConfig(options as EnhancedConfig<T>)
     }
     else {
       // For backward compatibility, convert Config<T> to EnhancedConfig<T>
-      const result = await globalConfigLoader.loadConfig({
+      result = await globalConfigLoader.loadConfig({
         ...options,
+        defaultConfig,
         cache: { enabled: true },
         performance: { enabled: false },
       } as EnhancedConfig<T>)
-      return result.config
     }
+
+    // Ensure config is never null or undefined
+    return result?.config ?? defaultConfig
   }
   catch (error) {
-    // For backward compatibility, handle ConfigNotFoundError and some ConfigLoadError gracefully
-    if (error instanceof Error && (error.name === 'ConfigNotFoundError'
-      || (error.name === 'ConfigLoadError' && shouldHandleConfigLoadErrorGracefully(error)))) {
-      const configOptions = isEnhanced
-        ? options
-        : {
-            ...options,
-            cache: { enabled: true },
-            performance: { enabled: false },
-          } as EnhancedConfig<T>
+    // For any error, fall back to defaults gracefully
+    // This ensures loadConfig NEVER throws or returns null/undefined
+    const errorName = error instanceof Error ? error.name : 'UnknownError'
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    const isConfigError = errorName === 'ConfigNotFoundError'
+      || errorName === 'ConfigLoadError'
+      || errorName === 'ConfigValidationError'
+      || errorMessage.includes('config') // Fallback check for any config-related error
 
-      // Fall back to environment variables + defaults
-      const envResult = await globalConfigLoader.applyEnvironmentVariables(
-        configOptions.name || '',
-        configOptions.defaultConfig,
-        configOptions.checkEnv !== false,
-        configOptions.verbose || false,
-      )
-      return envResult.config
+    // Always fall back to defaults, but log if it's not an expected "config not found" scenario
+    if (!isConfigError && options.verbose) {
+      log.warn(`Unexpected error loading config, using defaults:`, [error instanceof Error ? error : new Error(String(error))])
     }
 
-    // Re-throw other errors
-    throw error
+    const configOptions = isEnhanced
+      ? { ...options, defaultConfig } as EnhancedConfig<T>
+      : {
+          ...options,
+          defaultConfig,
+          cache: { enabled: true },
+          performance: { enabled: false },
+        } as EnhancedConfig<T>
+
+    // Fall back to environment variables + defaults
+    const envResult = await globalConfigLoader.applyEnvironmentVariables(
+      configOptions.name || '',
+      defaultConfig,
+      configOptions.checkEnv !== false,
+      configOptions.verbose || false,
+    )
+    
+    // Final safety check - never return null/undefined
+    return envResult?.config ?? defaultConfig
   }
 }
 
