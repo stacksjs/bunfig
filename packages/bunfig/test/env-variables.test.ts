@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
-import { applyEnvVarsToConfig, config, getEnvOrDefault, loadConfig } from '../src'
+import { applyEnvVarsToConfig, config, getEnvOrDefault, globalCache, loadConfig } from '../src'
 
 describe('Environment Variable Configuration', () => {
   const testConfigDir = resolve(process.cwd(), 'test/tmp/env-variables-config')
@@ -20,6 +20,9 @@ describe('Environment Variable Configuration', () => {
   })
 
   afterEach(() => {
+    // Clear cache to prevent test interference
+    globalCache.clear()
+
     // Cleanup test directories
     if (existsSync(testConfigDir))
       rmSync(testConfigDir, { recursive: true })
@@ -32,6 +35,12 @@ describe('Environment Variable Configuration', () => {
 
     // Restore original environment
     process.env = { ...originalEnv }
+
+    // Ensure test env vars are removed even if they were in original env
+    Object.keys(process.env).forEach((key) => {
+      if (key.startsWith('TEST_APP_') || key.startsWith('COMPLEX_APP_') || (key.startsWith('TEST_') && key !== 'TEST'))
+        delete process.env[key]
+    })
   })
 
   describe('getEnvOrDefault', () => {

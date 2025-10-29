@@ -56,7 +56,7 @@ export class ConfigLoader {
       catch (error) {
         // Check if this is strict error handling mode (enhanced API)
         const isStrictMode = (baseOptions as any).__strictErrorHandling
-        
+
         // Handle ConfigNotFoundError
         if (error instanceof Error && error.name === 'ConfigNotFoundError') {
           // In strict mode (enhanced API), re-throw ConfigNotFoundError
@@ -554,6 +554,9 @@ export class ConfigLoader {
       keyParts.push(`cwd:${options.cwd}`)
     if (options.configDir)
       keyParts.push(`configDir:${options.configDir}`)
+    // Include checkEnv in cache key to prevent collisions between configs with different env var settings
+    if ('checkEnv' in options)
+      keyParts.push(`checkEnv:${options.checkEnv}`)
 
     return keyParts.join('|')
   }
@@ -680,7 +683,7 @@ export async function loadConfigWithResult<T>(options: EnhancedConfig<T>): Promi
 
 /**
  * Standard configuration loading function that returns just the config (backward compatible)
- * 
+ *
  * NOTE: This function will ALWAYS return at least defaultConfig values, never null or undefined.
  * If config loading fails for any reason, it gracefully falls back to defaults.
  */
@@ -695,7 +698,7 @@ export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Pro
 
   try {
     let result: ConfigResult<T>
-    
+
     if (isEnhanced) {
       result = await globalConfigLoader.loadConfig(options as EnhancedConfig<T>)
     }
@@ -739,7 +742,7 @@ export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Pro
     // Fall back to environment variables + defaults, but ONLY if checkEnv is not false
     // Respect the checkEnv flag - if explicitly false, don't apply env vars
     const shouldCheckEnv = 'checkEnv' in options ? options.checkEnv !== false : true
-    
+
     if (shouldCheckEnv) {
       const envResult = await globalConfigLoader.applyEnvironmentVariables(
         configOptions.name || '',
@@ -750,7 +753,7 @@ export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Pro
       // Final safety check - never return null/undefined
       return envResult?.config ?? defaultConfig
     }
-    
+
     // checkEnv is false, so just return defaults without applying env vars
     return defaultConfig
   }
