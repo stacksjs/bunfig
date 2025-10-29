@@ -93,6 +93,11 @@ interface JSONSchema {
 }
 
 /**
+ * URL pattern regex for API validation rules
+ */
+const URL_PATTERN = /^https?:\/\//
+
+/**
  * Configuration validator service
  */
 export class ConfigValidator {
@@ -627,7 +632,7 @@ export class ConfigValidator {
         { path: 'timeout', type: 'number', min: 0 },
       ],
       api: [
-        { path: 'baseUrl', required: true, type: 'string', pattern: /^https?:\/\// },
+        { path: 'baseUrl', required: true, type: 'string', pattern: URL_PATTERN },
         { path: 'timeout', type: 'number', min: 0 },
         { path: 'retries', type: 'number', min: 0, max: 10 },
       ],

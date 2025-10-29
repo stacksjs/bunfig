@@ -425,35 +425,43 @@ export const globalCache: ConfigCache = new ConfigCache()
 export const globalPerformanceMonitor: PerformanceMonitor = new PerformanceMonitor()
 
 /**
+ * Create cache key from configuration parameters
+ */
+function createKey(configName: string, options: Record<string, unknown> = {}): string {
+  const sortedKeys = Object.keys(options).sort()
+  const optionsStr = sortedKeys.map(key => `${key}:${options[key]}`).join('|')
+  return optionsStr ? `${configName}:${optionsStr}` : configName
+}
+
+/**
+ * Check if two cache entries are equivalent
+ */
+function isEquivalent(a: unknown, b: unknown): boolean {
+  try {
+    return JSON.stringify(a) === JSON.stringify(b)
+  }
+  catch {
+    return a === b
+  }
+}
+
+/**
+ * Estimate memory usage of cache
+ */
+function estimateMemoryUsage(cache: ConfigCache): number {
+  const stats = cache.getStats()
+  return stats.size * 2 // Rough estimate including overhead
+}
+
+/**
  * Utility functions for cache management
  */
-export const CacheUtils = {
-  /**
-   * Create cache key from configuration parameters
-   */
-  createKey(configName: string, options: Record<string, unknown> = {}): string {
-    const sortedKeys = Object.keys(options).sort()
-    const optionsStr = sortedKeys.map(key => `${key}:${options[key]}`).join('|')
-    return optionsStr ? `${configName}:${optionsStr}` : configName
-  },
-
-  /**
-   * Check if two cache entries are equivalent
-   */
-  isEquivalent(a: unknown, b: unknown): boolean {
-    try {
-      return JSON.stringify(a) === JSON.stringify(b)
-    }
-    catch {
-      return a === b
-    }
-  },
-
-  /**
-   * Estimate memory usage of cache
-   */
-  estimateMemoryUsage(cache: ConfigCache): number {
-    const stats = cache.getStats()
-    return stats.size * 2 // Rough estimate including overhead
-  },
-} as const
+export const CacheUtils: {
+  createKey: typeof createKey
+  isEquivalent: typeof isEquivalent
+  estimateMemoryUsage: typeof estimateMemoryUsage
+} = {
+  createKey,
+  isEquivalent,
+  estimateMemoryUsage,
+}
