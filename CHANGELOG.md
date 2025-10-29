@@ -1,3 +1,17 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.3...v0.15.4)
+
+### Contributors
+
+- glennmichael123 <gtorregosa@gmail.com>
+
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.3...HEAD)
+
+### Contributors
+
+- glennmichael123 <gtorregosa@gmail.com>
+
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.2...v0.15.3)
 
 ### Contributors
