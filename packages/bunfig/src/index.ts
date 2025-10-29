@@ -1,5 +1,6 @@
-export * from './cache'
 /// <reference path="./virtual-bunfig-types.d.ts" />
+
+export * from './cache'
 // Export configuration functions explicitly to avoid conflicts
 export {
   applyEnvVarsToConfig,
@@ -23,8 +24,6 @@ export * from './plugin'
 export * from './services/env-processor'
 export * from './services/file-loader'
 export * from './services/validator'
-// Export validation interfaces from validator
-export type { ValidationError, ValidationOptions, ValidationResult, ValidationRule } from './services/validator'
 
 export * from './types'
 
