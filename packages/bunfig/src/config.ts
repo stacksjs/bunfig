@@ -736,16 +736,23 @@ export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Pro
           performance: { enabled: false },
         } as EnhancedConfig<T>
 
-    // Fall back to environment variables + defaults
-    const envResult = await globalConfigLoader.applyEnvironmentVariables(
-      configOptions.name || '',
-      defaultConfig,
-      configOptions.checkEnv !== false,
-      configOptions.verbose || false,
-    )
+    // Fall back to environment variables + defaults, but ONLY if checkEnv is not false
+    // Respect the checkEnv flag - if explicitly false, don't apply env vars
+    const shouldCheckEnv = 'checkEnv' in options ? options.checkEnv !== false : true
     
-    // Final safety check - never return null/undefined
-    return envResult?.config ?? defaultConfig
+    if (shouldCheckEnv) {
+      const envResult = await globalConfigLoader.applyEnvironmentVariables(
+        configOptions.name || '',
+        defaultConfig,
+        true,
+        configOptions.verbose || false,
+      )
+      // Final safety check - never return null/undefined
+      return envResult?.config ?? defaultConfig
+    }
+    
+    // checkEnv is false, so just return defaults without applying env vars
+    return defaultConfig
   }
 }
 

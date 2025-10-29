@@ -249,6 +249,11 @@ describe('Environment Variable Configuration', () => {
       process.env.TEST_APP_PORT = '8080'
       process.env.TEST_APP_HOST = 'env-host'
 
+      // Create config file
+      const configPath = resolve(testConfigDir, 'test-app.config.ts')
+      const configContent = `export default { host: 'file-host' }`
+      writeFileSync(configPath, configContent)
+
       // Store original cwd to restore later
       const originalCwd = process.cwd
 
