@@ -1,9 +1,31 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.4...v0.15.5)
+
+### 🧹 Chores
+
+- release v0.15.5 ([5dcb6fe](https://github.com/stacksjs/bunfig/commit/5dcb6fe)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([554da26](https://github.com/stacksjs/bunfig/commit/554da26)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([e6455bb](https://github.com/stacksjs/bunfig/commit/e6455bb)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.4...HEAD)
+
+### 🧹 Chores
+
+- wip ([554da26](https://github.com/stacksjs/bunfig/commit/554da26)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([e6455bb](https://github.com/stacksjs/bunfig/commit/e6455bb)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.3...v0.15.4)
 
 ### Contributors
 
 - glennmichael123 <gtorregosa@gmail.com>
-
 
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.3...HEAD)
 
@@ -11,20 +33,17 @@
 
 - glennmichael123 <gtorregosa@gmail.com>
 
-
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.2...v0.15.3)
 
 ### Contributors
 
 - glennmichael123 <gtorregosa@gmail.com>
 
-
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.2...HEAD)
 
 ### Contributors
 
 - glennmichael123 <gtorregosa@gmail.com>
-
 
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.1...v0.15.2)
 
@@ -34,7 +53,6 @@
 - glennmichael123 <gtorregosa@gmail.com>
 - renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.1...HEAD)
 
 ### Contributors
@@ -42,7 +60,6 @@
 - Chris <chrisbreuer93@gmail.com>
 - glennmichael123 <gtorregosa@gmail.com>
 - renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
 
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.0...v0.15.1)
 
@@ -52,7 +69,6 @@
 - cab-mikee <mike.cabz32@gmail.com>
 - glennmichael123 <gtorregosa@gmail.com>
 
-
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.0...HEAD)
 
 ### Contributors
@@ -61,7 +77,6 @@
 - cab-mikee <mike.cabz32@gmail.com>
 - glennmichael123 <gtorregosa@gmail.com>
 
-
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.14.1...HEAD)
 
 ### Contributors
@@ -69,15 +84,12 @@
 - Adelino Ngomacha <adelinob335@gmail.com>
 - Chris <chrisbreuer93@gmail.com>
 
-
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.14.1...HEAD)
 
 ### Contributors
 
 - Adelino Ngomacha <adelinob335@gmail.com>
 - Chris <chrisbreuer93@gmail.com>
-
-
 
 ## v0.14.0...main
 
@@ -600,7 +612,6 @@
 
 ## ...main
 
-
 ### 🏡 Chore
 
 - Initial commit ([0d2505b](https://github.com/stacksjs/bun-config/commit/0d2505b))
@@ -617,7 +628,6 @@
 
 ## ...main
 
-
 ### 🏡 Chore
 
 - Initial commit ([0d2505b](https://github.com/stacksjs/bun-config/commit/0d2505b))
@@ -632,7 +642,6 @@
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
 ## ...main
-
 
 ### 🏡 Chore
 
