@@ -1,3 +1,28 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.5...v0.15.6)
+
+### 🧹 Chores
+
+- release v0.15.6 ([4688d25](https://github.com/stacksjs/bunfig/commit/4688d25)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([a9fe9b1](https://github.com/stacksjs/bunfig/commit/a9fe9b1)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **deps**: update all non-major dependencies (#264) ([ce812b3](https://github.com/stacksjs/bunfig/commit/ce812b3)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#264](https://github.com/stacksjs/bunfig/issues/264), [#264](https://github.com/stacksjs/bunfig/issues/264))
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.5...HEAD)
+
+### 🧹 Chores
+
+- wip ([a9fe9b1](https://github.com/stacksjs/bunfig/commit/a9fe9b1)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **deps**: update all non-major dependencies (#264) ([ce812b3](https://github.com/stacksjs/bunfig/commit/ce812b3)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#264](https://github.com/stacksjs/bunfig/issues/264), [#264](https://github.com/stacksjs/bunfig/issues/264))
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.4...v0.15.5)
 
 ### 🧹 Chores
