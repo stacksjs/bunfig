@@ -136,6 +136,7 @@ function applyBrowserEnvVarsToConfig<T extends Record<string, any>>(
  * })
  * ```
  */
+// eslint-disable-next-line no-unused-vars
 export async function loadConfig<T>({
   name = '',
   endpoint,

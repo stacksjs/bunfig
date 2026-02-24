@@ -488,7 +488,7 @@ export class ConfigLoader {
   private async validateConfiguration<T>(
     config: T,
     schema: string | object | undefined,
-    customValidator: ((config: T) => string[] | void) | undefined,
+    customValidator: ((_config: T) => string[] | void) | undefined,
     configName?: string,
   ): Promise<void> {
     const errors: string[] = []
