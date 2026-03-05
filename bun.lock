@@ -5,7 +5,7 @@
     "": {
       "name": "bunfig",
       "devDependencies": {
-        "@happy-dom/global-registrator": "^20.6.1",
+        "@happy-dom/global-registrator": "^20.8.3",
         "@stacksjs/bumpx": "^0.2.4",
         "@stacksjs/docs": "^0.70.23",
         "@stacksjs/logsmith": "^0.2.1",
