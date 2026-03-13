@@ -2,7 +2,7 @@
 
 ## About
 
-A smart & fully-typed configuration loader for Bun.
+A TypeScript-first configuration loader with zero dependencies. It supports automatic environment variable detection and merging, smart file discovery across project root/home directory/package.json, JSON Schema validation, XDG-compliant global configs, hot reload, browser environment support via API endpoints, and a Bun build plugin for dynamic config name types. Config files are searched in multiple formats (`.ts`, `.js`, `.mjs`, `.cjs`, `.json`) with deep merging and alias support.
 
 ## Linting
 
