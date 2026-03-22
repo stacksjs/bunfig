@@ -13,3 +13,5 @@ docs/.vitepress/cache
 bin/bunfig
 bin/bunfig*
 src/generated
+.zed
+.cursor
