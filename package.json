@@ -86,9 +86,6 @@
     "bun-plugin-dtsx": "0.9.13",
     "typescript": "^5.9.3"
   },
-  "overrides": {
-    "unconfig": "0.3.10"
-  },
   "workspaces": [
     "packages/*"
   ],
