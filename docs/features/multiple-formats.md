@@ -21,6 +21,7 @@ When multiple configuration files exist with the same base name, bunfig follows 
 3. **JSON** files (`.json`)
 
 Within each category, the order is:
+
 - `.ts` > `.mts` > `.cts`
 - `.js` > `.mjs` > `.cjs`
 
@@ -174,7 +175,7 @@ bunfig supports JSON with comments when using appropriate tooling:
   "port": 3000,
   "host": "localhost",
 
-  /* Database settings */
+  /_ Database settings _/
   "database": {
     "url": "postgresql://localhost:5432/myapp",
     "pool": 10
@@ -332,7 +333,7 @@ config/
 const config = await loadConfig({
   name: 'my-app',
   configDir: './settings', // Custom config directory
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
 })
 ```
 

@@ -59,7 +59,7 @@ interface PluginOptions {
 const defaultConfig = {
   configDir: './config',
   extensions: ['.ts', '.js', '.mjs', '.cjs', '.json'],
-  exclude: ['**/*.test.*', '**/*.spec.*', '**/node_modules/**'],
+  exclude: ['**/*.test.*', '**/*.spec.*', '**/node*modules/**'],
   virtualModuleName: 'virtual:bunfig-types',
   generateTypes: false,
   typesOutputDir: './src/generated'
@@ -123,7 +123,7 @@ config/
 ├── features/
 │   ├── payments.ts      # → ConfigNames includes 'payments'
 │   └── notifications.ts # → ConfigNames includes 'notifications'
-└── _internal.ts         # → ignored (underscore prefix)
+└── *internal.ts         # → ignored (underscore prefix)
 ```
 
 ### Type Extraction

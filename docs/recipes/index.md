@@ -12,30 +12,35 @@ Real-world configuration patterns and solutions for common use cases. These reci
 More recipes are being developed to cover common configuration patterns:
 
 ### Web Applications
+
 - Express/Fastify server configurations
 - Next.js and React application setup
 - Microservices configuration patterns
 - Static site generator configurations
 
 ### Databases & Storage
+
 - PostgreSQL connection and pooling
 - MongoDB and NoSQL database setup
 - Redis caching strategies
 - Multi-database configurations
 
 ### Authentication & Security
+
 - JWT authentication patterns
 - OAuth integration guides
 - API key management
 - Security header configurations
 
 ### DevOps & Deployment
+
 - Docker containerization
 - Kubernetes deployment
 - CI/CD pipeline configuration
 - Cloud provider integrations
 
 ### Monitoring & Observability
+
 - Logging configuration
 - Metrics collection
 - Error tracking setup

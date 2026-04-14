@@ -476,7 +476,7 @@ If bunfig can't find your configuration:
 3. **Check the extension** - use `.ts`, `.js`, `.mjs`, `.cjs`, or `.json`
 
 ```bash
-# For name: 'server', bunfig looks for:
+# For name: 'server', bunfig looks for
 server.config.ts
 server.config.js
 .server.config.ts

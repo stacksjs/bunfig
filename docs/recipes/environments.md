@@ -100,7 +100,7 @@ export default {
 
   database: {
     ...base.database,
-    url: 'postgresql://localhost:5432/myapp_dev',
+    url: 'postgresql://localhost:5432/myapp*dev',
     ssl: false,
     debug: true
   },
@@ -164,13 +164,13 @@ export default {
     port: Number.parseInt(process.env.PORT || '3000'),
     host: '0.0.0.0',
     cluster: true,
-    workers: Number.parseInt(process.env.WEB_CONCURRENCY || '2')
+    workers: Number.parseInt(process.env.WEB*CONCURRENCY || '2')
   },
 
   database: {
     ...base.database,
-    url: process.env.DATABASE_URL!,
-    pool: Number.parseInt(process.env.DB_POOL_SIZE || '20'),
+    url: process.env.DATABASE*URL!,
+    pool: Number.parseInt(process.env.DB*POOL*SIZE || '20'),
     ssl: true,
     sslMode: 'require',
     debug: false
@@ -179,8 +179,8 @@ export default {
   cache: {
     ...base.cache,
     enabled: true,
-    url: process.env.REDIS_URL!,
-    cluster: process.env.REDIS_CLUSTER === 'true'
+    url: process.env.REDIS*URL!,
+    cluster: process.env.REDIS*CLUSTER === 'true'
   },
 
   logging: {
@@ -196,7 +196,7 @@ export default {
   security: {
     ...base.security,
     bcryptRounds: 12,
-    sessionSecret: process.env.SESSION_SECRET!,
+    sessionSecret: process.env.SESSION*SECRET!,
     cookieSecure: true,
     trustProxy: true,
     helmet: true
@@ -214,17 +214,17 @@ export default {
     email: {
       enabled: true,
       provider: 'sendgrid',
-      apiKey: process.env.SENDGRID_API_KEY!
+      apiKey: process.env.SENDGRID*API*KEY!
     },
     storage: {
       provider: 's3',
-      bucket: process.env.S3_BUCKET!,
-      region: process.env.AWS_REGION!
+      bucket: process.env.S3*BUCKET!,
+      region: process.env.AWS*REGION!
     },
     metrics: {
       enabled: true,
       provider: 'datadog',
-      apiKey: process.env.DATADOG_API_KEY!
+      apiKey: process.env.DATADOG*API*KEY!
     }
   },
 
@@ -254,7 +254,7 @@ export default {
 
   database: {
     ...production.database,
-    url: process.env.STAGING_DATABASE_URL!,
+    url: process.env.STAGING*DATABASE*URL!,
     pool: 10 // Smaller pool for staging
   },
 
@@ -288,7 +288,7 @@ export default {
 
   // Staging-specific settings
   staging: {
-    resetDatabase: process.env.RESET_DB === 'true',
+    resetDatabase: process.env.RESET*DB === 'true',
     seedTestData: true,
     enableDebugRoutes: true
   }
@@ -312,7 +312,7 @@ export default {
 
   database: {
     ...base.database,
-    url: process.env.TEST_DATABASE_URL || 'postgresql://localhost:5432/myapp_test',
+    url: process.env.TEST*DATABASE*URL || 'postgresql://localhost:5432/myapp*test',
     pool: 2, // Small pool for tests
     debug: false
   },
@@ -365,7 +365,7 @@ export default {
 import { config } from 'bunfig'
 
 export async function loadEnvironmentConfig() {
-  const environment = process.env.NODE_ENV || 'development'
+  const environment = process.env.NODE*ENV || 'development'
 
   try {
     // Try to load environment-specific config first
@@ -392,27 +392,27 @@ export const appConfig = await loadEnvironmentConfig()
 
 ```bash
 # .env.development
-NODE_ENV=development
-DATABASE_URL=postgresql://localhost:5432/myapp_dev
-REDIS_URL=redis://localhost:6379/0
-LOG_LEVEL=debug
+NODE*ENV=development
+DATABASE*URL=postgresql://localhost:5432/myapp*dev
+REDIS*URL=redis://localhost:6379/0
+LOG*LEVEL=debug
 
 # .env.staging
-NODE_ENV=staging
-DATABASE_URL=postgresql://staging-db.example.com:5432/myapp
-REDIS_URL=redis://staging-redis.example.com:6379
-LOG_LEVEL=info
-SESSION_SECRET=staging-secret-key
+NODE*ENV=staging
+DATABASE*URL=postgresql://staging-db.example.com:5432/myapp
+REDIS*URL=redis://staging-redis.example.com:6379
+LOG*LEVEL=info
+SESSION*SECRET=staging-secret-key
 
 # .env.production
-NODE_ENV=production
-DATABASE_URL=postgresql://prod-db.example.com:5432/myapp
-REDIS_URL=redis://prod-redis.example.com:6379
-SESSION_SECRET=super-secure-production-secret
-SENDGRID_API_KEY=your-sendgrid-key
-S3_BUCKET=your-s3-bucket
-AWS_REGION=us-east-1
-DATADOG_API_KEY=your-datadog-key
+NODE*ENV=production
+DATABASE*URL=postgresql://prod-db.example.com:5432/myapp
+REDIS*URL=redis://prod-redis.example.com:6379
+SESSION*SECRET=super-secure-production-secret
+SENDGRID*API*KEY=your-sendgrid-key
+S3*BUCKET=your-s3-bucket
+AWS*REGION=us-east-1
+DATADOG*API*KEY=your-datadog-key
 ```
 
 ## Configuration Validation
@@ -492,7 +492,7 @@ import { config } from 'bunfig'
 import { environmentSchema, validateEnvironmentConfig } from './config/validation'
 
 async function loadValidatedConfig() {
-  const environment = process.env.NODE_ENV || 'development'
+  const environment = process.env.NODE*ENV || 'development'
 
   const appConfig = await config({
     name: environment,
@@ -520,7 +520,7 @@ import { config } from 'bunfig'
 
 // Load secrets from environment or secret management service
 export async function loadSecrets() {
-  const environment = process.env.NODE_ENV || 'development'
+  const environment = process.env.NODE*ENV || 'development'
 
   if (environment === 'production') {
     // Load from AWS Secrets Manager, Azure Key Vault, etc.
@@ -529,12 +529,12 @@ export async function loadSecrets() {
   else {
     // Load from environment variables
     return {
-      databaseUrl: process.env.DATABASE_URL,
-      sessionSecret: process.env.SESSION_SECRET,
-      jwtSecret: process.env.JWT_SECRET,
+      databaseUrl: process.env.DATABASE*URL,
+      sessionSecret: process.env.SESSION*SECRET,
+      jwtSecret: process.env.JWT*SECRET,
       apiKeys: {
-        sendgrid: process.env.SENDGRID_API_KEY,
-        datadog: process.env.DATADOG_API_KEY
+        sendgrid: process.env.SENDGRID*API*KEY,
+        datadog: process.env.DATADOG*API*KEY
       }
     }
   }
@@ -544,12 +544,12 @@ async function loadFromSecretsManager() {
   // Implementation depends on your cloud provider
   // This is a simplified example
 
-  if (process.env.AWS_SECRETS_MANAGER_SECRET_ID) {
+  if (process.env.AWS*SECRETS*MANAGER*SECRET*ID) {
     const AWS = await import('aws-sdk')
     const secretsManager = new AWS.SecretsManager()
 
     const secret = await secretsManager.getSecretValue({
-      SecretId: process.env.AWS_SECRETS_MANAGER_SECRET_ID
+      SecretId: process.env.AWS*SECRETS*MANAGER*SECRET*ID
     }).promise()
 
     return JSON.parse(secret.SecretString!)
@@ -562,7 +562,7 @@ async function loadFromSecretsManager() {
 ## Deployment Scripts
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # scripts/deploy-staging.sh
 
 set -e
@@ -570,7 +570,7 @@ set -e
 echo "🚀 Deploying to staging..."
 
 # Set environment
-export NODE_ENV=staging
+export NODE*ENV=staging
 
 # Load staging environment variables
 if [ -f .env.staging ]; then
@@ -591,7 +591,7 @@ bun run build
 
 # Deploy to staging server
 echo "🚚 Deploying to staging server..."
-rsync -avz --exclude node_modules . staging-server:/app/
+rsync -avz --exclude node*modules . staging-server:/app/
 
 # Restart services
 echo "♻️  Restarting services..."
@@ -601,7 +601,7 @@ echo "✅ Staging deployment complete!"
 ```
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # scripts/deploy-production.sh
 
 set -e
@@ -609,8 +609,8 @@ set -e
 echo "🚀 Deploying to production..."
 
 # Safety check
-if [ "$NODE_ENV" != "production" ]; then
-  echo "❌ NODE_ENV must be set to 'production'"
+if [ "$NODE*ENV" != "production" ]; then
+  echo "❌ NODE*ENV must be set to 'production'"
   exit 1
 fi
 
@@ -701,7 +701,7 @@ RUN bun install
 COPY . .
 
 # Set default environment
-ENV NODE_ENV=production
+ENV NODE*ENV=production
 
 # Build application
 RUN bun run build
@@ -722,32 +722,50 @@ services:
   app-dev:
     build: .
     environment:
-      - NODE_ENV=development
-    env_file:
+
+      - NODE*ENV=development
+
+    env*file:
+
       - .env.development
+
     ports:
+
       - '3000:3000'
+
     volumes:
+
       - .:/app
-      - /app/node_modules
+      - /app/node*modules
 
   app-staging:
     build: .
     environment:
-      - NODE_ENV=staging
-    env_file:
+
+      - NODE*ENV=staging
+
+    env*file:
+
       - .env.staging
+
     ports:
+
       - '3001:3000'
 
   app-prod:
     build: .
     environment:
-      - NODE_ENV=production
-    env_file:
+
+      - NODE*ENV=production
+
+    env*file:
+
       - .env.production
+
     ports:
+
       - '3002:3000'
+
     restart: unless-stopped
 ```
 
@@ -761,7 +779,7 @@ import { config } from 'bunfig'
 describe('Environment Configuration', () => {
   beforeEach(() => {
     // Reset environment
-    delete process.env.NODE_ENV
+    delete process.env.NODE*ENV
   })
 
   it('should load development config by default', async () => {
@@ -771,9 +789,9 @@ describe('Environment Configuration', () => {
   })
 
   it('should load production config with secure settings', async () => {
-    process.env.NODE_ENV = 'production'
-    process.env.DATABASE_URL = 'postgresql://prod:5432/app'
-    process.env.SESSION_SECRET = 'super-secure-secret'
+    process.env.NODE*ENV = 'production'
+    process.env.DATABASE*URL = 'postgresql://prod:5432/app'
+    process.env.SESSION*SECRET = 'super-secure-secret'
 
     const cfg = await config({ name: 'production', cwd: './config' })
     expect(cfg.security.cookieSecure).toBe(true)

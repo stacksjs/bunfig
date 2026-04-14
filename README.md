@@ -60,8 +60,8 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 > [!TIP]
 > bunfig searches for configuration in this order:
 > 1. **Project directories** (precedence: `./` > `./config` > `./.config` > custom `configDir` if provided)
->    - In the project root: `$name.config.{ts,js,mjs,cjs,json}`, `.$name.config.{ts,js,mjs,cjs,json}`, `$name.{ts,js,mjs,cjs,json}`, `.$name.{ts,js,mjs,cjs,json}`
->    - In `config/` or `.config/` (and your custom `configDir`): it prefers bare names (`$name.{ts,...}`, `.$name.{ts,...}`) before the suffixed forms (`$name.config.{ts,...}`, `.$name.config.{ts,...}`) to avoid redundancy
+> - In the project root: `$name.config.{ts,js,mjs,cjs,json}`, `.$name.config.{ts,js,mjs,cjs,json}`, `$name.{ts,js,mjs,cjs,json}`, `.$name.{ts,js,mjs,cjs,json}`
+> - In `config/` or `.config/` (and your custom `configDir`): it prefers bare names (`$name.{ts,...}`, `.$name.{ts,...}`) before the suffixed forms (`$name.config.{ts,...}`, `.$name.config.{ts,...}`) to avoid redundancy
 > 2. **Home directory**: `~/.config/$name/config.{ts,js,mjs,cjs,json}` (and `~/.config/$name/$name.config.{ts,...}`)
 > 3. **Package.json**: a section named after your config `name` (or its `alias`)
 
@@ -97,7 +97,7 @@ You can specify an alias to check for alternative config file names when the pri
 ```ts
 const config = await loadConfig({
   name: 'tlsx',
-  alias: 'tls', // Alternative name to check if tlsx.config.* doesn't exist
+  alias: 'tls', // Alternative name to check if tlsx.config._ doesn't exist
   defaultConfig: {
     domain: 'example.com',
     port: 443,
@@ -116,17 +116,19 @@ You can disable this feature by setting `checkEnv: false` in your config options
 ```ts
 const options = {
   name: 'my-app',
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... */ },
   checkEnv: false, // Disable environment variable checking
 }
 ```
 
 The naming convention for environment variables is:
+
 ```
 [CONFIG_NAME]_[PROPERTY_NAME]
 ```
 
 For nested properties, use underscores to separate the levels:
+
 ```
 [CONFIG_NAME]_[NESTED_PROPERTY_PATH]
 ```
@@ -155,6 +157,7 @@ const options = {
 ```
 
 For array values, you can use a JSON string or comma-separated values:
+
 ```
 MY_APP_ALLOWED_ORIGINS=["https://example.com","https://api.example.com"]
 // or

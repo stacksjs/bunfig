@@ -37,15 +37,19 @@ This allows you to store global configuration settings that apply across all you
 For example, if your `name` is "my-app", it will look for:
 
 **Local directory:**
+
 - `my-app.config.ts`
 - `.my-app.config.ts`
 - `my-app.ts`
 - `.my-app.ts`
+
 (and the same for other supported extensions)
 
 **Home directory (if no local file found):**
+
 - `~/.config/my-app/config.ts`
 - `~/.config/my-app/my-app.config.ts`
+
 (and the same for other supported extensions)
 
 ## Configuration Aliases
@@ -355,7 +359,7 @@ You can disable certain features of the configuration loader if needed:
 ```ts
 const config = await loadConfig<MyConfig>({
   name: 'my-app',
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
   checkEnv: false, // Disable environment variable loading
 })
 ```

@@ -655,7 +655,7 @@ const appConfig = await config({
 ### Automated Migration Script
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # migrate-to-bunfig.sh
 
 echo "🔄 Migrating to bunfig..."
@@ -663,7 +663,7 @@ echo "🔄 Migrating to bunfig..."
 # Backup existing configuration
 mkdir -p migration-backup
 cp -r config migration-backup/ 2>/dev/null || true
-cp .env* migration-backup/ 2>/dev/null || true
+cp .env_ migration-backup/ 2>/dev/null || true
 
 # Install bunfig
 echo "📦 Installing bunfig..."
@@ -676,7 +676,7 @@ if [ -f .env ]; then
 fi
 
 # Convert rc files
-for file in .*rc; do
+for file in ._rc; do
   if [ -f "$file" ]; then
     echo "🔧 Converting $file..."
     node migration-scripts/convert-rc.js "$file"

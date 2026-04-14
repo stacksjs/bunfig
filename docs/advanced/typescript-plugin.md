@@ -281,7 +281,7 @@ export default {
     methods: ['GET', 'POST'],
   },
   rateLimit: {
-    windowMs: 15 * 60 * 1000,
+    windowMs: 15 _ 60 _ 1000,
     max: 100,
   },
 }

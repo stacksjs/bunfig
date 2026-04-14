@@ -66,18 +66,23 @@ If no file-based configuration is found, bunfig looks for a configuration sectio
 For example, if your `name` is "my-app", it will look for:
 
 **Local directory:**
+
 - `my-app.config.ts`
 - `.my-app.config.ts`
 - `my-app.ts`
 - `.my-app.ts`
+
 (and the same for other supported extensions)
 
 **Home directory (if no local file found):**
+
 - `~/.config/my-app/config.ts`
 - `~/.config/my-app/my-app.config.ts`
+
 (and the same for other supported extensions)
 
 **Package.json:**
+
 ```json
 {
   "my-app": {

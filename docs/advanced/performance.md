@@ -474,7 +474,7 @@ export default defineConfig({
     bunfigPlugin({
       configDir: './config',
       // Only include used configurations in production
-      include: process.env.NODE_ENV === 'production'
+      include: process.env.NODE*ENV === 'production'
         ? ['app', 'database']
         : undefined,
     }),
@@ -556,7 +556,7 @@ class BrowserConfigLoader {
 
 ```ts
 // Development: Flexibility and hot reloading
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE*ENV === 'development') {
   config = await loadConfig({
     name: 'app',
     cache: false, // Disable cache for hot reloading
@@ -566,7 +566,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Production: Performance and stability
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE*ENV === 'production') {
   config = await loadConfig({
     name: 'app',
     cache: true, // Enable aggressive caching
@@ -582,7 +582,7 @@ Set up monitoring for configuration performance:
 
 ```ts
 // Monitor configuration loading times
-const SLOW_CONFIG_THRESHOLD = 100 // ms
+const SLOW*CONFIG*THRESHOLD = 100 // ms
 
 async function monitoredLoadConfig<T>(options: any): Promise<T> {
   const start = performance.now()
@@ -590,11 +590,11 @@ async function monitoredLoadConfig<T>(options: any): Promise<T> {
     const config = await loadConfig<T>(options)
     const duration = performance.now() - start
 
-    if (duration > SLOW_CONFIG_THRESHOLD) {
+    if (duration > SLOW*CONFIG*THRESHOLD) {
       console.warn(`⚠️  Slow configuration loading: ${options.name} took ${duration}ms`)
 
       // Send to monitoring service
-      // analytics.track('slow_config_load', { name: options.name, duration })
+      // analytics.track('slow*config_load', { name: options.name, duration })
     }
 
     return config

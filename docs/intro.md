@@ -14,7 +14,7 @@
 - **Multiple Search Patterns**: Supports various config file naming conventions
 - **Type Generation**: Automatically generates TypeScript types for your config files
 
-## Why bunfig?
+## Why bunfig
 
 When building Bun applications, you often need a way to manage configuration that is:
 

@@ -49,7 +49,7 @@ const apiEndpoint = process.env.API_ENDPOINT || '/api/config'
 const config = await loadConfig<MyConfig>({
   name: 'my-app',
   endpoint: apiEndpoint,
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
 })
 ```
 
@@ -62,12 +62,12 @@ async function getConfig() {
   if (isBrowser()) {
     // Browser: load from API
     const { loadConfig } = await import('bunfig/browser')
-    return loadConfig({ endpoint: '/api/config', /* ... */ })
+    return loadConfig({ endpoint: '/api/config', /_ ... _/ })
   }
   else {
     // Server: use file-based config with env vars
     const { loadConfig } = await import('bunfig')
-    return loadConfig({ name: 'my-app', /* ... */ })
+    return loadConfig({ name: 'my-app', /_ ... _/ })
   }
 }
 ```

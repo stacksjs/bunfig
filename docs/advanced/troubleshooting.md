@@ -15,8 +15,9 @@ Error: Configuration 'app' not found
 **Solutions**:
 
 1. **Check file naming** - Ensure your configuration file follows the expected naming pattern:
+
    ```bash
-   # Correct patterns
+# Correct patterns
    config/app.config.ts
    config/app.ts
    .config/app.config.ts
@@ -25,8 +26,9 @@ Error: Configuration 'app' not found
    ```
 
 2. **Verify file location** - bunfig searches in specific directories:
+
    ```bash
-   # Check these locations
+# Check these locations
    ./config/
    ./.config/
    ./
@@ -34,12 +36,14 @@ Error: Configuration 'app' not found
    ```
 
 3. **Check file permissions**:
+
    ```bash
    ls -la config/app.config.ts
-   # Should be readable by current user
+# Should be readable by current user
    ```
 
 4. **Use absolute paths for debugging**:
+
    ```ts
    import { resolve } from 'node:path'
    import { loadConfig } from 'bunfig'
@@ -63,14 +67,16 @@ TypeError: Cannot read property 'default' of undefined
 **Solutions**:
 
 1. **Check JSON syntax** (for .json files):
+
    ```bash
-   # Validate JSON syntax
+# Validate JSON syntax
    bunx prettier --check config/app.config.json
-   # or
+# or
    node -e "JSON.parse(require('fs').readFileSync('config/app.config.json', 'utf8'))"
    ```
 
 2. **Verify export format** (for .ts/.js files):
+
    ```ts
    // ✅ Correct - default export
    export default {
@@ -92,8 +98,9 @@ TypeError: Cannot read property 'default' of undefined
    ```
 
 3. **Check TypeScript compilation**:
+
    ```bash
-   # Compile TypeScript file manually
+# Compile TypeScript file manually
    bunx tsc --noEmit config/app.config.ts
    ```
 
@@ -109,6 +116,7 @@ Property 'port' is missing in type
 **Solutions**:
 
 1. **Define explicit interfaces**:
+
    ```ts
    interface AppConfig {
      port: number
@@ -125,6 +133,7 @@ Property 'port' is missing in type
    ```
 
 2. **Check environment variable types**:
+
    ```ts
    // ❌ String from environment variable
    const config = {
@@ -138,6 +147,7 @@ Property 'port' is missing in type
    ```
 
 3. **Use type assertions carefully**:
+
    ```ts
    // ✅ Safe type assertion with validation
    const port = Number(process.env.PORT)
@@ -158,14 +168,16 @@ Property 'port' is missing in type
 **Solutions**:
 
 1. **Check variable naming**:
+
    ```bash
-   # For config name 'app', variables should be:
+# For config name 'app', variables should be
    export MY_APP_PORT=3000
    export MY_APP_HOST=localhost
    export MY_APP_DATABASE_URL=postgresql://...
    ```
 
 2. **Verify environment loading**:
+
    ```ts
    // Debug environment variables
    console.log('Environment variables:', {
@@ -181,12 +193,13 @@ Property 'port' is missing in type
    ```
 
 3. **Test environment variable parsing**:
+
    ```bash
-   # Test in shell
+# Test in shell
    export MY_APP_PORT=4000
    echo $MY_APP_PORT
 
-   # Test in Node.js
+# Test in Node.js
    node -e "console.log(process.env.MY_APP_PORT)"
    ```
 
@@ -197,20 +210,23 @@ Property 'port' is missing in type
 **Solutions**:
 
 1. **Check home directory path**:
+
    ```bash
    echo $HOME
    ls -la ~/.config/
    ```
 
 2. **Verify directory structure**:
+
    ```bash
-   # Should exist
+# Should exist
    ~/.config/my-app/config.ts
-   # or
+# or
    ~/.config/my-app/my-app.config.ts
    ```
 
 3. **Test home directory loading**:
+
    ```ts
    import { homedir } from 'node:os'
    import { join } from 'node:path'
@@ -233,15 +249,19 @@ Property 'port' is missing in type
 **Solutions**:
 
 1. **Understand merge priority**:
+
    ```
+
    1. Local config files (highest priority)
    2. Home directory config
    3. Package.json sections
    4. Environment variables
    5. Default config (lowest priority)
+
    ```
 
 2. **Debug merge process**:
+
    ```ts
    import { loadConfig } from 'bunfig'
 
@@ -258,6 +278,7 @@ Property 'port' is missing in type
    ```
 
 3. **Test individual sources**:
+
    ```ts
    // Test without environment variables
    const configNoEnv = await loadConfig({
@@ -289,6 +310,7 @@ const config = await loadConfig({
 ```
 
 This will show:
+
 - File search paths
 - Found configuration files
 - Merge order and sources
@@ -381,6 +403,7 @@ debugFileSystem('app')
 **Cause**: No configuration file found in searched locations.
 
 **Solution**:
+
 - Check file naming and location
 - Use `bunfig info` command to see search paths
 - Verify file permissions
@@ -390,6 +413,7 @@ debugFileSystem('app')
 **Cause**: Configuration file doesn't export a default value.
 
 **Solution**:
+
 - Ensure `export default` or `module.exports` is used
 - Check for syntax errors in the file
 
@@ -398,6 +422,7 @@ debugFileSystem('app')
 **Cause**: Configuration doesn't match expected TypeScript types.
 
 **Solution**:
+
 - Define proper interfaces
 - Check type conversions (especially from environment variables)
 - Use type assertions where appropriate
@@ -407,6 +432,7 @@ debugFileSystem('app')
 **Cause**: Invalid environment variable format or conversion.
 
 **Solution**:
+
 - Check variable naming convention
 - Validate variable values
 - Handle type conversions explicitly
@@ -416,6 +442,7 @@ debugFileSystem('app')
 **Cause**: Incompatible configuration values during merge.
 
 **Solution**:
+
 - Review merge priority order
 - Check for conflicting array merge strategies
 - Use explicit merge options
@@ -427,6 +454,7 @@ debugFileSystem('app')
 **Symptoms**: Configuration loading takes longer than expected.
 
 **Debugging**:
+
 ```ts
 import { performance } from 'node:perf_hooks'
 
@@ -446,6 +474,7 @@ if (end - start > 100) {
 ```
 
 **Solutions**:
+
 - Enable caching
 - Reduce configuration file size
 - Optimize file structure
@@ -456,6 +485,7 @@ if (end - start > 100) {
 **Symptoms**: High memory usage or memory leaks.
 
 **Debugging**:
+
 ```ts
 import { memoryUsage } from 'node:process'
 
@@ -474,6 +504,7 @@ logMemoryUsage('After config loading')
 ```
 
 **Solutions**:
+
 - Use lazy loading
 - Clear configuration cache periodically
 - Avoid large configuration objects
@@ -490,6 +521,7 @@ bunfig doctor --config-dir ./config
 ```
 
 This checks for:
+
 - File permission issues
 - Syntax errors
 - Type inconsistencies
@@ -505,6 +537,7 @@ bunfig info app --show-content --show-types
 ```
 
 Shows:
+
 - Search paths
 - Found files
 - Resolution order
@@ -520,6 +553,7 @@ bunfig validate --strict --format json
 ```
 
 Checks for:
+
 - Syntax errors
 - Type errors
 - Required fields
@@ -532,6 +566,7 @@ Checks for:
 **Problem**: Configuration API requests blocked by CORS.
 
 **Solution**:
+
 ```ts
 // Configure CORS headers on your API endpoint
 app.get('/api/config/:name', (req, res) => {
@@ -553,6 +588,7 @@ const config = await loadConfig({
 **Problem**: Configuration loading fails due to network issues.
 
 **Solution**:
+
 ```ts
 import { loadConfig } from 'bunfig/browser'
 
@@ -574,24 +610,26 @@ const config = await loadConfig({
 ### Community Support
 
 1. **GitHub Issues**: Report bugs and ask questions
-   - https://github.com/stacksjs/bunfig/issues
+   - <https://github.com/stacksjs/bunfig/issues>
 
 2. **Discussions**: Community help and best practices
-   - https://github.com/stacksjs/stacks/discussions
+   - <https://github.com/stacksjs/stacks/discussions>
 
 3. **Discord**: Real-time chat support
-   - https://discord.gg/stacksjs
+   - <https://discord.gg/stacksjs>
 
 ### Reporting Issues
 
 When reporting issues, include:
 
 1. **bunfig version**:
+
    ```bash
    bunfig --version
    ```
 
 2. **Environment information**:
+
    ```bash
    bun --version
    node --version
@@ -599,6 +637,7 @@ When reporting issues, include:
    ```
 
 3. **Configuration files** (sanitized):
+
    ```ts
    // Remove sensitive information before sharing
    export default {
@@ -609,11 +648,13 @@ When reporting issues, include:
    ```
 
 4. **Error logs** with verbose output:
+
    ```bash
    DEBUG=bunfig* your-command 2>&1 | tee bunfig-debug.log
    ```
 
 5. **Minimal reproduction case**:
+
    ```ts
    // Simplest possible code that reproduces the issue
    import { loadConfig } from 'bunfig'

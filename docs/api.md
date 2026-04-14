@@ -253,16 +253,19 @@ If an alias is provided, it will also check for files with the alias name using 
 For a configuration with name "my-app":
 
 **Local directory (project-specific):**
+
 - `my-app.config.ts`
 - `.my-app.config.ts`
 - `my-app.ts`
 - `.my-app.ts`
 
 **Home directory (global, if no local file found):**
+
 - `~/.config/my-app/config.ts`
 - `~/.config/my-app/my-app.config.ts`
 
 **Package.json (if no file-based config found):**
+
 ```json
 {
   "my-app": {

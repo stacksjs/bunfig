@@ -193,14 +193,17 @@ Examples:
 
 Issues Found:
 ❌ Duplicate configuration files
+
    - app.config.ts and app.ts both exist
    - Recommendation: Remove app.ts to avoid conflicts
 
 ⚠️  Missing type annotations
+
    - database.config.ts lacks explicit types
    - Recommendation: Add interface definitions
 
 ⚠️  Inconsistent naming
+
    - Found both camelCase and kebab-case config names
    - Recommendation: Use consistent naming convention
 
@@ -232,6 +235,7 @@ Examples:
 #### Init Templates
 
 **Basic Template:**
+
 ```
 config/
 ├── app.config.ts
@@ -239,6 +243,7 @@ config/
 ```
 
 **Advanced Template:**
+
 ```
 config/
 ├── app.config.ts
@@ -358,7 +363,7 @@ Create a `.bunfigrc.json` file in your project root to configure CLI defaults:
   "verbose": false,
   "watch": false,
   "extensions": [".ts", ".js", ".mjs", ".cjs", ".json"],
-  "exclude": ["**/*.test.*", "**/*.spec.*"]
+  "exclude": ["**/_.test._", "**/_.spec._"]
 }
 ```
 
@@ -372,7 +377,7 @@ Create a `.bunfigrc.json` file in your project root to configure CLI defaults:
 | `verbose` | `boolean` | `false` | Enable verbose logging |
 | `watch` | `boolean` | `false` | Watch for changes |
 | `extensions` | `string[]` | `[".ts", ".js", ...]` | File extensions to process |
-| `exclude` | `string[]` | `["**/*.test.*", ...]` | Patterns to exclude |
+| `exclude` | `string[]` | `["**/_.test._", ...]` | Patterns to exclude |
 
 ## Environment Variables
 
@@ -427,11 +432,13 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v2
       - uses: oven-sh/setup-bun@v1
       - run: bun install
       - run: bunx bunfig validate --strict
       - run: bunx bunfig doctor
+
 ```
 
 ### Git Hooks
@@ -440,7 +447,7 @@ Validate configurations before commits:
 
 ```bash
 # .git/hooks/pre-commit
-#!/bin/sh
+# !/bin/sh
 bunx bunfig validate --strict
 if [ $? -ne 0 ]; then
   echo "Configuration validation failed. Please fix the errors before committing."

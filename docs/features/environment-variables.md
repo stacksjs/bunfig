@@ -77,7 +77,7 @@ Bunfig automatically converts environment variables to the appropriate type base
 - **Booleans**: `"true"` (case-insensitive) is converted to `true`, everything else to `false`
 - **Arrays**: Two formats are supported:
   - JSON arrays: `MY_APP_ALLOWED_ORIGINS=["https://example.com","https://api.example.com"]`
-  - Comma-separated values: `MY_APP_ALLOWED_ORIGINS=https://example.com,https://api.example.com`
+  - Comma-separated values: `MY_APP_ALLOWED_ORIGINS=https://example.com,<https://api.example.com>`
 - **Strings**: Used as-is
 
 ## Disabling Environment Variable Support
@@ -87,7 +87,7 @@ You can disable environment variable checking by setting `checkEnv: false` in yo
 ```ts
 const options = {
   name: 'my-app',
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
   checkEnv: false, // Disable environment variable checking
 }
 ```
@@ -105,7 +105,7 @@ For browser applications, consider using environment variables during your build
 const config = await loadConfig({
   name: 'my-app',
   endpoint: process.env.API_ENDPOINT || '/api/config',
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
 })
 ```
 

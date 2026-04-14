@@ -37,6 +37,7 @@ When you specify an alias, bunfig searches for configuration files in this order
 3. **Alias name files** (`my-old-tool.*`)
 
 This applies to all search locations:
+
 - Project directories (`./`, `./config`, `./.config`)
 - Home directory (`~/.config/`)
 - Package.json sections
@@ -224,15 +225,19 @@ When using aliases for migration, document the transition:
 
 ```ts
 /**
- * Configuration loader with backward compatibility.
- *
- * Migration path: 'legacy-config' → 'modern-config'
- * Support for 'legacy-config' will be removed in v3.0
- */
+
+ _ Configuration loader with backward compatibility.
+
+ _
+
+ _ Migration path: 'legacy-config' → 'modern-config'
+ _ Support for 'legacy-config' will be removed in v3.0
+
+ _/
 const config = await loadConfig({
   name: 'modern-config',
   alias: 'legacy-config',
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
 })
 ```
 
@@ -244,7 +249,7 @@ Consider version-specific aliases:
 const config = await loadConfig({
   name: `my-tool-v${MAJOR_VERSION}`,
   alias: `my-tool-v${MAJOR_VERSION - 1}`,
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
 })
 ```
 
@@ -257,14 +262,14 @@ Use aliases to gradually deprecate old configuration names:
 const config = await loadConfig({
   name: 'new-name',
   alias: 'old-name',
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
 })
 
 // Phase 2: Warn about deprecated usage
 const config = await loadConfig({
   name: 'new-name',
   alias: 'old-name',
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
 })
 // Add deprecation warning if old-name config is found
 
@@ -272,7 +277,7 @@ const config = await loadConfig({
 const config = await loadConfig({
   name: 'new-name',
   // alias removed
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... */ },
 })
 ```
 
