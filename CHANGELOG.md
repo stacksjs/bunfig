@@ -1,3 +1,83 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.6...v0.15.7)
+
+### 🚀 Features
+
+- add support for multiple aliases ([b620108](https://github.com/stacksjs/bunfig/commit/b620108)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🐛 Bug Fixes
+
+- externalize @stacksjs/clarity + @stacksjs/clapp ([50e81df](https://github.com/stacksjs/bunfig/commit/50e81df)) _(by Chris <chrisbreuer93@gmail.com>)_
+- restore packages/bunfig/happy-dom.ts ([4834a81](https://github.com/stacksjs/bunfig/commit/4834a81)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- use .cjs preload to bypass pickier lint and broken bun export condition ([ce4c3c9](https://github.com/stacksjs/bunfig/commit/ce4c3c9)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- suppress lint rules for very-happy-dom workaround import ([d15fd77](https://github.com/stacksjs/bunfig/commit/d15fd77)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- resolve very-happy-dom preload via direct dist path ([6bd83c5](https://github.com/stacksjs/bunfig/commit/6bd83c5)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.7 ([00c0fb8](https://github.com/stacksjs/bunfig/commit/00c0fb8)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([0d1ddd8](https://github.com/stacksjs/bunfig/commit/0d1ddd8)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([e7149f6](https://github.com/stacksjs/bunfig/commit/e7149f6)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- use `very-happy-dom` ([b6b11eb](https://github.com/stacksjs/bunfig/commit/b6b11eb)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([11f4f71](https://github.com/stacksjs/bunfig/commit/11f4f71)) _(by Chris <chrisbreuer93@gmail.com>)_
+- minor updates ([6cad716](https://github.com/stacksjs/bunfig/commit/6cad716)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- include md in pickier lint extensions ([4aa8fe9](https://github.com/stacksjs/bunfig/commit/4aa8fe9)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- update vscode config ([923bbbe](https://github.com/stacksjs/bunfig/commit/923bbbe)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- update dependencies ([ade1a54](https://github.com/stacksjs/bunfig/commit/ade1a54)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- repo cleanup and modernization ([f0460b1](https://github.com/stacksjs/bunfig/commit/f0460b1)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- repo cleanup and modernization ([c899738](https://github.com/stacksjs/bunfig/commit/c899738)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- remove @stacksjs/docs ([c64fdb6](https://github.com/stacksjs/bunfig/commit/c64fdb6)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- remove redundant docs/.vitepress ([9c1c76d](https://github.com/stacksjs/bunfig/commit/9c1c76d)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- remove .zed and .cursor folders ([71214ba](https://github.com/stacksjs/bunfig/commit/71214ba)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- use Pantry action for publish-commit and add job dependencies ([3e1c8a2](https://github.com/stacksjs/bunfig/commit/3e1c8a2)) _(by Chris <chrisbreuer93@gmail.com>)_
+- update bun-plugin-dtsx to 0.9.13 ([20d38bf](https://github.com/stacksjs/bunfig/commit/20d38bf)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- update lockfile ([bca317b](https://github.com/stacksjs/bunfig/commit/bca317b)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- revert bun-plugin-dtsx to 0.9.9 ([86d5f7b](https://github.com/stacksjs/bunfig/commit/86d5f7b)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- remove file ignores from pickier config ([23916c7](https://github.com/stacksjs/bunfig/commit/23916c7)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- add CLAUDE.md and CHANGELOG.md to pickier ignores ([81b9760](https://github.com/stacksjs/bunfig/commit/81b9760)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- remove .pickierignore ([2e2b2d5](https://github.com/stacksjs/bunfig/commit/2e2b2d5)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- enrich CLAUDE.md with detailed project context from README ([e6596b8](https://github.com/stacksjs/bunfig/commit/e6596b8)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- update CLAUDE.md with project context and crosswind details ([cf178df](https://github.com/stacksjs/bunfig/commit/cf178df)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- add proper claude code guidelines ([23f3e2a](https://github.com/stacksjs/bunfig/commit/23f3e2a)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- use pantry monorepo action instead of pantry-setup ([8ac9ca2](https://github.com/stacksjs/bunfig/commit/8ac9ca2)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- ignore claude config in linter ([91cd7e6](https://github.com/stacksjs/bunfig/commit/91cd7e6)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- add claude code guidelines ([47d1840](https://github.com/stacksjs/bunfig/commit/47d1840)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([a9b2751](https://github.com/stacksjs/bunfig/commit/a9b2751)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([daad6cc](https://github.com/stacksjs/bunfig/commit/daad6cc)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([5c7708d](https://github.com/stacksjs/bunfig/commit/5c7708d)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([7c85cd1](https://github.com/stacksjs/bunfig/commit/7c85cd1)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([0feb5d7](https://github.com/stacksjs/bunfig/commit/0feb5d7)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([02126e3](https://github.com/stacksjs/bunfig/commit/02126e3)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([525fff0](https://github.com/stacksjs/bunfig/commit/525fff0)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([53b20a9](https://github.com/stacksjs/bunfig/commit/53b20a9)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([2d64aef](https://github.com/stacksjs/bunfig/commit/2d64aef)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([1c9066c](https://github.com/stacksjs/bunfig/commit/1c9066c)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([15d5821](https://github.com/stacksjs/bunfig/commit/15d5821)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([7c95a0e](https://github.com/stacksjs/bunfig/commit/7c95a0e)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([f299c86](https://github.com/stacksjs/bunfig/commit/f299c86)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([221a0c0](https://github.com/stacksjs/bunfig/commit/221a0c0)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **deps**: update dependency @types/node to 25.2.2 (#1428) ([27c595b](https://github.com/stacksjs/bunfig/commit/27c595b)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#1428](https://github.com/stacksjs/bunfig/issues/1428), [#1428](https://github.com/stacksjs/bunfig/issues/1428))
+- **deps**: update all non-major dependencies (#1430) ([62383f2](https://github.com/stacksjs/bunfig/commit/62383f2)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#1430](https://github.com/stacksjs/bunfig/issues/1430), [#1430](https://github.com/stacksjs/bunfig/issues/1430))
+- **deps**: update all non-major dependencies (#1449) ([e84c3aa](https://github.com/stacksjs/bunfig/commit/e84c3aa)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#1449](https://github.com/stacksjs/bunfig/issues/1449), [#1449](https://github.com/stacksjs/bunfig/issues/1449))
+- **deps**: update dependency actions/cache to v5.0.3 (#1429) ([8224f53](https://github.com/stacksjs/bunfig/commit/8224f53)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#1429](https://github.com/stacksjs/bunfig/issues/1429), [#1429](https://github.com/stacksjs/bunfig/issues/1429))
+- **deps**: update actions/cache action to v5 (#448) ([8ba84a2](https://github.com/stacksjs/bunfig/commit/8ba84a2)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#448](https://github.com/stacksjs/bunfig/issues/448), [#448](https://github.com/stacksjs/bunfig/issues/448))
+- **deps**: update dependency @types/node to v25 (#435) ([0613e9e](https://github.com/stacksjs/bunfig/commit/0613e9e)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#435](https://github.com/stacksjs/bunfig/issues/435), [#435](https://github.com/stacksjs/bunfig/issues/435))
+- wip ([759edcf](https://github.com/stacksjs/bunfig/commit/759edcf)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([71895be](https://github.com/stacksjs/bunfig/commit/71895be)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **deps**: update all non-major dependencies (#274) ([563bf2f](https://github.com/stacksjs/bunfig/commit/563bf2f)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#274](https://github.com/stacksjs/bunfig/issues/274), [#274](https://github.com/stacksjs/bunfig/issues/274))
+- **deps**: update dependency @types/bun to ^1.3.3 (#275) ([24b42fe](https://github.com/stacksjs/bunfig/commit/24b42fe)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#275](https://github.com/stacksjs/bunfig/issues/275), [#275](https://github.com/stacksjs/bunfig/issues/275))
+- **deps**: update all non-major dependencies (#271) ([09e6450](https://github.com/stacksjs/bunfig/commit/09e6450)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#271](https://github.com/stacksjs/bunfig/issues/271), [#271](https://github.com/stacksjs/bunfig/issues/271))
+- **deps**: update actions/checkout action to v6 (#273) ([cf066f2](https://github.com/stacksjs/bunfig/commit/cf066f2)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#273](https://github.com/stacksjs/bunfig/issues/273), [#273](https://github.com/stacksjs/bunfig/issues/273))
+- **deps**: update all non-major dependencies (#268) ([e034698](https://github.com/stacksjs/bunfig/commit/e034698)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#268](https://github.com/stacksjs/bunfig/issues/268), [#268](https://github.com/stacksjs/bunfig/issues/268))
+- **deps**: update dependency @stacksjs/bumpx to ^0.2.4 (#269) ([115c7c9](https://github.com/stacksjs/bunfig/commit/115c7c9)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#269](https://github.com/stacksjs/bunfig/issues/269), [#269](https://github.com/stacksjs/bunfig/issues/269))
+- **deps**: update all non-major dependencies (#267) ([0e6dc7a](https://github.com/stacksjs/bunfig/commit/0e6dc7a)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#267](https://github.com/stacksjs/bunfig/issues/267), [#267](https://github.com/stacksjs/bunfig/issues/267))
+- wip ([e3fa141](https://github.com/stacksjs/bunfig/commit/e3fa141)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _[renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot])_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.5...v0.15.6)
 
 ### 🧹 Chores
