@@ -98,7 +98,7 @@ You can specify an alias to check for alternative config file names when the pri
 // Single alias
 const config = await loadConfig({
   name: 'tlsx',
-  alias: 'tls', // Alternative name to check if tlsx.config.* doesn't exist
+  alias: 'tls', // Alternative name to check if tlsx.config._ doesn't exist
   defaultConfig: {
     domain: 'example.com',
     port: 443,
@@ -109,7 +109,7 @@ const config = await loadConfig({
 const pickierConfig = await loadConfig({
   name: 'pickier',
   alias: ['code-style', 'lint'],
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
 })
 ```
 
@@ -124,7 +124,7 @@ You can disable this feature by setting `checkEnv: false` in your config options
 ```ts
 const options = {
   name: 'my-app',
-  defaultConfig: { /_ ... */ },
+  defaultConfig: { /_ ... _/ },
   checkEnv: false, // Disable environment variable checking
 }
 ```

@@ -2,69 +2,6 @@
 title: Config Loading Patterns
 description: Learn different patterns for loading configuration with bunfig
 ---
-
-# Config Loading Patterns
-
-This guide covers various patterns for loading configuration with bunfig, from basic usage to advanced scenarios.
-
-## Basic Loading
-
-### Simple Load
-
-```typescript
-import { loadConfig } from 'bunfig'
-
-// Load configuration from app.config.ts (or .js, .json, etc.)
-const config = await loadConfig({
-  name: 'app',
-})
-```
-
-### With Defaults
-
-```typescript
-const config = await loadConfig({
-  name: 'app',
-  defaultConfig: {
-    port: 3000,
-    host: 'localhost',
-    debug: false,
-  },
-})
-
-// Uses defaults if no config file is found
-// Merges with config file values if found
-```
-
-### With Custom Directory
-
-```typescript
-const config = await loadConfig({
-  name: 'app',
-  cwd: './config', // Look in ./config directory
-})
-```
-
-## Configuration Merging
-
-bunfig deeply merges configuration from multiple sources in this order (later sources override earlier):
-
-1. Default config
-2. Home directory config (`~/.config/$name/`)
-3. Project config file
-4. Environment variables
-
-```typescript
-// defaultConfig
-const defaultConfig = {
-  server: {
-    port: 3000,
-    host: 'localhost',
-    timeout: 30000,
-  },
-}
-
-// ~/.config/app/config.ts (user-wide settings)
 export default {
   server: {
     timeout: 60000, // User prefers longer timeout
@@ -88,6 +25,7 @@ export default {
     timeout: 60000,                    // from home directory config
   },
 }
+
 ```
 
 ## Using Aliases
@@ -95,6 +33,7 @@ export default {
 Specify an alias for backward compatibility or alternative names. `alias` accepts either a single string or an array of strings:
 
 ```typescript
+
 // Single alias
 const config = await loadConfig({
   name: 'tlsx',
@@ -109,8 +48,9 @@ const config = await loadConfig({
 const pickierConfig = await loadConfig({
   name: 'pickier',
   alias: ['code-style', 'lint'], // Resolves any of pickier.config.ts, code-style.config.ts, or lint.config.ts
-  defaultConfig: { /* ... */ },
+  defaultConfig: { /_ ... _/ },
 })
+
 ```
 
 The primary `name` always takes priority over any alias. See [Aliases Support](../features/aliases.md) for the full resolution order.
@@ -120,6 +60,7 @@ The primary `name` always takes priority over any alias. See [Aliases Support](.
 For projects that organize configs in a specific directory:
 
 ```typescript
+
 const config = await loadConfig({
   name: 'database',
   cwd: process.cwd(),
@@ -131,6 +72,7 @@ const config = await loadConfig({
 // ./settings/database.ts
 // ./settings/.database.config.ts
 // etc.
+
 ```
 
 ## Environment-Specific Loading
@@ -138,6 +80,7 @@ const config = await loadConfig({
 Load different configs based on environment:
 
 ```typescript
+
 // config/development.config.ts
 export default {
   database: { url: 'postgresql://localhost:5432/dev' },
@@ -149,9 +92,11 @@ export default {
   database: { url: process.env.DATABASE_URL },
   logging: { level: 'error' },
 }
+
 ```
 
 ```typescript
+
 import { loadConfig } from 'bunfig'
 
 const env = process.env.NODE_ENV || 'development'
@@ -164,6 +109,7 @@ const config = await loadConfig({
     logging: { level: 'info' },
   },
 })
+
 ```
 
 ## Conditional Loading
@@ -171,6 +117,7 @@ const config = await loadConfig({
 ### Check if Config Exists
 
 ```typescript
+
 import { loadConfig } from 'bunfig'
 
 try {
@@ -182,11 +129,13 @@ try {
   // No config, feature disabled
   console.log('Optional feature not configured')
 }
+
 ```
 
 ### With Fallback
 
 ```typescript
+
 const config = await loadConfig({
   name: 'app',
   defaultConfig: {
@@ -195,6 +144,7 @@ const config = await loadConfig({
     options: {},
   },
 })
+
 ```
 
 ## Multiple Configs
@@ -202,6 +152,7 @@ const config = await loadConfig({
 ### Load Multiple Independently
 
 ```typescript
+
 import { loadConfig } from 'bunfig'
 
 const [serverConfig, dbConfig, cacheConfig] = await Promise.all([
@@ -209,11 +160,13 @@ const [serverConfig, dbConfig, cacheConfig] = await Promise.all([
   loadConfig({ name: 'database' }),
   loadConfig({ name: 'cache' }),
 ])
+
 ```
 
 ### Compose Configs
 
 ```typescript
+
 // base.config.ts
 export default {
   logging: { level: 'info' },
@@ -230,6 +183,7 @@ export default {
     host: 'localhost',
   },
 }
+
 ```
 
 ## Lazy Loading
@@ -237,6 +191,7 @@ export default {
 Load configuration only when needed:
 
 ```typescript
+
 let cachedConfig: AppConfig | null = null
 
 async function getConfig(): Promise<AppConfig> {
@@ -248,11 +203,13 @@ async function getConfig(): Promise<AppConfig> {
 
 // Usage
 const config = await getConfig()
+
 ```
 
 ## Singleton Pattern
 
 ```typescript
+
 // config.ts
 import { loadConfig } from 'bunfig'
 
@@ -272,6 +229,7 @@ export function getConfig(): Promise<AppConfig> {
 import { getConfig } from './config'
 
 const config = await getConfig()
+
 ```
 
 ## Factory Pattern
@@ -279,6 +237,7 @@ const config = await getConfig()
 Create configuration loaders for different parts of your app:
 
 ```typescript
+
 import { loadConfig } from 'bunfig'
 
 function createConfigLoader<T>(name: string, defaults: T) {
@@ -304,6 +263,7 @@ const loadDbConfig = createConfigLoader('database', {
 // Usage
 const serverConfig = await loadServerConfig()
 const dbConfig = await loadDbConfig()
+
 ```
 
 ## Config Validation on Load
@@ -311,6 +271,7 @@ const dbConfig = await loadDbConfig()
 Validate configuration immediately after loading:
 
 ```typescript
+
 import { loadConfig } from 'bunfig'
 
 interface DatabaseConfig {
@@ -336,6 +297,7 @@ const config = await loadConfig<DatabaseConfig>({
 })
 
 validateDbConfig(config)
+
 ```
 
 ## Watching for Changes
@@ -343,6 +305,7 @@ validateDbConfig(config)
 For development, you might want to reload config on changes:
 
 ```typescript
+
 import { loadConfig } from 'bunfig'
 import { watch } from 'fs'
 
@@ -360,11 +323,13 @@ if (process.env.NODE_ENV === 'development') {
 export function getConfig() {
   return currentConfig
 }
+
 ```
 
 ## Error Handling
 
 ```typescript
+
 import { loadConfig } from 'bunfig'
 
 try {
@@ -380,6 +345,7 @@ try {
     throw error
   }
 }
+
 ```
 
 ## Next Steps

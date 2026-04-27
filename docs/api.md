@@ -142,9 +142,11 @@ The main configuration options interface.
 interface Config<T> {
   name: string
   /**
+
    * One or more alternative names to check for config files. Pass a string
    * for a single fallback or an array to probe several names in priority
    * order — the primary `name` is always tried first.
+
    */
   alias?: string | string[]
   cwd?: string

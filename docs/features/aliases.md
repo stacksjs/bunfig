@@ -132,7 +132,7 @@ Using aliases for environment-specific configurations:
 
 ```ts
 const config = await loadConfig({
-  name: process.env.NODE_ENV === 'production' ? 'prod-config' : 'dev-config',
+  name: process.env.NODE*ENV === 'production' ? 'prod-config' : 'dev-config',
   alias: 'base-config', // Fallback to base configuration
   defaultConfig: {
     apiUrl: 'http://localhost:3000',
@@ -257,18 +257,18 @@ When using aliases for migration, document the transition:
 ```ts
 /**
 
- _ Configuration loader with backward compatibility.
+ * Configuration loader with backward compatibility.
 
- _
+ *
 
- _ Migration path: 'legacy-config' → 'modern-config'
- _ Support for 'legacy-config' will be removed in v3.0
+ * Migration path: 'legacy-config' → 'modern-config'
+ * Support for 'legacy-config' will be removed in v3.0
 
- _/
+ */
 const config = await loadConfig({
   name: 'modern-config',
   alias: 'legacy-config',
-  defaultConfig: { /_ ... _/ },
+  defaultConfig: { /* ... */ },
 })
 ```
 
@@ -278,10 +278,10 @@ Consider version-specific aliases. With the array form you can keep several prev
 
 ```ts
 const config = await loadConfig({
-  name: `my-tool-v${MAJOR_VERSION}`,
+  name: `my-tool-v${MAJOR*VERSION}`,
   alias: [
-    `my-tool-v${MAJOR_VERSION - 1}`,
-    `my-tool-v${MAJOR_VERSION - 2}`,
+    `my-tool-v${MAJOR*VERSION - 1}`,
+    `my-tool-v${MAJOR*VERSION - 2}`,
   ],
   defaultConfig: { /* ... */ },
 })
@@ -296,14 +296,14 @@ Use aliases to gradually deprecate old configuration names:
 const config = await loadConfig({
   name: 'new-name',
   alias: 'old-name',
-  defaultConfig: { /_ ... _/ },
+  defaultConfig: { /* ... */ },
 })
 
 // Phase 2: Warn about deprecated usage
 const config = await loadConfig({
   name: 'new-name',
   alias: 'old-name',
-  defaultConfig: { /_ ... _/ },
+  defaultConfig: { /* ... */ },
 })
 // Add deprecation warning if old-name config is found
 
@@ -311,7 +311,7 @@ const config = await loadConfig({
 const config = await loadConfig({
   name: 'new-name',
   // alias removed
-  defaultConfig: { /_ ... */ },
+  defaultConfig: { /* ... */ },
 })
 ```
 

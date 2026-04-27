@@ -2,75 +2,13 @@
 title: Type Safety
 description: Leverage TypeScript for fully typed configuration with bunfig
 ---
-
-# Type Safety
-
-bunfig is built with TypeScript in mind, providing excellent type safety and IDE autocompletion for your configuration.
-
-## Basic Typing
-
-### Define Your Config Interface
-
-```typescript
-interface AppConfig {
-  server: {
-    port: number
-    host: string
-    ssl?: {
-      enabled: boolean
-      cert?: string
-      key?: string
-    }
-  }
-  database: {
-    url: string
-    pool: number
-    ssl: boolean
-  }
-  features: {
-    darkMode: boolean
-    analytics: boolean
-    beta: string[]
-  }
-}
-```
-
-### Load with Type Parameter
-
-```typescript
-import { loadConfig } from 'bunfig'
-
-const config = await loadConfig<AppConfig>({
-  name: 'app',
-})
-
-// Full type safety
-config.server.port // number
-config.database.url // string
-config.features.beta // string[]
-config.server.ssl?.enabled // boolean | undefined
-```
-
-## Type Inference from Defaults
-
-When you provide `defaultConfig`, TypeScript can infer the type:
-
-```typescript
-const config = await loadConfig({
-  name: 'app',
-  defaultConfig: {
-    server: {
-      port: 3000,
-      host: 'localhost',
-    },
-    debug: false,
-  },
 })
 
 // TypeScript infers:
 // config.server.port is number
 // config.server.host is string
 // config.debug is boolean
+
 ```
 
 ## Config Type Helper
@@ -78,6 +16,7 @@ const config = await loadConfig({
 Use the `Config` type for better organization:
 
 ```typescript
+
 import type { Config } from 'bunfig'
 
 interface MyAppConfig {
@@ -95,6 +34,7 @@ const options: Config<MyAppConfig> = {
 }
 
 const config = await loadConfig(options)
+
 ```
 
 ## Partial and Required Types
@@ -102,6 +42,7 @@ const config = await loadConfig(options)
 ### Handle Optional Values
 
 ```typescript
+
 interface AppConfig {
   required: {
     apiKey: string
@@ -125,11 +66,13 @@ const config = await loadConfig<AppConfig>({
 
 // Use optional chaining for optional fields
 const timeout = config.optional?.timeout ?? 30000
+
 ```
 
 ### Strict Required Fields
 
 ```typescript
+
 import { loadConfig } from 'bunfig'
 
 interface StrictConfig {
@@ -146,6 +89,7 @@ const config = await loadConfig<StrictConfig>({
 if (!config.apiKey || !config.secret) {
   throw new Error('Missing required configuration')
 }
+
 ```
 
 ## Dynamic Config Types with Build Plugin
@@ -155,6 +99,7 @@ bunfig provides a build plugin that generates types from your config files:
 ### Setup the Build Plugin
 
 ```typescript
+
 // build.ts
 import { bunfigPlugin } from 'bunfig'
 
@@ -168,11 +113,13 @@ await Bun.build({
     }),
   ],
 })
+
 ```
 
 ### Use Generated Types
 
 ```typescript
+
 import type { ConfigNames, ConfigOf } from 'bunfig'
 import { loadConfig } from 'bunfig'
 
@@ -185,6 +132,7 @@ function load<N extends ConfigNames>(name: N): Promise<ConfigOf<N>> {
 // Full type safety based on your actual config files
 const appConfig = await load('app')
 const dbConfig = await load('database')
+
 ```
 
 ## TypeScript Language Service Plugin
@@ -194,6 +142,7 @@ For editor support without building:
 ### Configure tsconfig.json
 
 ```json
+
 {
   "compilerOptions": {
     "types": ["bunfig"]
@@ -205,6 +154,7 @@ For editor support without building:
     }
   ]
 }
+
 ```
 
 ### Benefits
@@ -218,6 +168,7 @@ For editor support without building:
 Create type guards for runtime validation:
 
 ```typescript
+
 interface ServerConfig {
   port: number
   host: string
@@ -268,6 +219,7 @@ if (!isValidServerConfig(rawConfig)) {
 }
 
 // rawConfig is now typed as ServerConfig
+
 ```
 
 ## Zod Integration
@@ -275,6 +227,7 @@ if (!isValidServerConfig(rawConfig)) {
 Use Zod for schema validation with types:
 
 ```typescript
+
 import { z } from 'zod'
 import { loadConfig } from 'bunfig'
 
@@ -303,6 +256,7 @@ const rawConfig = await loadConfig({ name: 'app' })
 const config = AppConfigSchema.parse(rawConfig)
 
 // config is fully typed as AppConfig
+
 ```
 
 ## Conditional Types
@@ -310,6 +264,7 @@ const config = AppConfigSchema.parse(rawConfig)
 Handle different config shapes based on environment:
 
 ```typescript
+
 interface BaseConfig {
   appName: string
   version: string
@@ -346,6 +301,7 @@ if (isDev(config)) {
   // TypeScript knows config is ProdConfig
   console.log('Monitoring:', config.monitoring.endpoint)
 }
+
 ```
 
 ## Readonly Configuration
@@ -353,6 +309,7 @@ if (isDev(config)) {
 Make config immutable:
 
 ```typescript
+
 type DeepReadonly<T> = {
   readonly [P in keyof T]: T[P] extends object
     ? DeepReadonly<T[P]>
@@ -374,6 +331,7 @@ const config = await loadConfig<AppConfig>({
 
 // TypeScript error: Cannot assign to 'port' because it is a read-only property
 // config.server.port = 8080
+
 ```
 
 ## Namespace Organization
@@ -381,6 +339,7 @@ const config = await loadConfig<AppConfig>({
 Organize large configs with namespaces:
 
 ```typescript
+
 namespace Config {
   export interface Server {
     port: number
@@ -409,6 +368,7 @@ namespace Config {
 const config = await loadConfig<Config.App>({
   name: 'app',
 })
+
 ```
 
 ## Next Steps

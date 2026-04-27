@@ -3,67 +3,6 @@ title: Environment Variables
 description: Automatic environment variable detection and override in bunfig
 ---
 
-# Environment Variables
-
-bunfig automatically detects and merges environment variables with your configuration, providing a seamless way to override settings in different environments.
-
-## How It Works
-
-Environment variables are automatically mapped to configuration properties using a naming convention:
-
-```
-[CONFIG_NAME]_[PROPERTY_PATH]
-```
-
-### Examples
-
-```bash
-# For a config named "app"
-APP_PORT=8080                          # → config.port = 8080
-APP_DATABASE_URL=postgres://...        # → config.database.url = "postgres://..."
-APP_SERVER_HOST=0.0.0.0                # → config.server.host = "0.0.0.0"
-APP_FEATURES_DARK_MODE=true            # → config.features.darkMode = true
-```
-
-### Naming Convention
-
-- Config name is UPPERCASED: `app` → `APP_`
-- Property names are UPPERCASED: `serverHost` → `SERVER_HOST`
-- Nested properties use underscores: `database.pool.size` → `DATABASE_POOL_SIZE`
-- camelCase becomes SNAKE_CASE: `maxRetries` → `MAX_RETRIES`
-
-## Basic Example
-
-```typescript
-// app.config.ts
-export default {
-  port: 3000,
-  host: 'localhost',
-  database: {
-    url: 'postgresql://localhost:5432/dev',
-    pool: 10,
-  },
-}
-```
-
-```bash
-# .env or shell environment
-export APP_PORT=8080
-export APP_DATABASE_URL=postgresql://prod:5432/prod
-export APP_DATABASE_POOL=50
-```
-
-```typescript
-import { loadConfig } from 'bunfig'
-
-const config = await loadConfig({ name: 'app' })
-
-console.log(config.port)          // 8080 (from APP_PORT)
-console.log(config.database.url)  // "postgresql://prod:5432/prod"
-console.log(config.database.pool) // 50 (from APP_DATABASE_POOL)
-console.log(config.host)          // "localhost" (unchanged, no env var)
-```
-
 ## Type Conversion
 
 bunfig automatically converts environment variable values to the appropriate types:
@@ -71,33 +10,42 @@ bunfig automatically converts environment variable values to the appropriate typ
 ### Numbers
 
 ```bash
+
 APP_PORT=8080           # → number: 8080
 APP_TIMEOUT=30.5        # → number: 30.5
 APP_RETRIES=3           # → number: 3
+
 ```
 
 ### Booleans
 
 ```bash
+
 APP_DEBUG=true          # → boolean: true
 APP_DEBUG=false         # → boolean: false
 APP_DEBUG=1             # → boolean: true
 APP_DEBUG=0             # → boolean: false
 APP_ENABLED=yes         # → boolean: true
 APP_ENABLED=no          # → boolean: false
+
 ```
 
 ### Arrays
 
 ```bash
+
 # JSON format
+
 APP_HOSTS=["host1.com","host2.com"]
 
 # Comma-separated (when default is an array)
-APP_ALLOWED_ORIGINS=https://a.com,https://b.com
+
+APP_ALLOWED_ORIGINS=https://a.com,<https://b.com>
+
 ```
 
 ```typescript
+
 // In your config
 export default {
   hosts: [],                    // Empty array default
@@ -107,13 +55,17 @@ export default {
 // Result
 config.hosts = ['host1.com', 'host2.com']
 config.allowedOrigins = ['https://a.com', 'https://b.com']
+
 ```
 
 ### Objects
 
 ```bash
+
 # JSON format for complex objects
+
 APP_DATABASE='{"host":"localhost","port":5432}'
+
 ```
 
 ## Disabling Environment Variable Loading
@@ -121,10 +73,12 @@ APP_DATABASE='{"host":"localhost","port":5432}'
 If you don't want environment variables to override config:
 
 ```typescript
+
 const config = await loadConfig({
   name: 'app',
   checkEnv: false, // Disable environment variable checking
 })
+
 ```
 
 ## Custom Prefix
@@ -132,6 +86,7 @@ const config = await loadConfig({
 Use a different prefix for environment variables:
 
 ```typescript
+
 // Config name: "myapp"
 // Default prefix: MYAPP_
 // Custom via aliased config name
@@ -140,6 +95,7 @@ const config = await loadConfig({
   name: 'my-custom-app',  // MY_CUSTOM_APP_ prefix
   alias: 'app',           // Still loads from app.config.ts
 })
+
 ```
 
 ## Sensitive Values
@@ -147,6 +103,7 @@ const config = await loadConfig({
 For sensitive configuration, use environment variables exclusively:
 
 ```typescript
+
 // app.config.ts
 export default {
   api: {
@@ -155,15 +112,20 @@ export default {
     // apiKey: 'secret',  // BAD!
   },
 }
+
 ```
 
 ```bash
+
 # Set sensitive values via environment
+
 export APP_API_KEY=your-secret-api-key
 export APP_DATABASE_PASSWORD=db-password
+
 ```
 
 ```typescript
+
 interface AppConfig {
   api: {
     endpoint: string
@@ -181,6 +143,7 @@ const apiKey = config.api.apiKey
 if (!apiKey) {
   throw new Error('APP_API_KEY environment variable is required')
 }
+
 ```
 
 ## Priority Order
@@ -193,6 +156,7 @@ Environment variables take precedence in this order (highest to lowest):
 4. **Default config** (lowest priority)
 
 ```typescript
+
 // Default config
 const defaults = {
   port: 3000,
@@ -216,6 +180,7 @@ export default {
   port: 8080,      // From environment (highest priority)
   host: '0.0.0.0', // From project config
 }
+
 ```
 
 ## Working with .env Files
@@ -223,6 +188,7 @@ export default {
 bunfig works well with `.env` file loaders like `dotenv`:
 
 ```typescript
+
 // Load .env file first
 import 'dotenv/config'
 
@@ -232,20 +198,25 @@ import 'dotenv/config'
 import { loadConfig } from 'bunfig'
 
 const config = await loadConfig({ name: 'app' })
+
 ```
 
 ### .env File Example
 
 ```bash
+
 # .env
+
 APP_PORT=3000
 APP_DATABASE_URL=postgresql://localhost:5432/myapp
 APP_DEBUG=true
 
 # .env.production
+
 APP_PORT=80
 APP_DATABASE_URL=postgresql://prod-db:5432/myapp
 APP_DEBUG=false
+
 ```
 
 ## Environment-Specific Configs
@@ -253,6 +224,7 @@ APP_DEBUG=false
 Combine with environment-specific config files:
 
 ```typescript
+
 // Load environment-specific config file
 const env = process.env.NODE_ENV || 'development'
 
@@ -260,11 +232,13 @@ const config = await loadConfig({
   name: env,  // Loads development.config.ts or production.config.ts
   cwd: './config',
 })
+
 ```
 
 Or use a single config with environment-aware defaults:
 
 ```typescript
+
 // app.config.ts
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -277,6 +251,7 @@ export default {
       : 'postgresql://localhost:5432/dev',
   },
 }
+
 ```
 
 ## Validation with Environment Variables
@@ -284,6 +259,7 @@ export default {
 Ensure required environment variables are set:
 
 ```typescript
+
 import { loadConfig } from 'bunfig'
 
 interface AppConfig {
@@ -310,6 +286,7 @@ const missing = requiredEnvVars.filter(v => !process.env[v])
 if (missing.length > 0) {
   throw new Error(`Missing required environment variables: ${missing.join(', ')}`)
 }
+
 ```
 
 ## Debugging Environment Variables
@@ -317,6 +294,7 @@ if (missing.length > 0) {
 Enable verbose mode to see which environment variables are being used:
 
 ```typescript
+
 // Set DEBUG=bunfig or check what's being loaded
 const config = await loadConfig({
   name: 'app',
@@ -332,6 +310,7 @@ Object.keys(process.env)
   .forEach(key => {
     console.log(`  ${key}=${process.env[key]}`)
   })
+
 ```
 
 ## Docker and Container Environments
@@ -339,7 +318,9 @@ Object.keys(process.env)
 Environment variables are especially useful in containerized environments:
 
 ```dockerfile
+
 # Dockerfile
+
 FROM oven/bun:1
 
 WORKDIR /app
@@ -347,23 +328,31 @@ COPY . .
 RUN bun install
 
 # Set runtime configuration via environment
+
 ENV APP_PORT=3000
 ENV APP_DATABASE_URL=postgresql://db:5432/app
 
 CMD ["bun", "run", "start"]
+
 ```
 
 ```yaml
+
 # docker-compose.yml
+
 services:
   app:
     build: .
     environment:
+
       - APP_PORT=3000
       - APP_DATABASE_URL=postgresql://db:5432/app
       - APP_REDIS_URL=redis://cache:6379
+
     env_file:
+
       - .env.production
+
 ```
 
 ## Next Steps

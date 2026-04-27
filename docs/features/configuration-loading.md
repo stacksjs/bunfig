@@ -95,14 +95,14 @@ The same alias resolution also applies when looking for configuration in the pac
 bunfig automatically checks for environment variables based on your configuration name, making it easy to override settings in different environments. Environment variables follow this naming pattern:
 
 ```
-[CONFIG_NAME]_[PROPERTY_NAME]
+[CONFIG*NAME]*[PROPERTY*NAME]
 ```
 
 For example, with a config name of "my-app", these environment variables would be recognized:
 
 ```bash
-MY_APP_PORT=8080
-MY_APP_HOST=production.example.com
+MY*APP*PORT=8080
+MY*APP*HOST=production.example.com
 ```
 
 Environment variables are automatically converted to the correct type based on your default configuration. See the [Environment Variables](./environment-variables.md) section for more details.
@@ -132,7 +132,7 @@ const defaultConfig = {
 }
 
 // Environment variables
-// MY_APP_SERVER_PORT=8080
+// MY*APP*SERVER*PORT=8080
 
 // my-app.config.ts (local) or ~/.config/my-app/config.ts (home)
 export default {
@@ -367,7 +367,7 @@ You can disable certain features of the configuration loader if needed:
 ```ts
 const config = await loadConfig<MyConfig>({
   name: 'my-app',
-  defaultConfig: { /_ ... _/ },
+  defaultConfig: { /* ... */ },
   checkEnv: false, // Disable environment variable loading
 })
 ```

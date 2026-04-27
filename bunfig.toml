@@ -3,4 +3,4 @@ registry = { url = "https://registry.npmjs.org/", token = "$BUN_AUTH_TOKEN" }
 linker = "hoisted"
 
 [test]
-preload = "./happy-dom.ts"
+preload = "./happy-dom.cjs"
