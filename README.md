@@ -63,7 +63,7 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 > - In the project root: `$name.config.{ts,js,mjs,cjs,json}`, `.$name.config.{ts,js,mjs,cjs,json}`, `$name.{ts,js,mjs,cjs,json}`, `.$name.{ts,js,mjs,cjs,json}`
 > - In `config/` or `.config/` (and your custom `configDir`): it prefers bare names (`$name.{ts,...}`, `.$name.{ts,...}`) before the suffixed forms (`$name.config.{ts,...}`, `.$name.config.{ts,...}`) to avoid redundancy
 > 2. **Home directory**: `~/.config/$name/config.{ts,js,mjs,cjs,json}` (and `~/.config/$name/$name.config.{ts,...}`)
-> 3. **Package.json**: a section named after your config `name` (or its `alias`)
+> 3. **Package.json**: a section named after your config `name` (or any of its `alias` entries — `alias` accepts a string or array of strings)
 
 ### Home Directory Configuration
 
@@ -92,20 +92,28 @@ The final configuration will be deeply merged, with local project settings takin
 
 ### Using Aliases
 
-You can specify an alias to check for alternative config file names when the primary name doesn't exist:
+You can specify an alias to check for alternative config file names when the primary name doesn't exist. `alias` accepts either a single string or an array of strings — pass an array to probe several fallback names in priority order:
 
 ```ts
+// Single alias
 const config = await loadConfig({
   name: 'tlsx',
-  alias: 'tls', // Alternative name to check if tlsx.config._ doesn't exist
+  alias: 'tls', // Alternative name to check if tlsx.config.* doesn't exist
   defaultConfig: {
     domain: 'example.com',
     port: 443,
   },
 })
+
+// Multiple aliases — tried in array order, first match wins
+const pickierConfig = await loadConfig({
+  name: 'pickier',
+  alias: ['code-style', 'lint'],
+  defaultConfig: { /* ... */ },
+})
 ```
 
-This will check for both `tlsx.config.ts` and `tls.config.ts` _(and other variations)_ in both local and home directories, using the first one it finds. This is useful for maintaining backward compatibility when renaming configurations or providing fallbacks.
+The single-alias example checks for both `tlsx.config.ts` and `tls.config.ts` _(and other variations)_ in both local and home directories, using the first one it finds. The array form does the same, walking each alias in declared order. The primary `name` always wins over any alias. This is useful for maintaining backward compatibility when renaming configurations, supporting multiple naming conventions, or providing fallbacks.
 
 ### Environment Variables
 

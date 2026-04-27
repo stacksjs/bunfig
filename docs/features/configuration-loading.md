@@ -60,9 +60,10 @@ bunfig supports configuration aliases, allowing you to specify an alternative na
 - Supporting multiple naming conventions
 - Providing fallbacks for different environments
 
-When you specify an alias, bunfig will check for configuration files with both the primary name and the alias name, using the first one it finds:
+When you specify an alias, bunfig will check for configuration files with both the primary name and the alias name, using the first one it finds. `alias` accepts a single string or an array of strings — pass an array to probe several fallback names in priority order:
 
 ```ts
+// Single alias
 const config = await loadConfig({
   name: 'tlsx',
   alias: 'tls',
@@ -71,16 +72,23 @@ const config = await loadConfig({
     port: 443,
   },
 })
+
+// Array of aliases — each is tried in declared order
+const pickierConfig = await loadConfig({
+  name: 'pickier',
+  alias: ['code-style', 'lint'],
+  defaultConfig: { /* ... */ },
+})
 ```
 
-This will check for both `tlsx.config.ts` and `tls.config.ts` (and other variations), using the primary name with higher priority. If no file with the primary name is found, it will use the alias name.
+The single-alias form checks `tlsx.config.ts` then `tls.config.ts` (and variations). The array form walks each alias in array order — the primary name still wins, then the first alias's pattern set, then the second alias's pattern set, and so on.
 
 **Alias resolution applies to both local and home directories:**
 
 - Local: `tlsx.config.ts` → `tls.config.ts`
 - Home: `~/.config/tlsx/config.ts` → `~/.config/tlsx/tls.config.ts` → `~/.config/tls/config.ts` → `~/.config/tls/tls.config.ts`
 
-The same alias resolution also applies when looking for configuration in the package.json file. If a section with the primary name doesn't exist, bunfig will look for a section with the alias name.
+The same alias resolution also applies when looking for configuration in the package.json file. If a section with the primary name doesn't exist, bunfig walks each alias in order and uses the first matching section.
 
 ## Environment Variable Support
 

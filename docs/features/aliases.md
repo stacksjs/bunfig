@@ -13,11 +13,12 @@ Aliases are alternative configuration names that bunfig will check when the prim
 
 ## Basic Usage
 
-To use aliases, simply provide an `alias` property in your configuration options:
+To use aliases, simply provide an `alias` property in your configuration options. `alias` accepts either a single string or an array of strings — pass an array to probe several names in one call:
 
 ```ts
 import { loadConfig } from 'bunfig'
 
+// Single alias
 const config = await loadConfig({
   name: 'my-new-tool',
   alias: 'my-old-tool', // Fallback name
@@ -26,7 +27,16 @@ const config = await loadConfig({
     host: 'localhost',
   },
 })
+
+// Multiple aliases — tried in array order, first match wins
+const config2 = await loadConfig({
+  name: 'pickier',
+  alias: ['code-style', 'lint'],
+  defaultConfig: { /* ... */ },
+})
 ```
+
+When `alias` is an array, bunfig walks each entry in declared order and uses the first match. The primary `name` is always tried first, before any alias.
 
 ## Search Order
 
@@ -35,6 +45,14 @@ When you specify an alias, bunfig searches for configuration files in this order
 1. **Primary name files** (`my-new-tool.*`)
 2. **Primary name with alias suffix** (`my-new-tool.my-old-tool.*`)
 3. **Alias name files** (`my-old-tool.*`)
+
+When `alias` is an array, each entry contributes the same pattern set, walked in the order you declared. With `alias: ['a', 'b']`:
+
+1. Primary name (`my-tool.*`)
+2. Combined patterns for the first alias (`my-tool.a.*`)
+3. First alias on its own (`a.*`)
+4. Combined patterns for the second alias (`my-tool.b.*`)
+5. Second alias on its own (`b.*`)
 
 This applies to all search locations:
 
@@ -125,42 +143,44 @@ const config = await loadConfig({
 
 ## Multiple Aliases
 
-While bunfig currently supports a single alias, you can implement multiple fallbacks using a wrapper function:
+Pass an array to `alias` to probe several fallback names in one call. Bunfig walks the array in order and returns the first match, with the primary `name` always taking priority over any alias:
 
 ```ts
-async function loadConfigWithMultipleAliases<T>(
-  name: string,
-  aliases: string[],
-  defaultConfig: T
-) {
-  for (const alias of [undefined, ...aliases]) {
-    try {
-      return await loadConfig({
-        name,
-        alias,
-        defaultConfig,
-      })
-    }
-    catch (error) {
-      // Continue to next alias
-      if (alias === aliases[aliases.length - 1]) {
-        throw error // Rethrow if last alias also fails
-      }
-    }
-  }
-}
-
-// Usage
-const config = await loadConfigWithMultipleAliases(
-  'new-tool',
-  ['legacy-tool', 'old-tool', 'deprecated-tool'],
-  { port: 3000 }
-)
+const config = await loadConfig({
+  name: 'new-tool',
+  alias: ['legacy-tool', 'old-tool', 'deprecated-tool'],
+  defaultConfig: { port: 3000 },
+})
 ```
+
+Resolution order for the example above:
+
+1. `new-tool` (primary, all locations)
+2. `legacy-tool` (first alias, all locations)
+3. `old-tool` (second alias, all locations)
+4. `deprecated-tool` (third alias, all locations)
+5. `package.json` fields, tried in the same priority order
+6. Defaults
+
+This is the recommended way to support several fallback names — it's a single resolution pass with consistent priority semantics, rather than a loop of independent `loadConfig` calls.
+
+### Real-world example
+
+The [pickier](https://github.com/stacksjs/pickier) linter uses this to honor both its branded alias and a project convention:
+
+```ts
+await loadConfig({
+  name: 'pickier',
+  alias: ['code-style', 'lint'],
+  defaultConfig,
+})
+```
+
+This resolves any of `pickier.config.ts`, `code-style.config.ts`, `config/lint.ts`, etc. — whichever the project author prefers.
 
 ## Package.json Aliases
 
-Aliases also work with package.json sections:
+Aliases also work with package.json sections, including array form:
 
 ```json
 {
@@ -172,17 +192,28 @@ Aliases also work with package.json sections:
   "old-tool": {
     "port": 3000,
     "host": "localhost"
+  },
+  "legacy-tool": {
+    "port": 2000,
+    "host": "127.0.0.1"
   }
 }
 ```
 
 ```ts
-const config = await loadConfig({
+// Single alias — primary name first, then alias
+const a = await loadConfig({
   name: 'new-tool',
   alias: 'old-tool',
   defaultConfig: { port: 8080 },
 })
-// Will use "new-tool" section if present, otherwise "old-tool"
+
+// Array — primary name, then each alias in order, first hit wins
+const b = await loadConfig({
+  name: 'new-tool',
+  alias: ['old-tool', 'legacy-tool'],
+  defaultConfig: { port: 8080 },
+})
 ```
 
 ## Home Directory Aliases
@@ -243,13 +274,16 @@ const config = await loadConfig({
 
 ### 3. Version-Aware Aliases
 
-Consider version-specific aliases:
+Consider version-specific aliases. With the array form you can keep several previous majors readable in one place:
 
 ```ts
 const config = await loadConfig({
   name: `my-tool-v${MAJOR_VERSION}`,
-  alias: `my-tool-v${MAJOR_VERSION - 1}`,
-  defaultConfig: { /_ ... _/ },
+  alias: [
+    `my-tool-v${MAJOR_VERSION - 1}`,
+    `my-tool-v${MAJOR_VERSION - 2}`,
+  ],
+  defaultConfig: { /* ... */ },
 })
 ```
 

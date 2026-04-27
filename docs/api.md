@@ -42,6 +42,15 @@ const config3 = await config<MyConfig>({
     port: 3000,
   },
 })
+
+// Using multiple aliases — each is tried in array order
+const config4 = await config<MyConfig>({
+  name: 'my-app',
+  alias: ['legacy-app', 'old-app'],
+  defaultConfig: {
+    port: 3000,
+  },
+})
 ```
 
 ### `loadConfig<T>`
@@ -63,7 +72,7 @@ async function loadConfig<T>({
 #### Parameters
 
 - `name`: The name of your configuration
-- `alias`: An alternative name to check for config files (optional)
+- `alias`: An alternative name to check for config files (optional). Accepts a single string, or an array of strings to probe several fallback names in order. The primary `name` always wins over any alias.
 - `cwd`: Working directory to search for config files (defaults to process.cwd())
 - `defaultConfig`: Default configuration values
 - `arrayStrategy`: Controls how arrays are merged. Defaults to `'replace'` (user-provided arrays replace defaults). Set to `'merge'` to concatenate arrays using bunfig's smart merge.
@@ -85,6 +94,15 @@ const tlsConfig = await loadConfig<TlsConfig>({
   alias: 'tls',
   defaultConfig: {
     domain: 'example.com',
+  },
+})
+
+// With multiple aliases — first match wins, primary name still takes priority
+const pickierConfig = await loadConfig({
+  name: 'pickier',
+  alias: ['code-style', 'lint'],
+  defaultConfig: {
+    /* ... */
   },
 })
 ```
@@ -123,7 +141,12 @@ The main configuration options interface.
 ```ts
 interface Config<T> {
   name: string
-  alias?: string
+  /**
+   * One or more alternative names to check for config files. Pass a string
+   * for a single fallback or an array to probe several names in priority
+   * order — the primary `name` is always tried first.
+   */
+  alias?: string | string[]
   cwd?: string
   endpoint?: string // browser
   headers?: Record<string, string> // browser
@@ -246,7 +269,7 @@ This allows you to store global configuration settings that apply across all you
 
 If no file-based configuration is found, bunfig looks for a configuration section in your package.json file.
 
-If an alias is provided, it will also check for files with the alias name using the same patterns if no file with the primary name is found.
+If an alias is provided, it will also check for files with the alias name using the same patterns if no file with the primary name is found. When `alias` is an array, each entry is tried in array order.
 
 ### Resolution Examples
 

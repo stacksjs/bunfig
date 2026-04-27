@@ -112,23 +112,33 @@ export default {
 
 ### With Aliases
 
-Home directory configuration also works with aliases:
+Home directory configuration also works with aliases. Pass a single string for one fallback or an array to probe several:
 
 ```ts
+// Single alias
 const config = await loadConfig({
   name: 'new-tool',
   alias: 'old-tool',
   defaultConfig: { /* ... */ },
 })
+
+// Multiple aliases
+const config2 = await loadConfig({
+  name: 'new-tool',
+  alias: ['old-tool', 'legacy-tool'],
+  defaultConfig: { /* ... */ },
+})
 ```
 
-This will check for:
+The single-alias example checks for:
 
 1. `~/.config/new-tool/config.*`
 2. `~/.config/new-tool/new-tool.config.*`
 3. `~/.config/new-tool/old-tool.config.*` (alias pattern)
 4. `~/.config/old-tool/config.*` (alias directory)
 5. `~/.config/old-tool/old-tool.config.*`
+
+When `alias` is an array, the same patterns are generated for each alias in the order you declared them — first alias's patterns are tried before the second's.
 
 ## Best Practices
 

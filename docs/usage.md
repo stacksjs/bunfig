@@ -96,9 +96,10 @@ When you specify an alias, bunfig will also check for files with the alias name 
 
 ## Configuration Aliases
 
-You can use aliases to provide alternative configuration file names:
+You can use aliases to provide alternative configuration file names. `alias` accepts either a single string or an array of strings:
 
 ```ts
+// Single fallback
 const tlsConfig = await loadConfig({
   name: 'tlsx',
   alias: 'tls',
@@ -107,6 +108,13 @@ const tlsConfig = await loadConfig({
     port: 443,
   },
 })
+
+// Multiple fallbacks — tried in array order, first match wins
+const pickierConfig = await loadConfig({
+  name: 'pickier',
+  alias: ['code-style', 'lint'],
+  defaultConfig: { /* ... */ },
+})
 ```
 
 This is useful for:
@@ -114,15 +122,16 @@ This is useful for:
 - Maintaining backward compatibility when renaming configurations
 - Supporting multiple naming conventions
 - Providing fallbacks for different environments
+- Probing several historical names from past major versions in one call
 
-When both a primary config file and an alias config file exist, the primary file takes precedence.
+When both a primary config file and an alias config file exist, the primary file takes precedence. When `alias` is an array, the array's order defines priority among aliases.
 
 **Alias resolution applies to both local and home directories:**
 
 - Local: `tlsx.config.ts` → `tls.config.ts`
 - Home: `~/.config/tlsx/config.ts` → `~/.config/tlsx/tls.config.ts` → `~/.config/tls/config.ts` → `~/.config/tls/tls.config.ts`
 
-The alias feature also works when looking for config in package.json - if a section with the primary name isn't found, bunfig will look for a section with the alias name.
+The alias feature also works when looking for config in package.json — if a section with the primary name isn't found, bunfig walks each alias in order and uses the first matching section.
 
 ## Advanced Usage
 
@@ -228,7 +237,7 @@ Low-level configuration loader with more options.
 Options:
 
 - `name`: The name of your configuration
-- `alias`: An alternative name to check for config files (optional)
+- `alias`: An alternative name (or array of names) to check for config files (optional). When an array is passed, each entry is tried in order and the first match wins.
 - `cwd?`: Working directory to search for config files (defaults to process.cwd())
 - `defaultConfig`: Default configuration values
 

@@ -92,9 +92,10 @@ export default {
 
 ## Using Aliases
 
-Specify an alias for backward compatibility or alternative names:
+Specify an alias for backward compatibility or alternative names. `alias` accepts either a single string or an array of strings:
 
 ```typescript
+// Single alias
 const config = await loadConfig({
   name: 'tlsx',
   alias: 'tls', // Falls back to tls.config.ts if tlsx.config.ts not found
@@ -103,7 +104,16 @@ const config = await loadConfig({
     port: 443,
   },
 })
+
+// Multiple aliases — tried in array order, first match wins
+const pickierConfig = await loadConfig({
+  name: 'pickier',
+  alias: ['code-style', 'lint'], // Resolves any of pickier.config.ts, code-style.config.ts, or lint.config.ts
+  defaultConfig: { /* ... */ },
+})
 ```
+
+The primary `name` always takes priority over any alias. See [Aliases Support](../features/aliases.md) for the full resolution order.
 
 ## Custom Config Directory
 
