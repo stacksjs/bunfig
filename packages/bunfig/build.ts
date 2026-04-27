@@ -8,7 +8,6 @@ await Bun.build({
   entrypoints: ['src/index.ts'],
   outdir: './dist',
   target: 'bun',
-  external: ['@stacksjs/clarity', '@stacksjs/clapp'],
   plugins: [dts()],
 })
 
@@ -17,7 +16,6 @@ await Bun.build({
   entrypoints: ['src/ts-plugin.ts'],
   outdir: './dist',
   target: 'node',
-  external: ['@stacksjs/clarity', '@stacksjs/clapp'],
   plugins: [dts()],
 })
 
@@ -26,7 +24,6 @@ await Bun.build({
   entrypoints: ['src/browser.ts'],
   outdir: './dist',
   target: 'browser',
-  external: ['@stacksjs/clarity', '@stacksjs/clapp'],
   plugins: [dts()],
 })
 
@@ -35,7 +32,6 @@ await Bun.build({
   entrypoints: ['bin/cli.ts'],
   outdir: './dist',
   target: 'bun',
-  external: ['@stacksjs/clarity', '@stacksjs/clapp'],
   plugins: [dts()],
 })
 
