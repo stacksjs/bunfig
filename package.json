@@ -1,7 +1,7 @@
 {
   "name": "bunfig",
   "type": "module",
-  "version": "0.15.7",
+  "version": "0.15.8",
   "private": true,
   "description": "A smart & fully-typed configuration loader for Bun.",
   "author": "Chris Breuer <chris@stacksjs.org>",
@@ -96,5 +96,8 @@
       }
     },
     "commit-msg": "bunx gitlint --edit .git/COMMIT_EDITMSG"
+  },
+  "dependencies": {
+    "@stacksjs/clarity": "^0.3.27"
   }
 }

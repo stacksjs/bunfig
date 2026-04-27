@@ -1,3 +1,14 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.7...v0.15.8)
+
+### 🧹 Chores
+
+- release v0.15.8 ([92673fe](https://github.com/stacksjs/bunfig/commit/92673fe)) _(by Chris <chrisbreuer93@gmail.com>)_
+- drop clarity + clapp externalize from build ([2e06bcd](https://github.com/stacksjs/bunfig/commit/2e06bcd)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.6...v0.15.7)
 
 ### 🚀 Features

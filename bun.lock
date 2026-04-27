@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "bunfig",
+      "dependencies": {
+        "@stacksjs/clarity": "^0.3.27",
+      },
       "devDependencies": {
         "@stacksjs/bumpx": "^0.2.4",
         "@stacksjs/logsmith": "^0.2.1",
@@ -16,7 +19,7 @@
     },
     "packages/bunfig": {
       "name": "bunfig",
-      "version": "0.15.6",
+      "version": "0.15.7",
       "bin": {
         "bunfig": "./bin/cli.js",
       },
@@ -35,7 +38,7 @@
 
     "@stacksjs/clapp": ["@stacksjs/clapp@0.2.0", "", { "dependencies": { "mri": "^1.2.0", "wrap-ansi": "^9.0.0" }, "bin": { "clapp": "dist/bin/cli.js", "@stacksjs/clapp": "dist/bin/cli.js" } }, "sha512-dSqnbeZjXnQLLvVxC5NU7D9Vpjxc6cC9Bo2ZwaqjgruK7pbVoFCI0goc9Mtf/lfSTbTx6Uvv/mbY7+cOW/j3Og=="],
 
-    "@stacksjs/clarity": ["@stacksjs/clarity@0.3.24", "", { "bin": { "clarity": "dist/bin/cli.js" } }, "sha512-QN21fT/9dovcuFTkni9LFHDzBpiBZ4Q//0a3vFJsckPiblNIu1RhwwePkkTK4j6Xu2DtVYGR60/9Scdrp6wRfw=="],
+    "@stacksjs/clarity": ["@stacksjs/clarity@0.3.27", "", { "dependencies": { "bunfig": "^0.15.6" }, "bin": { "clarity": "./dist/bin/cli.js" } }, "sha512-6gO/Zd3wxJFNT/U5XIv+pKtFC1UCLYvbOFvcwJTVzQ0o39/azggACxVlY4WAjQ17CkgGqmRtfeQMlOuHWt1ueg=="],
 
     "@stacksjs/dtsx": ["@stacksjs/dtsx@0.9.13", "", { "dependencies": { "@stacksjs/clapp": "^0.2.0" }, "peerDependencies": { "typescript": ">=5.9.3" }, "bin": { "dtsx": "./dist/bin/cli.js" } }, "sha512-2/UvcKgRYuuY70q1SOMp/7Tj2eXBg8SOV7dvWAndyVyyukZiczR4kPkSxI6eTdJDVpe4MfEL0pPNlpBBtKrhIw=="],
 
