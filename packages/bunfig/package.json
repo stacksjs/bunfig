@@ -76,7 +76,7 @@
   },
   "dependencies": {
     "@stacksjs/clapp": "^0.2.0",
-    "@stacksjs/clarity": "^0.3.24"
+    "@stacksjs/clarity": "^0.3.28"
   },
   "devDependencies": {
     "very-happy-dom": "^0.1.2",
