@@ -23,7 +23,8 @@ describe('doctor', () => {
     writeFileSync(tsconfigPath, JSON.stringify({ compilerOptions: {} }, null, 2))
 
     const proc = Bun.spawn([
-      './bunfig',
+      'bun',
+      'bin/cli.ts',
       'doctor',
       '--tsconfig',
       tsconfigPath,
@@ -50,7 +51,8 @@ describe('doctor', () => {
     writeFileSync(tsconfigPath, JSON.stringify({ compilerOptions: {} }, null, 2))
 
     const proc = Bun.spawn([
-      './bunfig',
+      'bun',
+      'bin/cli.ts',
       'doctor',
       '--tsconfig',
       tsconfigPath,
@@ -84,7 +86,8 @@ describe('doctor', () => {
     writeFileSync(tsconfigPath, JSON.stringify(preconfigured, null, 2))
 
     const proc = Bun.spawn([
-      './bunfig',
+      'bun',
+      'bin/cli.ts',
       'doctor',
       '--tsconfig',
       tsconfigPath,
