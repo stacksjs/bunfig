@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
+import { globalCache } from '../src/cache'
 import { config, deepMerge, generateConfigTypes, loadConfig } from '../src'
 
 describe('bunfig', () => {
@@ -21,6 +22,10 @@ describe('bunfig', () => {
     // Create test directories
     mkdirSync(testConfigDir, { recursive: true })
     mkdirSync(testGeneratedDir, { recursive: true })
+
+    // Reset the in-memory config cache so tests can re-create files at the
+    // same paths without stale cache hits across cases.
+    globalCache.clear()
 
     // Clean up environment variables from previous tests
     delete process.env.TEST_APP_PORT
@@ -622,6 +627,77 @@ describe('bunfig', () => {
       })
 
       expect(result).toEqual({ name: 'primary' })
+    })
+
+    it('should accept an array of aliases and resolve any matching name', async () => {
+      // Only the second alias has a config file on disk.
+      writeFileSync(resolve(testConfigDir, 'lint.config.ts'), `export default { from: 'lint' }`)
+
+      const result = await loadConfig({
+        name: 'pickier',
+        alias: ['code-style', 'lint'],
+        cwd: testConfigDir,
+        defaultConfig: { from: 'default' },
+      })
+
+      expect(result).toEqual({ from: 'lint' })
+    })
+
+    it('should respect alias-array order — earlier aliases win over later ones', async () => {
+      writeFileSync(resolve(testConfigDir, 'code-style.config.ts'), `export default { from: 'code-style' }`)
+      writeFileSync(resolve(testConfigDir, 'lint.config.ts'), `export default { from: 'lint' }`)
+
+      const result = await loadConfig({
+        name: 'pickier',
+        alias: ['code-style', 'lint'],
+        cwd: testConfigDir,
+        defaultConfig: { from: 'default' },
+      })
+
+      expect(result).toEqual({ from: 'code-style' })
+    })
+
+    it('should still prefer the primary name over any alias in the array', async () => {
+      writeFileSync(resolve(testConfigDir, 'pickier.config.ts'), `export default { from: 'primary' }`)
+      writeFileSync(resolve(testConfigDir, 'code-style.config.ts'), `export default { from: 'code-style' }`)
+
+      const result = await loadConfig({
+        name: 'pickier',
+        alias: ['code-style', 'lint'],
+        cwd: testConfigDir,
+        defaultConfig: { from: 'default' },
+      })
+
+      expect(result).toEqual({ from: 'primary' })
+    })
+
+    it('should fall back to defaults when no alias in the array exists', async () => {
+      const result = await loadConfig({
+        name: 'pickier',
+        alias: ['code-style', 'lint'],
+        cwd: testConfigDir,
+        defaultConfig: { from: 'default' },
+      })
+
+      expect(result).toEqual({ from: 'default' })
+    })
+
+    it('should try alias array against package.json fields in order', async () => {
+      const packageJsonPath = resolve(testConfigDir, 'package.json')
+      writeFileSync(packageJsonPath, JSON.stringify({
+        name: 'test-package',
+        // primary missing, first alias missing, second alias matches
+        lint: { from: 'pkg-json-lint' },
+      }))
+
+      const result = await loadConfig({
+        name: 'pickier',
+        alias: ['code-style', 'lint'],
+        cwd: testConfigDir,
+        defaultConfig: { from: 'default' },
+      })
+
+      expect(result).toEqual({ from: 'pkg-json-lint' })
     })
 
     it('should use alias from package.json when primary is not found', async () => {

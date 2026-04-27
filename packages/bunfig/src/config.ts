@@ -1,5 +1,5 @@
 import type { ArrayMergeStrategy, Config, ConfigResult, ConfigSource, EnhancedConfig, PerformanceMetrics } from './types'
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
@@ -17,6 +17,18 @@ const log = new Logger('bunfig', {
 })
 
 type ConfigNames = string
+
+/**
+ * Format the alias portion of a user-facing message. Handles `undefined`,
+ * a single alias, or an array of aliases.
+ */
+function formatAliasSuffix(alias: string | string[] | undefined): string {
+  if (!alias) return ''
+  const list = Array.isArray(alias) ? alias.filter(Boolean) : [alias]
+  if (list.length === 0) return ''
+  if (list.length === 1) return ` or alias "${list[0]}"`
+  return ` or aliases ${list.map(a => `"${a}"`).join(', ')}`
+}
 
 /**
  * Configuration loading service that orchestrates all other services
@@ -266,7 +278,7 @@ export class ConfigLoader {
 
     return {
       ...envResult,
-      warnings: [`No configuration file found for "${name}"${alias ? ` or alias "${alias}"` : ''}, using defaults with environment variables`],
+      warnings: [`No configuration file found for "${name}"${formatAliasSuffix(alias)}, using defaults with environment variables`],
     }
   }
 
@@ -275,7 +287,7 @@ export class ConfigLoader {
    */
   private async loadLocalConfiguration<T>(
     name: string,
-    alias: string | undefined,
+    alias: string | string[] | undefined,
     baseDir: string,
     configDir: string | undefined,
     defaultConfig: T,
@@ -325,7 +337,7 @@ export class ConfigLoader {
    */
   private async loadHomeConfiguration<T>(
     name: string,
-    alias: string | undefined,
+    alias: string | string[] | undefined,
     defaultConfig: T,
     arrayStrategy: ArrayMergeStrategy,
     verbose: boolean,
@@ -373,7 +385,7 @@ export class ConfigLoader {
    */
   private async loadPackageJsonConfiguration<T>(
     name: string,
-    alias: string | undefined,
+    alias: string | string[] | undefined,
     baseDir: string,
     defaultConfig: T,
     arrayStrategy: ArrayMergeStrategy,
@@ -391,15 +403,34 @@ export class ConfigLoader {
         return null
       }
 
-      const pkg = await import(pkgPath)
+      // Read & parse fresh on each call. `await import(pkgPath)` would cache
+      // the parsed module by path forever within a process — wrong for any
+      // workflow that mutates package.json (tests, watch mode, dev tooling).
+      let pkg: Record<string, unknown> = {}
+      try {
+        pkg = JSON.parse(readFileSync(pkgPath, 'utf8')) as Record<string, unknown>
+      }
+      catch (parseError) {
+        if (verbose) {
+          log.warn(`Failed to parse package.json:`, [parseError instanceof Error ? parseError : new Error(String(parseError))])
+        }
+        return null
+      }
 
-      // Try primary name first, then alias
-      let pkgConfig = pkg[name]
+      // Try primary name first, then each alias in declared order
+      let pkgConfig: unknown = pkg[name]
       let usedName = name
 
       if (!pkgConfig && alias) {
-        pkgConfig = pkg[alias]
-        usedName = alias
+        const aliases = Array.isArray(alias) ? alias : [alias]
+        for (const a of aliases) {
+          if (!a) continue
+          if (pkg[a]) {
+            pkgConfig = pkg[a]
+            usedName = a
+            break
+          }
+        }
       }
 
       if (pkgConfig && typeof pkgConfig === 'object' && !Array.isArray(pkgConfig)) {
@@ -548,8 +579,10 @@ export class ConfigLoader {
   private generateCacheKey(configName: string, options: Partial<Config<unknown>>): string {
     const keyParts = [configName]
 
-    if (options.alias)
-      keyParts.push(`alias:${options.alias}`)
+    if (options.alias) {
+      const aliasKey = Array.isArray(options.alias) ? options.alias.join(',') : options.alias
+      keyParts.push(`alias:${aliasKey}`)
+    }
     if (options.cwd)
       keyParts.push(`cwd:${options.cwd}`)
     if (options.configDir)
@@ -578,7 +611,7 @@ export class ConfigLoader {
    */
   private getAllSearchPaths(
     name: string,
-    alias: string | undefined,
+    alias: string | string[] | undefined,
     baseDir: string,
     configDir?: string,
   ): string[] {
@@ -601,7 +634,7 @@ export class ConfigLoader {
    */
   private getLocalSearchPaths(
     name: string,
-    alias: string | undefined,
+    alias: string | string[] | undefined,
     baseDir: string,
     configDir?: string,
   ): string[] {
@@ -618,7 +651,7 @@ export class ConfigLoader {
   /**
    * Get home directory search paths
    */
-  private getHomeSearchPaths(name: string, alias: string | undefined): string[] {
+  private getHomeSearchPaths(name: string, alias: string | string[] | undefined): string[] {
     if (!name)
       return []
 

@@ -3,7 +3,7 @@
  * Config Options
  *
  * @param name - The name of the configuration file.
- * @param alias - An alternative name to check for config files.
+ * @param alias - One or more alternative names to check for config files. Pass a string for a single alias or a string array to probe several names in priority order.
  * @param cwd - The current working directory.
  * @param defaultConfig - The default configuration.
  * @param endpoint - The API endpoint to fetch config from in browser environments.
@@ -19,7 +19,7 @@
  * })
  * ```
  *
- * You can specify an alias to check for alternative config files:
+ * You can specify a single alias to check for alternative config files:
  * ```ts
  * await loadConfig({
  *   name: 'tlsx',
@@ -28,6 +28,18 @@
  * })
  * ```
  * This will check for both `tlsx.config.ts` and `tls.config.ts`.
+ *
+ * Or pass an array of aliases to probe several alternative names. Each alias
+ * is tried in order; the first match wins:
+ * ```ts
+ * await loadConfig({
+ *   name: 'pickier',
+ *   alias: ['code-style', 'lint'],
+ *   defaultConfig,
+ * })
+ * ```
+ * This will resolve any of `pickier.config.ts`, `code-style.config.ts`, or
+ * `lint.config.ts` (and the same names inside `./config/`).
  *
  * Environment variables are automatically checked based on the config name.
  * For example, with a config name of "tlsx" and a defaultConfig with a property "domain",
@@ -45,7 +57,7 @@
  */
 export interface Config<T> {
   name?: string
-  alias?: string
+  alias?: string | string[]
   cwd?: string
   configDir?: string
   generatedDir?: string

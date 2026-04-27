@@ -53,9 +53,14 @@ export class ConfigNotFoundError extends BunfigError {
   constructor(
     configName: string,
     searchPaths: string[],
-    alias?: string,
+    alias?: string | string[],
   ) {
-    const aliasStr = alias ? ` or alias "${alias}"` : ''
+    const aliasList = alias === undefined
+      ? []
+      : Array.isArray(alias) ? alias.filter(Boolean) : [alias]
+    let aliasStr = ''
+    if (aliasList.length === 1) aliasStr = ` or alias "${aliasList[0]}"`
+    else if (aliasList.length > 1) aliasStr = ` or aliases ${aliasList.map(a => `"${a}"`).join(', ')}`
     super(
       `Configuration "${configName}"${aliasStr} not found`,
       {
@@ -309,7 +314,7 @@ export type BunfigErrorType =
  * Error factory functions for common error patterns
  */
 export const ErrorFactory = {
-  configNotFound(configName: string, searchPaths: string[], alias?: string): ConfigNotFoundError {
+  configNotFound(configName: string, searchPaths: string[], alias?: string | string[]): ConfigNotFoundError {
     return new ConfigNotFoundError(configName, searchPaths, alias)
   },
 

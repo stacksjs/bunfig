@@ -164,12 +164,13 @@ export class ConfigFileLoader {
   }
 
   /**
-   * Generate all possible config file paths for a given name and directory
+   * Generate all possible config file paths for a given name and directory.
+   * `alias` accepts a single name or an array of fallback names tried in order.
    */
   generateConfigPaths(
     configName: string,
     directory: string,
-    alias?: string,
+    alias?: string | string[],
   ): string[] {
     const patterns = this.generateNamePatterns(configName, alias)
     const paths: string[] = []
@@ -184,9 +185,11 @@ export class ConfigFileLoader {
   }
 
   /**
-   * Generate name patterns for configuration files
+   * Generate name patterns for configuration files. Accepts one or more alias
+   * names; each alias contributes the same pattern set as the primary name,
+   * preserving array order so the caller's priority is respected.
    */
-  private generateNamePatterns(configName: string, alias?: string): string[] {
+  private generateNamePatterns(configName: string, alias?: string | string[]): string[] {
     const patterns: string[] = []
 
     // Standard config file names (highest priority for ~/.config/$name/ directories)
@@ -198,16 +201,26 @@ export class ConfigFileLoader {
     }
 
     // Alias patterns (.config suffix has higher priority than bare name for dotfiles)
-    if (alias) {
-      patterns.push(alias, `.${alias}.config`, `${alias}.config`, `.${alias}`)
+    const aliases = alias === undefined ? [] : Array.isArray(alias) ? alias : [alias]
+    for (const a of aliases) {
+      if (!a) continue
+
+      patterns.push(a, `.${a}.config`, `${a}.config`, `.${a}`)
 
       // Combined patterns (primary.alias)
       if (configName) {
-        patterns.push(`${configName}.${alias}.config`, `.${configName}.${alias}.config`)
+        patterns.push(`${configName}.${a}.config`, `.${configName}.${a}.config`)
       }
     }
 
-    return patterns.filter(Boolean)
+    // De-duplicate while preserving first-seen order so priority is stable
+    // when a caller accidentally repeats names across primary/alias.
+    const seen = new Set<string>()
+    return patterns.filter((p) => {
+      if (!p || seen.has(p)) return false
+      seen.add(p)
+      return true
+    })
   }
 
   /**
