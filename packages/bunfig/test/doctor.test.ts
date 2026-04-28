@@ -24,7 +24,8 @@ describe('doctor', () => {
 
     const proc = Bun.spawn([
       'bun',
-      'bin/cli.ts',
+      'run',
+      './bunfig',
       'doctor',
       '--tsconfig',
       tsconfigPath,
@@ -52,7 +53,8 @@ describe('doctor', () => {
 
     const proc = Bun.spawn([
       'bun',
-      'bin/cli.ts',
+      'run',
+      './bunfig',
       'doctor',
       '--tsconfig',
       tsconfigPath,
@@ -87,7 +89,8 @@ describe('doctor', () => {
 
     const proc = Bun.spawn([
       'bun',
-      'bin/cli.ts',
+      'run',
+      './bunfig',
       'doctor',
       '--tsconfig',
       tsconfigPath,

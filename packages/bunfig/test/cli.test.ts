@@ -43,7 +43,7 @@ describe('CLI', () => {
       if (!existsSync(testGeneratedDir))
         mkdirSync(testGeneratedDir, { recursive: true, mode: 0o777 })
 
-      const proc = Bun.spawn(['bun', 'bin/cli.ts', 'generate', '--config-dir', testConfigDir, '--generated-dir', testGeneratedDir], {
+      const proc = Bun.spawn(['bun', 'run', './bunfig', 'generate', '--config-dir', testConfigDir, '--generated-dir', testGeneratedDir], {
         cwd: process.cwd(),
       })
 
@@ -69,7 +69,7 @@ describe('CLI', () => {
       if (!existsSync(defaultGeneratedDir))
         mkdirSync(defaultGeneratedDir, { recursive: true, mode: 0o777 })
 
-      const proc = Bun.spawn(['bun', 'bin/cli.ts', 'generate'], {
+      const proc = Bun.spawn(['bun', 'run', './bunfig', 'generate'], {
         cwd: process.cwd(),
       })
 
@@ -90,7 +90,7 @@ describe('CLI', () => {
       if (!existsSync(testGeneratedDir))
         mkdirSync(testGeneratedDir, { recursive: true, mode: 0o777 })
 
-      const proc = Bun.spawn(['bun', 'bin/cli.ts', 'generate', '--config-dir', '/invalid/path', '--generated-dir', testGeneratedDir], {
+      const proc = Bun.spawn(['bun', 'run', './bunfig', 'generate', '--config-dir', '/invalid/path', '--generated-dir', testGeneratedDir], {
         cwd: process.cwd(),
       })
 
@@ -111,7 +111,7 @@ describe('CLI', () => {
 
   describe('version command', () => {
     it('should display correct version', async () => {
-      const proc = Bun.spawn(['bun', 'bin/cli.ts', 'version'], {
+      const proc = Bun.spawn(['bun', 'run', './bunfig', 'version'], {
         cwd: process.cwd(),
       })
       const output = await new Response(proc.stdout).text()
@@ -121,7 +121,7 @@ describe('CLI', () => {
     })
 
     it('should display version with --version flag', async () => {
-      const proc = Bun.spawn(['bun', 'bin/cli.ts', '--version'], {
+      const proc = Bun.spawn(['bun', 'run', './bunfig', '--version'], {
         cwd: process.cwd(),
       })
       const output = await new Response(proc.stdout).text()
@@ -133,7 +133,7 @@ describe('CLI', () => {
 
   describe('help command', () => {
     it('should display help information', async () => {
-      const proc = Bun.spawn(['bun', 'bin/cli.ts', '--help'], {
+      const proc = Bun.spawn(['bun', 'run', './bunfig', '--help'], {
         cwd: process.cwd(),
       })
       const output = await new Response(proc.stdout).text()
