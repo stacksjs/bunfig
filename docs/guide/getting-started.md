@@ -2,21 +2,6 @@
 title: Getting Started with bunfig
 description: Learn how to set up and use bunfig for TypeScript-first configuration management
 ---
-    darkMode: boolean
-    analytics: boolean
-  }
-}
-
-const config = await loadConfig<AppConfig>({
-  name: 'app',
-})
-
-console.log(`Server: ${config.server.host}:${config.server.port}`)
-console.log(`Database: ${config.database.url}`)
-
-```
-
-### 3. Override with Environment Variables
 
 Environment variables automatically override configuration values:
 

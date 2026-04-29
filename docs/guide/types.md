@@ -2,24 +2,6 @@
 title: Type Safety
 description: Leverage TypeScript for fully typed configuration with bunfig
 ---
-})
-
-// TypeScript infers:
-// config.server.port is number
-// config.server.host is string
-// config.debug is boolean
-
-```
-
-## Config Type Helper
-
-Use the `Config` type for better organization:
-
-```typescript
-
-import type { Config } from 'bunfig'
-
-interface MyAppConfig {
   port: number
   host: string
 }

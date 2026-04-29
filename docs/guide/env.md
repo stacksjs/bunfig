@@ -2,26 +2,6 @@
 title: Environment Variables
 description: Automatic environment variable detection and override in bunfig
 ---
-
-## Type Conversion
-
-bunfig automatically converts environment variable values to the appropriate types:
-
-### Numbers
-
-```bash
-
-APP_PORT=8080           # → number: 8080
-APP_TIMEOUT=30.5        # → number: 30.5
-APP_RETRIES=3           # → number: 3
-
-```
-
-### Booleans
-
-```bash
-
-APP_DEBUG=true          # → boolean: true
 APP_DEBUG=false         # → boolean: false
 APP_DEBUG=1             # → boolean: true
 APP_DEBUG=0             # → boolean: false

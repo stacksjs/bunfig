@@ -2,22 +2,6 @@
 title: Config Loading Patterns
 description: Learn different patterns for loading configuration with bunfig
 ---
-export default {
-  server: {
-    timeout: 60000, // User prefers longer timeout
-  },
-}
-
-// ./app.config.ts (project settings)
-export default {
-  server: {
-    port: 8080, // Project-specific port
-  },
-}
-
-// Environment: APP_SERVER_HOST=production.example.com
-
-// Result after merging:
 {
   server: {
     port: 8080,                        // from project config

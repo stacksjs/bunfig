@@ -1,3 +1,27 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.8...v0.15.9)
+
+### 🐛 Bug Fixes
+
+- use bun run for CLI tests to ensure correct module resolution ([3cc9fd3](https://github.com/stacksjs/bunfig/commit/3cc9fd3)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.9 ([dc66de2](https://github.com/stacksjs/bunfig/commit/dc66de2)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.8...HEAD)
+
+### 🐛 Bug Fixes
+
+- use bun run for CLI tests to ensure correct module resolution ([3cc9fd3](https://github.com/stacksjs/bunfig/commit/3cc9fd3)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.7...v0.15.8)
 
 ### 🧹 Chores
