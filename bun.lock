@@ -28,7 +28,7 @@
         "@stacksjs/clarity": "^0.3.24",
       },
       "devDependencies": {
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
         "very-happy-dom": "^0.1.2",
       },
     },
@@ -77,5 +77,7 @@
     "very-happy-dom": ["very-happy-dom@0.1.2", "", {}, "sha512-0hCFk/JiMn7hXi2WzP/6Y2faDydNogk89ufvCwVjJZkcn1YBZDQpJkJDMjfbzMxlCHDISQUyqfAfYUFy+ToKxA=="],
 
     "wrap-ansi": ["wrap-ansi@9.0.2", "", { "dependencies": { "ansi-styles": "^6.2.1", "string-width": "^7.0.0", "strip-ansi": "^7.1.0" } }, "sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww=="],
+
+    "bunfig/typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
   }
 }

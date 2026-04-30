@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "very-happy-dom": "^0.1.2",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "overrides": {
     "unconfig": "0.3.10"
