@@ -1,3 +1,75 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.9...v0.15.10)
+
+### 🐛 Bug Fixes
+
+- add setup-bun to publish-commit job ([e8d3379](https://github.com/stacksjs/bunfig/commit/e8d3379)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🤖 Continuous Integration
+
+- drop redundant setup-bun (pantry installs bun via deps.yaml) ([ee46ddc](https://github.com/stacksjs/bunfig/commit/ee46ddc)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.10 ([7cd7369](https://github.com/stacksjs/bunfig/commit/7cd7369)) _(by Chris <chrisbreuer93@gmail.com>)_
+- drop --only-changed-since (unsupported in bumpx 0.2.4) ([225ec6c](https://github.com/stacksjs/bunfig/commit/225ec6c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- add release:patch and release:all scripts ([68346cf](https://github.com/stacksjs/bunfig/commit/68346cf)) _(by Chris <chrisbreuer93@gmail.com>)_
+- improve this error handling ([5e3931b](https://github.com/stacksjs/bunfig/commit/5e3931b)) _(by Chris <chrisbreuer93@gmail.com>)_
+- refresh bun.lock and apply pickier --fix ([980fa81](https://github.com/stacksjs/bunfig/commit/980fa81)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock ([f5574bb](https://github.com/stacksjs/bunfig/commit/f5574bb)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- fresh install to pick up dtsx 0.9.14 and bunfig 0.15.9 ([7510a34](https://github.com/stacksjs/bunfig/commit/7510a34)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.9...HEAD)
+
+### 🐛 Bug Fixes
+
+- add setup-bun to publish-commit job ([e8d3379](https://github.com/stacksjs/bunfig/commit/e8d3379)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🤖 Continuous Integration
+
+- drop redundant setup-bun (pantry installs bun via deps.yaml) ([ee46ddc](https://github.com/stacksjs/bunfig/commit/ee46ddc)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- drop --only-changed-since (unsupported in bumpx 0.2.4) ([225ec6c](https://github.com/stacksjs/bunfig/commit/225ec6c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- add release:patch and release:all scripts ([68346cf](https://github.com/stacksjs/bunfig/commit/68346cf)) _(by Chris <chrisbreuer93@gmail.com>)_
+- improve this error handling ([5e3931b](https://github.com/stacksjs/bunfig/commit/5e3931b)) _(by Chris <chrisbreuer93@gmail.com>)_
+- refresh bun.lock and apply pickier --fix ([980fa81](https://github.com/stacksjs/bunfig/commit/980fa81)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock ([f5574bb](https://github.com/stacksjs/bunfig/commit/f5574bb)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- fresh install to pick up dtsx 0.9.14 and bunfig 0.15.9 ([7510a34](https://github.com/stacksjs/bunfig/commit/7510a34)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.9...HEAD)
+
+### 🐛 Bug Fixes
+
+- add setup-bun to publish-commit job ([e8d3379](https://github.com/stacksjs/bunfig/commit/e8d3379)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🤖 Continuous Integration
+
+- drop redundant setup-bun (pantry installs bun via deps.yaml) ([ee46ddc](https://github.com/stacksjs/bunfig/commit/ee46ddc)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- add release:patch and release:all scripts ([68346cf](https://github.com/stacksjs/bunfig/commit/68346cf)) _(by Chris <chrisbreuer93@gmail.com>)_
+- improve this error handling ([5e3931b](https://github.com/stacksjs/bunfig/commit/5e3931b)) _(by Chris <chrisbreuer93@gmail.com>)_
+- refresh bun.lock and apply pickier --fix ([980fa81](https://github.com/stacksjs/bunfig/commit/980fa81)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock ([f5574bb](https://github.com/stacksjs/bunfig/commit/f5574bb)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- fresh install to pick up dtsx 0.9.14 and bunfig 0.15.9 ([7510a34](https://github.com/stacksjs/bunfig/commit/7510a34)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.8...v0.15.9)
 
 ### 🐛 Bug Fixes
