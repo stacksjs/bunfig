@@ -189,6 +189,16 @@ export class ConfigLoader {
       return result
     }
     catch (error) {
+      // ConfigNotFoundError in strict mode is a normal "no config file"
+      // signal that the caller is expected to handle (e.g. fall back to
+      // defaults). Logging it here as `log.error` floods the terminal of
+      // any consumer that calls `loadConfigWithResult` once per render
+      // cycle (Crosswind, dev servers, watchers). Re-throw silently so
+      // the caller's catch block stays in charge of the user-facing
+      // message; truly unexpected errors still get the noisy log.
+      if (error instanceof Error && error.name === 'ConfigNotFoundError')
+        throw error
+
       const duration = Date.now() - startTime
       log.error(`Configuration loading failed after ${duration}ms:`, [error instanceof Error ? error : new Error(String(error))])
       throw error
