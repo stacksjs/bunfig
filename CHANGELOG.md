@@ -1,3 +1,13 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.10...v0.15.11)
+
+### 🧹 Chores
+
+- release v0.15.11 ([5f2b019](https://github.com/stacksjs/bunfig/commit/5f2b019)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.9...v0.15.10)
 
 ### 🐛 Bug Fixes
