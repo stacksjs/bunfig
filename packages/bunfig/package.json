@@ -82,9 +82,6 @@
     "very-happy-dom": "^0.1.2",
     "typescript": "^5.9.3"
   },
-  "overrides": {
-    "unconfig": "0.3.10"
-  },
   "git-hooks": {
     "pre-commit": {
       "staged-lint": {

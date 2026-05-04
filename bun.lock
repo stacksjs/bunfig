@@ -19,7 +19,7 @@
     },
     "packages/bunfig": {
       "name": "bunfig",
-      "version": "0.15.9",
+      "version": "0.15.11",
       "bin": {
         "bunfig": "./bin/cli.js",
       },
