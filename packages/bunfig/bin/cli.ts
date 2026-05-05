@@ -2,8 +2,14 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { CLI } from '@stacksjs/clapp'
-import { version } from '../package.json'
+// Bun macro: getPackageVersion() runs at compile time and inlines the
+// active version as a string literal. See ../src/version.ts for the
+// rationale (avoids a dtsx side effect on JSON imports + bakes the
+// version into compiled binaries).
+import { getPackageVersion } from '../src/version' with { type: 'macro' }
 import { config, defaultConfigDir, defaultGeneratedDir, generateConfigTypes } from '../src/config'
+
+const version: string = getPackageVersion()
 
 const cli = new CLI('bunfig')
 

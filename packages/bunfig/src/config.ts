@@ -4,8 +4,16 @@ import { homedir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { Logger } from '@stacksjs/clarity'
-import { version } from '../../../package.json'
 import { globalCache } from './cache'
+// Bun macro: `getPackageVersion()` runs at compile time and inlines the
+// active version as a string literal. Plain JSON imports of
+// `../package.json` were rewriting the file to empty content during the
+// dtsx bundler pass, breaking subsequent build steps; the macro also
+// bakes the version into compiled binaries where `import.meta.url`
+// would no longer point at a real package.json on disk.
+import { getPackageVersion } from './version' with { type: 'macro' }
+
+const version: string = getPackageVersion()
 import { ErrorFactory } from './errors'
 import { EnvProcessor } from './services/env-processor'
 import { ConfigFileLoader } from './services/file-loader'
