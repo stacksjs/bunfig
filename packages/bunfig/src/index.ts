@@ -25,6 +25,21 @@ export * from './services/env-processor'
 export * from './services/file-loader'
 export * from './services/validator'
 
-export * from './types'
+export type {
+  ArrayMergeStrategy,
+  CacheOptions,
+  Config,
+  ConfigByName,
+  ConfigNames,
+  ConfigOf,
+  ConfigResult,
+  ConfigSource,
+  DeepMerge,
+  DeepMergeable,
+  EnhancedConfig,
+  PerformanceMetrics,
+  PerformanceOptions,
+  SimplifyDeep,
+} from './types'
 
 export * from './utils'
