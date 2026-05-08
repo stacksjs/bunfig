@@ -29,6 +29,10 @@
       "types": "./dist/browser.d.ts",
       "import": "./dist/browser.js"
     },
+    "./ts-plugin": {
+      "types": "./dist/ts-plugin.d.ts",
+      "import": "./dist/ts-plugin.js"
+    },
     "./virtual-bunfig-types": {
       "types": "./dist/virtual-bunfig-types.d.ts",
       "default": "./dist/virtual-bunfig-types.d.ts"
@@ -47,7 +51,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "cd packages/bunfig && bun build.ts && bun run compile",
+    "build": "cd packages/bunfig && bun build.ts && bun run compile && cd ../.. && rm -rf dist && cp -R packages/bunfig/dist dist",
     "compile": "bun build ./packages/bunfig/bin/cli.ts --compile --minify --outfile bin/bunfig",
     "compile:all": "bun run compile:linux-x64 && bun run compile:linux-arm64 && bun run compile:windows-x64 && bun run compile:darwin-x64 && bun run compile:darwin-arm64",
     "compile:linux-x64": "bun build ./packages/bunfig/bin/cli.ts --compile --minify --target=bun-linux-x64 --outfile bin/bunfig-linux-x64",
