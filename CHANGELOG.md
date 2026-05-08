@@ -1,3 +1,27 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.12...v0.15.13)
+
+### 🐛 Bug Fixes
+
+- refresh publish dist during build ([1a7a693](https://github.com/stacksjs/bunfig/commit/1a7a693)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.13 ([f527198](https://github.com/stacksjs/bunfig/commit/f527198)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.12...HEAD)
+
+### 🐛 Bug Fixes
+
+- refresh publish dist during build ([1a7a693](https://github.com/stacksjs/bunfig/commit/1a7a693)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.11...v0.15.12)
 
 ### 🐛 Bug Fixes
