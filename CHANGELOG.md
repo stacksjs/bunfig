@@ -1,3 +1,40 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.11...v0.15.12)
+
+### 🐛 Bug Fixes
+
+- validate generated bunfig declarations ([96b77c9](https://github.com/stacksjs/bunfig/commit/96b77c9)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **build**: use Bun macro for version to keep dtsx from wiping package.json ([7091ba8](https://github.com/stacksjs/bunfig/commit/7091ba8)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.12 ([bacace2](https://github.com/stacksjs/bunfig/commit/bacace2)) _(by Chris <chrisbreuer93@gmail.com>)_
+- drop unused unconfig override ([e4cdd0c](https://github.com/stacksjs/bunfig/commit/e4cdd0c)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock to pick up bun-plugin-dtsx@0.9.18 ([fe4e4e1](https://github.com/stacksjs/bunfig/commit/fe4e4e1)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- add cloud patch publish script ([8dbe1bb](https://github.com/stacksjs/bunfig/commit/8dbe1bb)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.11...HEAD)
+
+### 🐛 Bug Fixes
+
+- validate generated bunfig declarations ([96b77c9](https://github.com/stacksjs/bunfig/commit/96b77c9)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **build**: use Bun macro for version to keep dtsx from wiping package.json ([7091ba8](https://github.com/stacksjs/bunfig/commit/7091ba8)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- drop unused unconfig override ([e4cdd0c](https://github.com/stacksjs/bunfig/commit/e4cdd0c)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock to pick up bun-plugin-dtsx@0.9.18 ([fe4e4e1](https://github.com/stacksjs/bunfig/commit/fe4e4e1)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- add cloud patch publish script ([8dbe1bb](https://github.com/stacksjs/bunfig/commit/8dbe1bb)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.10...v0.15.11)
 
 ### 🧹 Chores
