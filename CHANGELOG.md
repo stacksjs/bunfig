@@ -1,3 +1,20 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.13...v0.15.14)
+
+### 🐛 Bug Fixes
+
+- **createLibraryConfig**: don't alias defaults; preserve runtime sets across background load ([6884f84](https://github.com/stacksjs/bunfig/commit/6884f84)) _(by Chris <chrisbreuer93@gmail.com>)_
+- kebab staged-lint key + bunx gitlint package path in git-hooks ([0ef980e](https://github.com/stacksjs/bunfig/commit/0ef980e)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.14 ([c12309f](https://github.com/stacksjs/bunfig/commit/c12309f)) _(by Chris <chrisbreuer93@gmail.com>)_
+- ignore pantry directory ([03ae3e3](https://github.com/stacksjs/bunfig/commit/03ae3e3)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.12...v0.15.13)
 
 ### 🐛 Bug Fixes
