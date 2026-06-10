@@ -1046,21 +1046,44 @@ export type ConfigNames = ${files.length ? `'${files.join('\' | \'')}'` : 'strin
 export function createLibraryConfig<T extends Record<string, any>>(
   options: Config<T> | EnhancedConfig<T>,
 ): T {
-  let configCache: T | null = null
+  const defaultConfig = 'defaultConfig' in options ? options.defaultConfig : ({} as T)
+
+  // Start from a COPY of the caller's defaults — never alias it, or the proxy's
+  // `set`/`deleteProperty` traps would mutate the user's original object.
+  let configCache: T = { ...defaultConfig }
+
+  // Runtime mutations made via the proxy (e.g. an app's `setConfig()`) BEFORE
+  // the background load resolves must survive it: an explicit in-code override
+  // should win over a config file. We record them and re-apply on top of the
+  // loaded config. Tracking keys (not just merging into configCache) is what
+  // lets the post-load merge know which values were deliberately set vs. which
+  // came from the defaults.
+  const overrides = new Map<PropertyKey, unknown>()
+  const deletions = new Set<PropertyKey>()
   let loadPromise: Promise<T> | null = null
+
+  const applyOverrides = (base: T): T => {
+    const merged: any = { ...base }
+    for (const [k, v] of overrides)
+      merged[k] = v
+    for (const k of deletions)
+      delete merged[k]
+    return merged as T
+  }
 
   // Start loading immediately
   const startLoading = () => {
     if (!loadPromise) {
       loadPromise = loadConfig(options).then(
         (loadedConfig) => {
-          configCache = loadedConfig
-          return loadedConfig
+          // Merge file/env config UNDER any runtime overrides, so a prior
+          // `set` is not clobbered by the background load.
+          configCache = applyOverrides(loadedConfig)
+          return configCache
         },
         (error) => {
-          // On error, ensure we still have defaults
-          const defaultConfig = 'defaultConfig' in options ? options.defaultConfig : ({} as T)
-          configCache = defaultConfig
+          // On error, fall back to defaults (still honoring runtime overrides).
+          configCache = applyOverrides({ ...defaultConfig })
 
           // Only log in verbose mode or if checkEnv is enabled
           const verbose = 'verbose' in options && options.verbose
@@ -1068,43 +1091,43 @@ export function createLibraryConfig<T extends Record<string, any>>(
             log.warn(`Config loading failed, using defaults:`, [error instanceof Error ? error : new Error(String(error))])
           }
 
-          return defaultConfig
+          return configCache
         },
       )
     }
     return loadPromise
   }
 
-  // Initialize with defaults immediately
-  const defaultConfig = 'defaultConfig' in options ? options.defaultConfig : ({} as T)
-  configCache = defaultConfig
   startLoading() // Trigger async load in background
 
   return new Proxy({} as T, {
     get(target, prop) {
-      // If we have cached config, use it
-      if (configCache) {
-        return configCache[prop as keyof T]
-      }
-      // Otherwise, return from defaults and trigger load if needed
-      const value = defaultConfig[prop as keyof T]
-      startLoading()
-      return value
+      return configCache[prop as keyof T]
     },
     has(target, prop) {
-      return prop in (configCache || defaultConfig)
+      return prop in configCache
     },
     ownKeys() {
-      return Object.keys(configCache || defaultConfig)
+      return Reflect.ownKeys(configCache)
     },
     getOwnPropertyDescriptor(target, prop) {
-      return Object.getOwnPropertyDescriptor(configCache || defaultConfig, prop)
+      const d = Object.getOwnPropertyDescriptor(configCache, prop)
+      // A proxy may only report a property as non-configurable if the target
+      // actually has it; force configurable:true so ownKeys/enumeration work.
+      if (d)
+        d.configurable = true
+      return d
     },
     set(target, prop, value) {
-      if (!configCache) {
-        configCache = { ...defaultConfig } as T
-      }
+      overrides.set(prop, value)
+      deletions.delete(prop)
       ;(configCache as any)[prop] = value
+      return true
+    },
+    deleteProperty(target, prop) {
+      deletions.add(prop)
+      overrides.delete(prop)
+      delete (configCache as any)[prop]
       return true
     },
   })
