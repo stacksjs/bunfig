@@ -1,8 +1,13 @@
-import type * as tsModule from 'typescript/lib/tsserverlibrary'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 
-let ts: typeof import('typescript/lib/tsserverlibrary')
+interface TypeScriptServerModule {
+  ScriptSnapshot: {
+    fromString: (source: string) => unknown
+  }
+}
+
+let ts: TypeScriptServerModule
 
 const ALLOWED_EXTS: ReadonlySet<string> = new Set([
   '.ts',
@@ -74,8 +79,8 @@ ${selections
   return source
 }
 
-export function create(info: any): tsModule.LanguageService {
-  ts = (info as any).typescript
+export function create(info: any): unknown {
+  ts = (info as any).typescript as TypeScriptServerModule
 
   const projectRoot = info.project.getCurrentDirectory()
   const options = (info.config || {}) as { configDir?: string }

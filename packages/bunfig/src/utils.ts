@@ -68,7 +68,7 @@ export function deepMerge<T, S>(
           : T
       : T {
   // Initialize circular reference tracking if not already done
-  const visited = new WeakMap()
+  const visited = new WeakMap<object, any>()
   return deepMergeWithVisited(target, source, options, visited) as any
 }
 

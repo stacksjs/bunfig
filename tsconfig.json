@@ -3,7 +3,6 @@
     "target": "esnext",
     "lib": ["esnext", "dom"],
     "moduleDetection": "force",
-    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "bundler",
     "plugins": [{ "name": "bunfig/ts-plugin" }],
