@@ -1,3 +1,32 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.14...v0.15.15)
+
+### 🚀 Features
+
+- **discovery**: expose lightweight local config lookup ([b513376](https://github.com/stacksjs/bunfig/commit/b513376)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.15 ([ac79e76](https://github.com/stacksjs/bunfig/commit/ac79e76)) _(by Chris <chrisbreuer93@gmail.com>)_
+- upgrade to TypeScript 7 ([753fce1](https://github.com/stacksjs/bunfig/commit/753fce1)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.14...HEAD)
+
+### 🚀 Features
+
+- **discovery**: expose lightweight local config lookup ([b513376](https://github.com/stacksjs/bunfig/commit/b513376)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- upgrade to TypeScript 7 ([753fce1](https://github.com/stacksjs/bunfig/commit/753fce1)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.13...v0.15.14)
 
 ### 🐛 Bug Fixes
