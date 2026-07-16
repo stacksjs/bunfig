@@ -5,6 +5,7 @@ import { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { Logger } from '@stacksjs/clarity'
 import { globalCache } from './cache'
+import { getLocalConfigDirectories } from './discovery'
 // Bun macro: `getPackageVersion()` runs at compile time and inlines the
 // active version as a string literal. Plain JSON imports of
 // `../package.json` were rewriting the file to empty content during the
@@ -616,12 +617,7 @@ export class ConfigLoader {
    * Get local search directories
    */
   private getLocalDirectories(baseDir: string, configDir?: string): string[] {
-    return Array.from(new Set([
-      baseDir,
-      resolve(baseDir, 'config'),
-      resolve(baseDir, '.config'),
-      configDir ? resolve(baseDir, configDir) : undefined,
-    ].filter(Boolean) as string[]))
+    return getLocalConfigDirectories({ cwd: baseDir, configDir })
   }
 
   /**

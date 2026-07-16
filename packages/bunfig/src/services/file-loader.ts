@@ -2,6 +2,7 @@ import type { ArrayMergeStrategy, ConfigSource } from '../types'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { globalCache, globalPerformanceMonitor } from '../cache'
+import { CONFIG_FILE_EXTENSIONS, getConfigNamePatterns, getConfigPaths } from '../discovery'
 import { ConfigLoadError, ErrorFactory, withErrorRecovery } from '../errors'
 import { deepMergeWithArrayStrategy } from '../utils'
 
@@ -25,7 +26,7 @@ export interface FileLoadOptions {
  * Configuration file loader service
  */
 export class ConfigFileLoader {
-  private readonly extensions = ['.ts', '.js', '.mjs', '.cjs', '.json', '.mts', '.cts']
+  private readonly extensions = CONFIG_FILE_EXTENSIONS
 
   /**
    * Load configuration from a specific file path
@@ -172,16 +173,7 @@ export class ConfigFileLoader {
     directory: string,
     alias?: string | string[],
   ): string[] {
-    const patterns = this.generateNamePatterns(configName, alias)
-    const paths: string[] = []
-
-    for (const pattern of patterns) {
-      for (const ext of this.extensions) {
-        paths.push(resolve(directory, `${pattern}${ext}`))
-      }
-    }
-
-    return paths
+    return getConfigPaths({ name: configName, directory, alias })
   }
 
   /**
@@ -190,37 +182,7 @@ export class ConfigFileLoader {
    * preserving array order so the caller's priority is respected.
    */
   private generateNamePatterns(configName: string, alias?: string | string[]): string[] {
-    const patterns: string[] = []
-
-    // Standard config file names (highest priority for ~/.config/$name/ directories)
-    patterns.push('config', '.config')
-
-    // Primary name patterns (.config suffix has higher priority than bare name for dotfiles)
-    if (configName) {
-      patterns.push(configName, `.${configName}.config`, `${configName}.config`, `.${configName}`)
-    }
-
-    // Alias patterns (.config suffix has higher priority than bare name for dotfiles)
-    const aliases = alias === undefined ? [] : Array.isArray(alias) ? alias : [alias]
-    for (const a of aliases) {
-      if (!a) continue
-
-      patterns.push(a, `.${a}.config`, `${a}.config`, `.${a}`)
-
-      // Combined patterns (primary.alias)
-      if (configName) {
-        patterns.push(`${configName}.${a}.config`, `.${configName}.${a}.config`)
-      }
-    }
-
-    // De-duplicate while preserving first-seen order so priority is stable
-    // when a caller accidentally repeats names across primary/alias.
-    const seen = new Set<string>()
-    return patterns.filter((p) => {
-      if (!p || seen.has(p)) return false
-      seen.add(p)
-      return true
-    })
+    return getConfigNamePatterns({ name: configName, alias })
   }
 
   /**

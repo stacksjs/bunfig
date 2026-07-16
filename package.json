@@ -29,6 +29,10 @@
       "types": "./dist/browser.d.ts",
       "import": "./dist/browser.js"
     },
+    "./discovery": {
+      "types": "./dist/discovery.d.ts",
+      "import": "./dist/discovery.js"
+    },
     "./ts-plugin": {
       "types": "./dist/ts-plugin.d.ts",
       "import": "./dist/ts-plugin.js"

@@ -1,6 +1,7 @@
 /// <reference path="./virtual-bunfig-types.d.ts" />
 
 export * from './cache'
+export * from './discovery'
 // Export configuration functions explicitly to avoid conflicts
 export {
   applyEnvVarsToConfig,

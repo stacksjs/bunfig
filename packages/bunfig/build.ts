@@ -11,6 +11,14 @@ await Bun.build({
   plugins: [dts()],
 })
 
+// Build the lightweight config discovery helpers as a standalone subpath.
+await Bun.build({
+  entrypoints: ['src/discovery.ts'],
+  outdir: './dist',
+  target: 'node',
+  plugins: [dts()],
+})
+
 // Build the ts-plugin
 await Bun.build({
   entrypoints: ['src/ts-plugin.ts'],

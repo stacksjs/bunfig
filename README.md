@@ -115,6 +115,27 @@ const pickierConfig = await loadConfig({
 
 The single-alias example checks for both `tlsx.config.ts` and `tls.config.ts` _(and other variations)_ in both local and home directories, using the first one it finds. The array form does the same, walking each alias in declared order. The primary `name` always wins over any alias. This is useful for maintaining backward compatibility when renaming configurations, supporting multiple naming conventions, or providing fallbacks.
 
+### Lightweight Local Discovery
+
+Optional integrations can check whether a project-local config exists without loading bunfig's full configuration pipeline. The `bunfig/discovery` entry point has no logger, environment, validation, home-directory, or package.json side effects:
+
+```ts
+import { findLocalConfig, hasLocalConfig } from 'bunfig/discovery'
+
+if (hasLocalConfig({ name: 'crosswind', cwd: projectRoot })) {
+  // Only initialize the optional integration when it is configured.
+}
+
+const configPath = findLocalConfig({
+  name: 'my-tool',
+  alias: ['legacy-name'],
+  cwd: projectRoot,
+  configDir: 'settings',
+})
+```
+
+Discovery uses the exact same directory, filename, alias, extension, and priority rules as `loadConfig`. It only checks project-local files; normal `loadConfig` calls still support home-directory and package.json fallbacks.
+
 ### Environment Variables
 
 Bunfig automatically checks for environment variables based on the config name. Environment variables take precedence over default values but are overridden by config files.
