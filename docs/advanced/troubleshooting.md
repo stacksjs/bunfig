@@ -616,7 +616,7 @@ const config = await loadConfig({
    - <https://github.com/stacksjs/stacks/discussions>
 
 3. **Discord**: Real-time chat support
-   - <https://discord.gg/stacksjs>
+   - <https://stacksjs.com/discord>
 
 ### Reporting Issues
 
