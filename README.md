@@ -117,10 +117,10 @@ The single-alias example checks for both `tlsx.config.ts` and `tls.config.ts` _(
 
 ### Lightweight Local Discovery
 
-Optional integrations can check whether a project-local config exists without loading bunfig's full configuration pipeline. The `bunfig/discovery` entry point has no logger, environment, validation, home-directory, or package.json side effects:
+Optional integrations can check whether a project-local config exists without loading bunfig's full configuration pipeline. These helpers have no logger, environment, validation, home-directory, or package.json side effects, and the package is marked side-effect free so a bundler drops the rest of bunfig when they are all you import:
 
 ```ts
-import { findLocalConfig, hasLocalConfig } from 'bunfig/discovery'
+import { findLocalConfig, hasLocalConfig } from 'bunfig'
 
 if (hasLocalConfig({ name: 'crosswind', cwd: projectRoot })) {
   // Only initialize the optional integration when it is configured.
@@ -301,7 +301,7 @@ bunx bunfig generate --config-dir ./config --generated-dir ./src/generated
 #### How it works
 
 - **Virtual module**: bunfig exposes `ConfigNames` via `export type ConfigNames = import('virtual:bunfig-types').ConfigNames`. Your bundler plugin (`bunfigPlugin`) provides a virtual module at build time that turns it into a string-literal union of file basenames in your `config` directory.
-- **Safe fallback**: If no plugin is active, bunfig ships an ambient fallback declaration so the type resolves to `string`. This is published and available under the subpath `bunfig/virtual-bunfig-types`.
+- **Safe fallback**: If no plugin is active, bunfig ships an ambient fallback declaration so the type resolves to `string`. It is published with the package types and picked up automatically.
 - **No extra setup required**: Most setups work out of the box. If your TypeScript project uses strict project references or custom `types` filtering and you see a missing type error for `virtual:bunfig-types`, reference the shipped fallback explicitly using one of:
 
 ```ts
