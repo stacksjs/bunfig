@@ -1,3 +1,40 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.14...v0.15.16)
+
+### 🚀 Features
+
+- load a config from an explicitly named file ([bfcab8b](https://github.com/stacksjs/bunfig/commit/bfcab8b)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 📚 Documentation
+
+- link the community as stacksjs.com/discord ([c523f33](https://github.com/stacksjs/bunfig/commit/c523f33)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.16 ([5360514](https://github.com/stacksjs/bunfig/commit/5360514)) _(by Chris <chrisbreuer93@gmail.com>)_
+- upgrade to TypeScript 7 ([753fce1](https://github.com/stacksjs/bunfig/commit/753fce1)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.14...HEAD)
+
+### 🚀 Features
+
+- load a config from an explicitly named file ([bfcab8b](https://github.com/stacksjs/bunfig/commit/bfcab8b)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 📚 Documentation
+
+- link the community as stacksjs.com/discord ([c523f33](https://github.com/stacksjs/bunfig/commit/c523f33)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- upgrade to TypeScript 7 ([753fce1](https://github.com/stacksjs/bunfig/commit/753fce1)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.13...v0.15.14)
 
 ### 🐛 Bug Fixes
