@@ -75,6 +75,13 @@ export class ConfigLoader {
         result = await this.loadConfigurationStrategies(baseOptions, true, cache)
       }
       catch (error) {
+        // A file the caller named by path is not a "no config here" signal.
+        // Every fallback below - defaults, env vars, a discoverable file - runs
+        // with settings nobody chose, and the mistake surfaces as behaviour
+        // rather than as an error. Missing, unreadable and malformed all count.
+        if (baseOptions.configFile)
+          throw error
+
         // Check if this is strict error handling mode (enhanced API)
         const isStrictMode = (baseOptions as any).__strictErrorHandling
 
@@ -221,6 +228,7 @@ export class ConfigLoader {
     const {
       name = '',
       alias,
+      configFile,
       cwd,
       configDir,
       defaultConfig,
@@ -231,6 +239,34 @@ export class ConfigLoader {
 
     const baseDir = cwd || process.cwd()
     const searchPaths: string[] = []
+
+    // 0. An explicitly named file wins over every discovery strategy, and a
+    // miss here is fatal rather than a fall through. The caller named this
+    // file; loading a different one found further down the search order, or
+    // silently proceeding on defaults, would apply settings they never asked
+    // for and would surface only as wrong behaviour later.
+    if (configFile) {
+      const explicitPath = resolve(baseDir, configFile)
+      searchPaths.push(explicitPath)
+
+      const envDefaults = checkEnv
+        ? applyEnvVarsToConfig(name, defaultConfig as any, verbose) as T
+        : defaultConfig
+
+      const explicitResult = await this.fileLoader.tryLoadFromPaths(
+        [explicitPath],
+        envDefaults,
+        { arrayStrategy, verbose, cacheTtl: cacheOptions?.ttl, useCache: !cacheOptions?.ttl || cacheOptions.ttl > 100 },
+      )
+
+      if (!explicitResult)
+        throw ErrorFactory.configNotFound(name || configFile, searchPaths, alias)
+
+      if (verbose)
+        log.success(`Configuration loaded from explicit path: ${explicitPath}`)
+
+      return this.finalizeResult(explicitResult, searchPaths, checkEnv, name, verbose)
+    }
 
     // 1. Try local configuration files
     const localResult = await this.loadLocalConfiguration(
@@ -604,6 +640,10 @@ export class ConfigLoader {
     }
     if (options.cwd)
       keyParts.push(`cwd:${options.cwd}`)
+    // Without this, two explicit files loaded under the same name collide and
+    // the second caller silently receives the first one's settings.
+    if (options.configFile)
+      keyParts.push(`configFile:${options.configFile}`)
     if (options.configDir)
       keyParts.push(`configDir:${options.configDir}`)
     // Include checkEnv in cache key to prevent collisions between configs with different env var settings
@@ -763,7 +803,15 @@ export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Pro
     return result?.config ?? defaultConfig
   }
   catch (error) {
-    // For any error, fall back to defaults gracefully
+    // The one deliberate exception to "loadConfig never throws". Falling back
+    // to defaults is the right answer for "no config file exists anywhere",
+    // and the wrong one for "the file you named could not be loaded" - that is
+    // a caller mistake, and hiding it means running with settings nobody
+    // chose. Callers who want the lenient behaviour simply omit configFile.
+    if (options.configFile)
+      throw error
+
+    // For any other error, fall back to defaults gracefully
     // This ensures loadConfig NEVER throws or returns null/undefined
     const errorName = error instanceof Error ? error.name : 'UnknownError'
     const errorMessage = error instanceof Error ? error.message : String(error)
