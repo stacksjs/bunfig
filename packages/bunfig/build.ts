@@ -1,7 +1,11 @@
-import { copyFile, readFile, writeFile } from 'node:fs/promises'
+import { copyFile, readFile, rm, writeFile } from 'node:fs/promises'
 import { dts } from 'bun-plugin-dtsx'
 
 console.log('Building...')
+
+// Start from an empty dist. Without this, dropping an entrypoint leaves its
+// old bundle behind and the package keeps publishing a file nothing builds.
+await rm('./dist', { recursive: true, force: true })
 
 // Build the main package
 await Bun.build({
@@ -11,15 +15,9 @@ await Bun.build({
   plugins: [dts()],
 })
 
-// Build the lightweight config discovery helpers as a standalone subpath.
-await Bun.build({
-  entrypoints: ['src/discovery.ts'],
-  outdir: './dist',
-  target: 'node',
-  plugins: [dts()],
-})
-
-// Build the ts-plugin
+// The ts-plugin stays a separate entry: TypeScript resolves a language
+// service plugin by module name from tsconfig, so it is never reached
+// through an import a bundler could tree-shake.
 await Bun.build({
   entrypoints: ['src/ts-plugin.ts'],
   outdir: './dist',

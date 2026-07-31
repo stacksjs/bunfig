@@ -20,6 +20,7 @@
     "bun",
     "bunfig"
   ],
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -29,20 +30,9 @@
       "types": "./dist/browser.d.ts",
       "import": "./dist/browser.js"
     },
-    "./discovery": {
-      "types": "./dist/discovery.d.ts",
-      "import": "./dist/discovery.js"
-    },
     "./ts-plugin": {
       "types": "./dist/ts-plugin.d.ts",
       "import": "./dist/ts-plugin.js"
-    },
-    "./virtual-bunfig-types": {
-      "types": "./dist/virtual-bunfig-types.d.ts",
-      "default": "./dist/virtual-bunfig-types.d.ts"
-    },
-    "./*": {
-      "import": "./dist/*"
     }
   },
   "module": "./dist/index.js",
