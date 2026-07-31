@@ -18,10 +18,15 @@ await Bun.build({
 // The ts-plugin stays a separate entry: TypeScript resolves a language
 // service plugin by module name from tsconfig, so it is never reached
 // through an import a bundler could tree-shake.
+//
+// It ships as CommonJS because tsserver `require()`s plugins, and the package
+// is `type: module` — so an ESM `.js` would not load at all.
 await Bun.build({
   entrypoints: ['src/ts-plugin.ts'],
   outdir: './dist',
   target: 'node',
+  format: 'cjs',
+  naming: '[dir]/[name].cjs',
   plugins: [dts()],
 })
 

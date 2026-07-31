@@ -139,4 +139,8 @@ export function create(info: any): unknown {
   return info.languageService
 }
 
-module.exports = { create }
+// tsserver `require()`s a plugin, so this module is emitted as CommonJS and
+// `create` becomes `exports.create`. The bare `module.exports = { create }`
+// that used to live here was rewritten by the ESM bundler into a reference to
+// an undefined binding, which threw the moment tsserver loaded the plugin.
+export default { create }

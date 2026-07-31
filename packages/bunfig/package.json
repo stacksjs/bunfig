@@ -19,7 +19,6 @@
     "bun",
     "bunfig"
   ],
-  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -31,7 +30,7 @@
     },
     "./ts-plugin": {
       "types": "./dist/ts-plugin.d.ts",
-      "import": "./dist/ts-plugin.js"
+      "default": "./dist/ts-plugin.cjs"
     }
   },
   "module": "./dist/index.js",
