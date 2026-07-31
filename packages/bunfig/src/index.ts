@@ -16,11 +16,6 @@ export {
   tryLoadConfig,
 } from './config'
 export * from './errors'
-// Export specific error classes that tests need
-export {
-  ConfigValidationError,
-  SchemaValidationError,
-} from './errors'
 export * from './plugin'
 export * from './services/env-processor'
 export * from './services/file-loader'
