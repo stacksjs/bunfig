@@ -58,6 +58,20 @@
 export interface Config<T> {
   name?: string
   alias?: string | string[]
+  /**
+   * Load this exact file instead of searching for one.
+   *
+   * Discovery is right for a project with a checked-in config and wrong
+   * whenever the file is chosen at run time - a `--config` flag, a config
+   * dropped on a remote machine for one job, a test fixture. There, the only
+   * way to be sure which file was read is to name it.
+   *
+   * Relative paths resolve against `cwd`. Unlike discovery, a named file that
+   * is missing or unreadable is an error rather than a fall back to defaults:
+   * the caller said which file to use, and quietly using different settings
+   * is a failure they would only notice by its consequences.
+   */
+  configFile?: string
   cwd?: string
   configDir?: string
   generatedDir?: string
