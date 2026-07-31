@@ -1034,8 +1034,8 @@ export function applyEnvVarsToConfig<T extends Record<string, any>>(
 }
 
 // Export constants for backward compatibility
-export const defaultConfigDir: string = resolve(process.cwd(), 'config')
-export const defaultGeneratedDir: string = resolve(process.cwd(), 'src/generated')
+export const defaultConfigDir: string = /* @__PURE__ */ resolve(process.cwd(), 'config')
+export const defaultGeneratedDir: string = /* @__PURE__ */ resolve(process.cwd(), 'src/generated')
 
 /**
  * Generate configuration types
