@@ -1,12 +1,19 @@
-import type { BunpressConfig } from 'bunpress'
+import type { BunPressConfig } from '@stacksjs/bunpress'
 
-const config: BunpressConfig = {
-  name: 'bunfig',
+const config: BunPressConfig = {
+  title: 'bunfig',
   description: 'TypeScript-first configuration loader with automatic environment variable detection, validation, and zero dependencies.',
   url: 'https://bunfig.stacksjs.org',
 
-  theme: {
-    primaryColor: '#F59E0B',
+  themeConfig: {
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/stacksjs/bunfig' },
+      { icon: 'discord', link: 'https://discord.gg/stacksjs' },
+      { icon: 'twitter', link: 'https://twitter.com/stacksjs' },
+    ],
+    colors: {
+      primary: '#F59E0B',
+    },
   },
 
   nav: [
@@ -75,11 +82,6 @@ const config: BunpressConfig = {
     ['meta', { name: 'keywords', content: 'bunfig, config, configuration, typescript, bun, environment variables, validation' }],
   ],
 
-  socialLinks: [
-    { icon: 'github', link: 'https://github.com/stacksjs/bunfig' },
-    { icon: 'discord', link: 'https://discord.gg/stacksjs' },
-    { icon: 'twitter', link: 'https://twitter.com/stacksjs' },
-  ],
 }
 
 export default config
