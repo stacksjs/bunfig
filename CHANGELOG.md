@@ -1,3 +1,49 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.17...v0.15.19)
+
+### 🐛 Bug Fixes
+
+- **docs**: use the config keys bunpress actually has ([febaf37](https://github.com/stacksjs/bunfig/commit/febaf37)) _(by Chris <chrisbreuer93@gmail.com>)_
+- point bin at the CLI the build actually produces ([3103edc](https://github.com/stacksjs/bunfig/commit/3103edc)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.19 ([0941b22](https://github.com/stacksjs/bunfig/commit/0941b22)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: dtsx 0.11.8, for declarations that parse ([f0a3c76](https://github.com/stacksjs/bunfig/commit/f0a3c76)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.17...HEAD)
+
+### 🐛 Bug Fixes
+
+- **docs**: use the config keys bunpress actually has ([febaf37](https://github.com/stacksjs/bunfig/commit/febaf37)) _(by Chris <chrisbreuer93@gmail.com>)_
+- point bin at the CLI the build actually produces ([3103edc](https://github.com/stacksjs/bunfig/commit/3103edc)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- **deps**: dtsx 0.11.8, for declarations that parse ([f0a3c76](https://github.com/stacksjs/bunfig/commit/f0a3c76)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.17...HEAD)
+
+### 🐛 Bug Fixes
+
+- **docs**: use the config keys bunpress actually has ([febaf37](https://github.com/stacksjs/bunfig/commit/febaf37)) _(by Chris <chrisbreuer93@gmail.com>)_
+- point bin at the CLI the build actually produces ([3103edc](https://github.com/stacksjs/bunfig/commit/3103edc)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- **deps**: dtsx 0.11.8, for declarations that parse ([f0a3c76](https://github.com/stacksjs/bunfig/commit/f0a3c76)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.14...v0.15.15)
 
 ### 🚀 Features
