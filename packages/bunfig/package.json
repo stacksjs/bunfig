@@ -43,7 +43,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "bunfig": "./bin/cli.js"
+    "bunfig": "./dist/cli.js"
   },
   "files": [
     "README.md",
@@ -75,12 +75,12 @@
     "zip:darwin-arm64": "zip -j bin/bunfig-darwin-arm64.zip bin/bunfig-darwin-arm64"
   },
   "dependencies": {
-    "@stacksjs/clapp": "^0.2.0",
     "@stacksjs/clarity": "^0.3.24"
   },
   "devDependencies": {
-    "very-happy-dom": "^0.1.2",
-    "typescript": "^7.0.2"
+    "@stacksjs/clapp": "^0.2.0",
+    "typescript": "^7.0.2",
+    "very-happy-dom": "^0.1.2"
   },
   "git-hooks": {
     "pre-commit": {

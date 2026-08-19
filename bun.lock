@@ -19,15 +19,15 @@
     },
     "packages/bunfig": {
       "name": "bunfig",
-      "version": "0.15.14",
+      "version": "0.15.16",
       "bin": {
-        "bunfig": "./bin/cli.js",
+        "bunfig": "./dist/cli.js",
       },
       "dependencies": {
-        "@stacksjs/clapp": "^0.2.0",
         "@stacksjs/clarity": "^0.3.24",
       },
       "devDependencies": {
+        "@stacksjs/clapp": "^0.2.0",
         "typescript": "^7.0.2",
         "very-happy-dom": "^0.1.2",
       },
