@@ -1,3 +1,27 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.16...v0.15.18)
+
+### 🐛 Bug Fixes
+
+- point bin at the CLI the build actually produces ([d560cda](https://github.com/stacksjs/bunfig/commit/d560cda)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.15.18 ([3e311d4](https://github.com/stacksjs/bunfig/commit/3e311d4)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.16...HEAD)
+
+### 🐛 Bug Fixes
+
+- point bin at the CLI the build actually produces ([d560cda](https://github.com/stacksjs/bunfig/commit/d560cda)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.14...v0.15.16)
 
 ### 🚀 Features
