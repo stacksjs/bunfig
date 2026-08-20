@@ -13,14 +13,14 @@
         "@stacksjs/logsmith": "^0.2.1",
         "@types/bun": "^1.3.9",
         "@types/node": "^25.2.3",
-        "bun-plugin-dtsx": "^0.11.8",
+        "bun-plugin-dtsx": "^0.11.10",
         "typescript": "^7.0.2",
         "very-happy-dom": "^0.1.2",
       },
     },
     "packages/bunfig": {
       "name": "bunfig",
-      "version": "0.15.17",
+      "version": "0.15.19",
       "bin": {
         "bunfig": "./dist/cli.js",
       },
@@ -50,7 +50,7 @@
 
     "@stacksjs/desktop": ["@stacksjs/desktop@0.2.198", "", { "dependencies": { "craft-native": ">=0.0.55" } }, "sha512-P+iUxNgNc2DvlrnwCpy1lo6jnmUSfHSQj1nl9S5enb8glknDtd13mpOyelO5u8VxPVgGyQ9xPFDlI44fzHc10w=="],
 
-    "@stacksjs/dtsx": ["@stacksjs/dtsx@0.11.8", "", { "dependencies": { "@stacksjs/clapp": "^0.2.0" }, "bin": { "dtsx": "./dist/bin/cli.js" } }, "sha512-ekcE6ClfEzskxaS1YLwyGdzn9HxPYWEN7UhUnRsOBYNGoBB7zDHrFqyi41wDdv7inBTEofzx1Uz6bJ4PJn4IxA=="],
+    "@stacksjs/dtsx": ["@stacksjs/dtsx@0.11.10", "", { "dependencies": { "@stacksjs/clapp": "^0.2.0" }, "bin": { "dtsx": "./dist/bin/cli.js" } }, "sha512-NOSSGv7mdxzmijmKHxTZDmgZp7vCYrRKWpDwNqwTc97MTv5csjo3uukf7A/c+s7pSzJd+HxqsTCZ7IznjfEtmw=="],
 
     "@stacksjs/logsmith": ["@stacksjs/logsmith@0.2.1", "", { "dependencies": { "@stacksjs/clapp": "^0.2.0", "bunfig": "^0.15.6", "pickier": "^0.1.7" }, "bin": { "logsmith": "dist/bin/cli.js", "@stacksjs/logsmith": "dist/bin/cli.js" } }, "sha512-JbAnn0dWZDEBjks7qRd/L0kWbsD3Qi0uSFmCPkEU9fH0+eP6Fdl7mtnok2oVDUaNitWu97OJZHlFe/MV2ilgnA=="],
 
@@ -118,7 +118,7 @@
 
     "@typescript/typescript-win32-x64": ["@typescript/typescript-win32-x64@7.0.2", "", { "os": "win32", "cpu": "x64" }, "sha512-0BQ3HkAHHlKLSp1qRvf3SUhGpGsDuhB/jgFw75guyqbxJqEaS0Cw/VFO8i2nHglJUzQCRtMMR/IBAKE3ETMC4g=="],
 
-    "bun-plugin-dtsx": ["bun-plugin-dtsx@0.11.8", "", { "dependencies": { "@stacksjs/dtsx": "0.11.8" } }, "sha512-D0B2tGN2vU48XOUeGy5vNxVx4r/3eFnOVZbzWJ3TUrPJPObvz/DwJPP2jdHCdUv5rhEaoON0mnPW+j0/11efOQ=="],
+    "bun-plugin-dtsx": ["bun-plugin-dtsx@0.11.10", "", { "dependencies": { "@stacksjs/dtsx": "0.11.10" } }, "sha512-qQrEBIV1pzhDmrxmhTHhgVK5gqE5CfpO8C9NCp7zUaN48c4IJVrpqXbeNWch7sAT/Hf4GhVMWau7T65xySm59Q=="],
 
     "bun-plugin-stx": ["bun-plugin-stx@0.2.198", "", { "dependencies": { "@stacksjs/stx": "^0.2.72", "stx-router": "^0.2.72" }, "bin": { "serve": "./dist/serve.js", "stx-serve": "./dist/serve.js" } }, "sha512-NiCfmceacqrAvM8mb5iutA0v94IUOhreyyTl4T7PEmPG2fvsT3QYerR2gqy7SU8Pja4+UfKvMEhHt9Unlhyl3w=="],
 
