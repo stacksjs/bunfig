@@ -12,6 +12,13 @@ temp
 docs/.vitepress/cache
 bin/bunfig
 bin/bunfig*
+# Same artifact, built from inside the package. The pattern above is anchored to
+# this file's directory, so it never covered this path - and 61MB of compiled
+# binary was tracked, rewritten by every `bun run compile`, and pushed each time.
+# It ships nowhere: the package's `files` is README.md + dist, and its `bin`
+# points at dist/cli.js.
+packages/bunfig/bin/bunfig
+packages/bunfig/bin/bunfig-*
 src/generated
 .zed
 .cursor
