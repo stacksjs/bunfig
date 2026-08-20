@@ -143,4 +143,9 @@ export function create(info: any): unknown {
 // `create` becomes `exports.create`. The bare `module.exports = { create }`
 // that used to live here was rewritten by the ESM bundler into a reference to
 // an undefined binding, which threw the moment tsserver loaded the plugin.
-export default { create }
+// Annotated rather than inferred: `isolatedDeclarations` cannot work out the
+// type of an object literal built from shorthand properties, and this is the
+// one export in the package that is written that way.
+const plugin: { create: typeof create } = { create }
+
+export default plugin
