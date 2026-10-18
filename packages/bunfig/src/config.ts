@@ -17,6 +17,7 @@ import { getPackageVersion } from './version' with { type: 'macro' }
 const version: string = getPackageVersion()
 import { ErrorFactory } from './errors'
 import { EnvProcessor } from './services/env-processor'
+import { isMissingConfigPath } from './services/config-files'
 import { ConfigFileLoader } from './services/file-loader'
 import { ConfigValidator } from './services/validator'
 import { deepMergeWithArrayStrategy } from './utils'
@@ -60,9 +61,15 @@ export class ConfigLoader {
       ...baseOptions
     } = options
 
+    // Strict callers must observe current files, access and validation policy.
+    // Neither a prior lenient result nor a file-cache hit can establish that.
+    const effectiveCache = baseOptions.errorPolicy === 'throw'
+      ? { ...cache, enabled: false }
+      : cache
+
     try {
       // Check cache first if enabled
-      if (cache?.enabled) {
+      if (effectiveCache?.enabled) {
         const cached = this.checkCache<T>(baseOptions.name || '', baseOptions)
         if (cached) {
           return cached
@@ -72,14 +79,15 @@ export class ConfigLoader {
       // Load configuration through multiple strategies
       let result: ConfigResult<T>
       try {
-        result = await this.loadConfigurationStrategies(baseOptions, true, cache)
+        result = await this.loadConfigurationStrategies(baseOptions, true, effectiveCache)
       }
       catch (error) {
         // A file the caller named by path is not a "no config here" signal.
         // Every fallback below - defaults, env vars, a discoverable file - runs
         // with settings nobody chose, and the mistake surfaces as behaviour
         // rather than as an error. Missing, unreadable and malformed all count.
-        if (baseOptions.configFile)
+        if (baseOptions.configFile || (baseOptions.errorPolicy === 'throw'
+          && !(error instanceof Error && error.name === 'ConfigNotFoundError')))
           throw error
 
         // Check if this is strict error handling mode (enhanced API)
@@ -88,7 +96,7 @@ export class ConfigLoader {
         // Handle ConfigNotFoundError
         if (error instanceof Error && error.name === 'ConfigNotFoundError') {
           // In strict mode (enhanced API), re-throw ConfigNotFoundError
-          if (isStrictMode) {
+          if (isStrictMode && baseOptions.errorPolicy !== 'throw') {
             throw error
           }
           // Otherwise, fall back to defaults gracefully
@@ -178,8 +186,8 @@ export class ConfigLoader {
       }
 
       // Cache the result if caching is enabled
-      if (cache?.enabled && result) {
-        this.cacheResult(baseOptions.name || '', result, cache, baseOptions)
+      if (effectiveCache?.enabled && result) {
+        this.cacheResult(baseOptions.name || '', result, effectiveCache, baseOptions)
       }
 
       // Record performance metrics
@@ -256,7 +264,7 @@ export class ConfigLoader {
       const explicitResult = await this.fileLoader.tryLoadFromPaths(
         [explicitPath],
         envDefaults,
-        { arrayStrategy, verbose, cacheTtl: cacheOptions?.ttl, useCache: !cacheOptions?.ttl || cacheOptions.ttl > 100 },
+        { arrayStrategy, verbose, cacheTtl: cacheOptions?.ttl, useCache: cacheOptions?.enabled !== false && (!cacheOptions?.ttl || cacheOptions.ttl > 100), strictDiscovery: true },
       )
 
       if (!explicitResult)
@@ -279,6 +287,7 @@ export class ConfigLoader {
       verbose,
       checkEnv,
       cacheOptions,
+      options.errorPolicy === 'throw',
     )
 
     if (localResult) {
@@ -294,6 +303,8 @@ export class ConfigLoader {
       arrayStrategy,
       verbose,
       checkEnv,
+      cacheOptions,
+      options.errorPolicy === 'throw',
     )
 
     if (homeResult) {
@@ -310,6 +321,7 @@ export class ConfigLoader {
       arrayStrategy,
       verbose,
       checkEnv,
+      options.errorPolicy,
     )
 
     if (packageResult) {
@@ -350,6 +362,7 @@ export class ConfigLoader {
     verbose: boolean,
     checkEnv: boolean,
     cacheOptions?: NonNullable<EnhancedConfig<T>['cache']>,
+    strictDiscovery = false,
   ): Promise<{ config: T, source: ConfigSource } | null> {
     // Apply environment variables to default config before merging with file config
     // This ensures file config has higher priority than environment variables
@@ -372,7 +385,8 @@ export class ConfigLoader {
           arrayStrategy,
           verbose,
           cacheTtl: cacheOptions?.ttl,
-          useCache: !cacheOptions?.ttl || cacheOptions.ttl > 100, // Disable file cache for very short TTL
+          useCache: cacheOptions?.enabled !== false && (!cacheOptions?.ttl || cacheOptions.ttl > 100),
+          strictDiscovery,
         },
       )
 
@@ -397,6 +411,8 @@ export class ConfigLoader {
     arrayStrategy: ArrayMergeStrategy,
     verbose: boolean,
     checkEnv: boolean,
+    cacheOptions?: NonNullable<EnhancedConfig<T>['cache']>,
+    strictDiscovery = false,
   ): Promise<{ config: T, source: ConfigSource } | null> {
     if (!name)
       return null
@@ -421,7 +437,7 @@ export class ConfigLoader {
       const result = await this.fileLoader.tryLoadFromPaths(
         configPaths,
         envDefaultConfig,
-        { arrayStrategy, verbose },
+        { arrayStrategy, verbose, cacheTtl: cacheOptions?.ttl, useCache: cacheOptions?.enabled !== false && (!cacheOptions?.ttl || cacheOptions.ttl > 100), strictDiscovery },
       )
 
       if (result) {
@@ -446,73 +462,54 @@ export class ConfigLoader {
     arrayStrategy: ArrayMergeStrategy,
     verbose: boolean,
     checkEnv: boolean,
+    errorPolicy?: Config<T>['errorPolicy'],
   ): Promise<{ config: T, source: ConfigSource } | null> {
-    // Apply environment variables to default config before merging with package.json config
     const envDefaultConfig = checkEnv
       ? applyEnvVarsToConfig(name, defaultConfig as any, verbose) as T
       : defaultConfig
+    const pkgPath = resolve(baseDir, 'package.json')
+    const strict = errorPolicy === 'throw'
 
     try {
-      const pkgPath = resolve(baseDir, 'package.json')
-      if (!existsSync(pkgPath)) {
+      const parsed: unknown = JSON.parse(readFileSync(pkgPath, 'utf8'))
+      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed))
+        throw new Error('package.json must contain an object')
+      const pkg = parsed as Record<string, unknown>
+      const aliases = alias === undefined ? [] : Array.isArray(alias) ? alias : [alias]
+      const names = [name, ...aliases.filter(Boolean)]
+      // An explicitly present invalid primary field must not be hidden by an
+      // alias. Preserve the legacy truthy-field fallback for lenient callers.
+      const usedName = names.find(candidate => Object.hasOwn(pkg, candidate)
+        && (strict || Boolean(pkg[candidate])))
+      if (usedName === undefined)
         return null
-      }
 
-      // Read & parse fresh on each call. `await import(pkgPath)` would cache
-      // the parsed module by path forever within a process — wrong for any
-      // workflow that mutates package.json (tests, watch mode, dev tooling).
-      let pkg: Record<string, unknown> = {}
-      try {
-        pkg = JSON.parse(readFileSync(pkgPath, 'utf8')) as Record<string, unknown>
-      }
-      catch (parseError) {
-        if (verbose) {
-          log.warn(`Failed to parse package.json:`, [parseError instanceof Error ? parseError : new Error(String(parseError))])
-        }
-        return null
-      }
+      const pkgConfig = pkg[usedName]
+      if (typeof pkgConfig !== 'object' || pkgConfig === null || Array.isArray(pkgConfig))
+        throw new Error(`Configuration field "${usedName}" must contain an object`)
 
-      // Try primary name first, then each alias in declared order
-      let pkgConfig: unknown = pkg[name]
-      let usedName = name
+      if (verbose)
+        log.success(`Configuration loaded from package.json: ${usedName}`)
 
-      if (!pkgConfig && alias) {
-        const aliases = Array.isArray(alias) ? alias : [alias]
-        for (const a of aliases) {
-          if (!a) continue
-          if (pkg[a]) {
-            pkgConfig = pkg[a]
-            usedName = a
-            break
-          }
-        }
-      }
-
-      if (pkgConfig && typeof pkgConfig === 'object' && !Array.isArray(pkgConfig)) {
-        if (verbose) {
-          log.success(`Configuration loaded from package.json: ${usedName}`)
-        }
-
-        const mergedConfig = deepMergeWithArrayStrategy(envDefaultConfig, pkgConfig, arrayStrategy) as T
-
-        return {
-          config: mergedConfig,
-          source: {
-            type: 'package.json',
-            path: pkgPath,
-            priority: 30,
-            timestamp: new Date(),
-          },
-        }
+      return {
+        config: deepMergeWithArrayStrategy(envDefaultConfig, pkgConfig, arrayStrategy) as T,
+        source: {
+          type: 'package.json',
+          path: pkgPath,
+          priority: 30,
+          timestamp: new Date(),
+        },
       }
     }
     catch (error) {
-      if (verbose) {
+      if (isMissingConfigPath(error))
+        return null
+      if (strict)
+        throw ErrorFactory.configLoad(pkgPath, error instanceof Error ? error : new Error(String(error)))
+      if (verbose)
         log.warn(`Failed to load package.json:`, [error instanceof Error ? error : new Error(String(error))])
-      }
+      return null
     }
-
-    return null
   }
 
   /**
@@ -771,8 +768,9 @@ export async function loadConfigWithResult<T>(options: EnhancedConfig<T>): Promi
 /**
  * Standard configuration loading function that returns just the config (backward compatible)
  *
- * NOTE: This function will ALWAYS return at least defaultConfig values, never null or undefined.
- * If config loading fails for any reason, it gracefully falls back to defaults.
+ * Defaults remain available for optional absence. Explicit paths and
+ * errorPolicy: 'throw' propagate loading and validation errors. Strict loads
+ * re-read files and revalidate instead of accepting cached fallback results.
  */
 export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Promise<T> {
   // Ensure defaultConfig exists - if not provided, use empty object as fallback
@@ -803,16 +801,13 @@ export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Pro
     return result?.config ?? defaultConfig
   }
   catch (error) {
-    // The one deliberate exception to "loadConfig never throws". Falling back
-    // to defaults is the right answer for "no config file exists anywhere",
-    // and the wrong one for "the file you named could not be loaded" - that is
-    // a caller mistake, and hiding it means running with settings nobody
-    // chose. Callers who want the lenient behaviour simply omit configFile.
-    if (options.configFile)
+    // Explicit paths and callers opting into error propagation must retain
+    // the original failure. Optional discovery still resolves genuine absence
+    // to defaults inside the loader before reaching this catch.
+    if (options.configFile || options.errorPolicy === 'throw')
       throw error
 
-    // For any other error, fall back to defaults gracefully
-    // This ensures loadConfig NEVER throws or returns null/undefined
+    // Preserve the default fallback policy for other callers.
     const errorName = error instanceof Error ? error.name : 'UnknownError'
     const errorMessage = error instanceof Error ? error.message : String(error)
     const isConfigError = errorName === 'ConfigNotFoundError'
@@ -905,6 +900,9 @@ export async function config<T>(
     return result.config
   }
   catch (error) {
+    if (nameOrOptions.configFile || nameOrOptions.errorPolicy === 'throw')
+      throw error
+
     // For backward compatibility, handle ConfigNotFoundError and some ConfigLoadError gracefully
     if (error instanceof Error && (error.name === 'ConfigNotFoundError'
       || (error.name === 'ConfigLoadError' && shouldHandleConfigLoadErrorGracefully(error)))) {
@@ -1090,6 +1088,9 @@ export type ConfigNames = ${files.length ? `'${files.join('\' | \'')}'` : 'strin
 export function createLibraryConfig<T extends Record<string, any>>(
   options: Config<T> | EnhancedConfig<T>,
 ): T {
+  if (options.errorPolicy === 'throw')
+    throw new TypeError("Synchronous library configuration cannot propagate loading failures; use await loadConfig({ errorPolicy: 'throw', ... }) instead")
+
   const defaultConfig = 'defaultConfig' in options ? options.defaultConfig : ({} as T)
 
   // Start from a COPY of the caller's defaults — never alias it, or the proxy's

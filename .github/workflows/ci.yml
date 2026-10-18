@@ -13,6 +13,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
+env:
+  BUN_VERSION: '1.4.2'
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -20,8 +26,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
 
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2.1.2
+      - name: Setup Pantry
+        uses: pantry-pm/pantry/packages/action@edda9c23439a37a35e0f828315e2380889cc75e9 # v0.11.92
+        with:
+          version: '0.11.92'
+          install: 'false'
+          packages: 'bun.com@${{ env.BUN_VERSION }}'
 
       - name: Use cached node_modules
         uses: actions/cache@v5.0.3
@@ -32,7 +42,7 @@ jobs:
             node-modules-
 
       - name: Install Dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Lint
         run: bun run lint
@@ -43,8 +53,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
 
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2.1.2
+      - name: Setup Pantry
+        uses: pantry-pm/pantry/packages/action@edda9c23439a37a35e0f828315e2380889cc75e9 # v0.11.92
+        with:
+          version: '0.11.92'
+          install: 'false'
+          packages: 'bun.com@${{ env.BUN_VERSION }}'
 
       - name: Use cached node_modules
         uses: actions/cache@v5.0.3
@@ -55,7 +69,7 @@ jobs:
             node-modules-
 
       - name: Install Dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Typecheck
         run: bun --bun run typecheck
@@ -66,8 +80,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
 
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2.1.2
+      - name: Setup Pantry
+        uses: pantry-pm/pantry/packages/action@edda9c23439a37a35e0f828315e2380889cc75e9 # v0.11.92
+        with:
+          version: '0.11.92'
+          install: 'false'
+          packages: 'bun.com@${{ env.BUN_VERSION }}'
 
       - name: Use cached node_modules
         uses: actions/cache@v5.0.3
@@ -78,7 +96,7 @@ jobs:
             node-modules-
 
       - name: Install Dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Unit Test
         run: bun test
@@ -93,10 +111,14 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Pantry
-        uses: home-lang/pantry/packages/action@main
+        uses: pantry-pm/pantry/packages/action@edda9c23439a37a35e0f828315e2380889cc75e9 # v0.11.92
+        with:
+          version: '0.11.92'
+          install: 'false'
+          packages: 'bun.com@${{ env.BUN_VERSION }}'
 
       - name: Install Dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Build
         run: bun run build

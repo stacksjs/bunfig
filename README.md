@@ -65,6 +65,24 @@ console.log(resolvedConfig) // { port: 3000, host: 'localhost' }, unless a confi
 > 2. **Home directory**: `~/.config/$name/config.{ts,js,mjs,cjs,json}` (and `~/.config/$name/$name.config.{ts,...}`)
 > 3. **Package.json**: a section named after your config `name` (or any of its `alias` entries — `alias` accepts a string or array of strings)
 
+### Required configuration at startup
+
+Use `errorPolicy: 'throw'` when configuration errors must stop initialization:
+
+```ts
+const settings = await loadConfig({
+  name: 'my-app',
+  defaultConfig: { port: 3000 },
+  errorPolicy: 'throw',
+})
+```
+
+Optional absence still uses defaults and environment overrides. Invalid files,
+permission errors and validation failures reject the load. An explicit
+`configFile` is required. Throw policy rechecks the configuration and schema
+entry modules and bypasses Bunfig's caches. See [error handling](./docs/features/error-handling.md)
+for loading policies, error types and reload ownership.
+
 ### Home Directory Configuration
 
 bunfig supports global configuration files in your home directory following the XDG Base Directory specification. This is useful for:

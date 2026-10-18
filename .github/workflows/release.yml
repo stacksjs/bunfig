@@ -6,9 +6,13 @@ on:
       - 'v*'
   workflow_dispatch:
 
+env:
+  BUN_VERSION: '1.4.2'
+
 jobs:
   npm:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
       id-token: write
@@ -20,10 +24,23 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Pantry
-        uses: home-lang/pantry/packages/action@main
+        uses: pantry-pm/pantry/packages/action@edda9c23439a37a35e0f828315e2380889cc75e9 # v0.11.92
+        with:
+          version: '0.11.92'
+          install: 'false'
+          packages: 'bun.com@${{ env.BUN_VERSION }}'
 
       - name: Install Dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
+
+      - name: Validate source
+        run: |
+          bun run lint
+          bun run typecheck
+          bun test
+
+      - name: Build
+        run: bun run build
 
       - name: Publish
         run: pantry publish --npm --access public

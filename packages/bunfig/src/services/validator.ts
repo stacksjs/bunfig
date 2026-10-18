@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs'
 import { globalPerformanceMonitor } from '../cache'
 import { SchemaValidationError } from '../errors'
+import { importFreshConfiguration } from './config-files'
 
 /**
  * Validation rule for configuration properties
@@ -184,14 +185,16 @@ export class ConfigValidator {
         )
       }
 
-      const schemaModule = await import(schemaPath)
-      const schema = schemaModule.default || schemaModule
+      const schemaModule = await importFreshConfiguration(schemaPath)
+      const schema = Object.hasOwn(schemaModule, 'default') ? schemaModule.default : schemaModule
 
       if (Array.isArray(schema)) {
         return this.validateWithRules(config, schema, options)
       }
       else {
-        return this.validateWithJSONSchema(config, schema, options)
+        if (typeof schema !== 'object' || schema === null)
+          throw new Error('Schema must export an object or validation rule array')
+        return this.validateWithJSONSchema(config, schema as JSONSchema, options)
       }
     }
     catch (error) {

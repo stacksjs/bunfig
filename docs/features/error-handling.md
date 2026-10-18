@@ -1,607 +1,123 @@
-# Error Handling
+# Error handling
 
-bunfig provides comprehensive error handling to help you debug configuration issues and implement robust error recovery strategies. All errors are structured, typed, and include detailed context about what went wrong.
+Choose the loading policy at the asynchronous configuration boundary. Ordinary
+`loadConfig` callers keep their existing fallback behavior. Use
+`errorPolicy: 'throw'` when an invalid configuration must stop startup.
 
-## Error Types
-
-bunfig uses a hierarchy of error types that provide specific information about different failure scenarios:
-
-### ConfigNotFoundError
-
-Thrown when no configuration file can be found in any of the search locations.
+## Propagate configuration errors
 
 ```ts
-import { ConfigNotFoundError } from 'bunfig'
+import { loadConfig } from 'bunfig'
 
-try {
-  const config = await loadConfig({ name: 'my-app' })
-}
-catch (error) {
-  if (error instanceof ConfigNotFoundError) {
-    console.log(`Configuration "${error.context.configName}" not found`)
-    console.log(`Searched ${error.context.searchPathCount} locations:`)
-    error.context.searchPaths.forEach(path => console.log(`  - ${path}`))
-  }
-}
-```
-
-### ConfigLoadError
-
-Thrown when a configuration file is found but cannot be loaded due to syntax errors, invalid exports, or other loading issues.
-
-```ts
-import { ConfigLoadError } from 'bunfig'
-
-try {
-  const config = await loadConfig({ name: 'my-app' })
-}
-catch (error) {
-  if (error instanceof ConfigLoadError) {
-    console.log(`Failed to load config from: ${error.context.configPath}`)
-    console.log(`Error: ${error.context.originalMessage}`)
-
-    // Check specific error types
-    if (error.message.includes('syntax error')) {
-      console.log('Fix the syntax in your configuration file')
-    }
-    else if (error.message.includes('must export')) {
-      console.log('Ensure your config file exports a default object')
-    }
-  }
-}
-```
-
-### ValidationError
-
-Thrown when configuration validation fails (when using schemas or validation rules).
-
-```ts
-import { ValidationError } from 'bunfig'
-
-try {
-  const config = await loadConfig({
-    name: 'my-app',
-    schema: validationSchema
-  })
-}
-catch (error) {
-  if (error instanceof ValidationError) {
-    console.log(`Validation failed: ${error.context.errors.length} errors found`)
-
-    error.context.errors.forEach((err) => {
-      console.log(`❌ ${err.path}: ${err.message}`)
-      if (err.expected)
-        console.log(`   Expected: ${err.expected}`)
-      if (err.actual !== undefined)
-        console.log(`   Actual: ${err.actual}`)
-    })
-  }
-}
-```
-
-### FileSystemError
-
-Thrown when file system operations fail (permissions, disk space, etc.).
-
-```ts
-import { FileSystemError } from 'bunfig'
-
-try {
-  const config = await loadConfig({ name: 'my-app' })
-}
-catch (error) {
-  if (error instanceof FileSystemError) {
-    console.log(`File system error: ${error.message}`)
-    console.log(`Operation: ${error.context.operation}`)
-    console.log(`Path: ${error.context.path}`)
-
-    if (error.message.includes('EACCES')) {
-      console.log('Permission denied - check file permissions')
-    }
-    else if (error.message.includes('ENOSPC')) {
-      console.log('No space left on device')
-    }
-  }
-}
-```
-
-## Error Context
-
-All bunfig errors include rich context information to help with debugging:
-
-```ts
-interface ErrorContext {
-  timestamp: Date
-  configName?: string
-  searchPaths?: string[]
-  searchPathCount?: number
-  configPath?: string
-  originalError?: Error
-  originalMessage?: string
-  operation?: string
-  path?: string
-  errors?: ValidationError[]
-}
-```
-
-## Error Recovery Strategies
-
-### Graceful Fallbacks
-
-Implement fallback configurations when loading fails:
-
-```ts
-async function loadConfigWithFallback<T>(
-  name: string,
-  fallbackConfig: T
-): Promise<T> {
-  try {
-    const result = await loadConfig({
-      name,
-      defaultConfig: fallbackConfig
-    })
-    return result
-  }
-  catch (error) {
-    if (error instanceof ConfigNotFoundError) {
-      console.warn(`No ${name} config found, using defaults`)
-      return fallbackConfig
-    }
-
-    if (error instanceof ValidationError) {
-      console.warn(`${name} config validation failed, using defaults`)
-      console.warn('Validation errors:', error.context.errors)
-      return fallbackConfig
-    }
-
-    // Re-throw unexpected errors
-    throw error
-  }
-}
-
-// Usage
-const config = await loadConfigWithFallback('my-app', {
-  port: 3000,
-  host: 'localhost'
-})
-```
-
-### Partial Configuration Loading
-
-Load configuration with partial error recovery:
-
-```ts
-async function loadConfigPartial<T>(
-  name: string,
-  defaultConfig: T
-): Promise<{ config: T, warnings: string[] }> {
-  const warnings: string[] = []
-
-  try {
-    const result = await loadConfig({
-      name,
-      defaultConfig,
-      // Use permissive validation
-      validate: (config) => {
-        const errors: string[] = []
-
-        // Check critical fields only
-        if (!config.port || typeof config.port !== 'number') {
-          errors.push('port must be a number')
-        }
-
-        // Warn about non-critical issues
-        if (!config.timeout) {
-          warnings.push('timeout not specified, using default')
-          config.timeout = 30000
-        }
-
-        return errors.length > 0 ? errors : undefined
-      }
-    })
-
-    return { config: result, warnings }
-  }
-  catch (error) {
-    if (error instanceof ValidationError) {
-      // Fix what we can, warn about the rest
-      const config = { ...defaultConfig }
-
-      error.context.errors?.forEach((err) => {
-        warnings.push(`${err.path}: ${err.message}`)
-      })
-
-      return { config, warnings }
-    }
-
-    throw error
-  }
-}
-```
-
-### Retry Logic
-
-Implement retry logic for transient errors:
-
-```ts
-async function loadConfigWithRetry<T>(
-  name: string,
-  options: { maxRetries?: number, retryDelay?: number } = {}
-): Promise<T> {
-  const { maxRetries = 3, retryDelay = 1000 } = options
-  let lastError: Error
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await loadConfig({ name })
-    }
-    catch (error) {
-      lastError = error as Error
-
-      // Don't retry for permanent errors
-      if (error instanceof ConfigNotFoundError
-        || error instanceof ValidationError) {
-        throw error
-      }
-
-      // Retry for file system or temporary errors
-      if (error instanceof FileSystemError
-        || error instanceof ConfigLoadError) {
-        if (attempt < maxRetries) {
-          console.warn(`Config load attempt ${attempt} failed, retrying in ${retryDelay}ms`)
-          await new Promise(resolve => setTimeout(resolve, retryDelay))
-          continue
-        }
-      }
-
-      throw error
-    }
-  }
-
-  // Ensure we're throwing an Error object
-  throw lastError instanceof Error ? lastError : new Error(`Unknown error: ${String(lastError)}`)
-}
-```
-
-## Development vs Production Error Handling
-
-### Development Mode
-
-In development, provide detailed error information:
-
-```ts
-async function loadConfigDev<T>(name: string): Promise<T> {
-  try {
-    return await loadConfig({
-      name,
-      verbose: true, // Enable detailed logging
-      trackPerformance: true
-    })
-  }
-  catch (error) {
-    // Detailed error reporting for development
-    console.error('🚨 Configuration Loading Failed')
-    console.error('================================')
-
-    if (error instanceof ConfigNotFoundError) {
-      console.error(`Config "${name}" not found. Searched these locations:`)
-      error.context.searchPaths?.forEach((path, i) => {
-        console.error(`  ${i + 1}. ${path}`)
-      })
-      console.error('\nTry creating one of these files:')
-      console.error(`  • ${name}.config.ts`)
-      console.error(`  • ${name}.config.js`)
-      console.error(`  • .${name}.config.ts`)
-    }
-    else if (error instanceof ConfigLoadError) {
-      console.error(`File: ${error.context.configPath}`)
-      console.error(`Error: ${error.context.originalMessage}`)
-      console.error('\nCommon fixes:')
-      console.error('  • Check file syntax')
-      console.error('  • Ensure default export exists')
-      console.error('  • Verify all imports are valid')
-    }
-    else if (error instanceof ValidationError) {
-      console.error('Validation errors:')
-      error.context.errors?.forEach((err) => {
-        console.error(`  ❌ ${err.path}: ${err.message}`)
-      })
-    }
-
-    throw error
-  }
-}
-```
-
-### Production Mode
-
-In production, log errors securely and provide fallbacks:
-
-```ts
-async function loadConfigProd<T>(
-  name: string,
-  fallback: T,
-  logger?: any
-): Promise<T> {
-  try {
-    return await loadConfig({
-      name,
-      verbose: false, // Disable verbose logging
-      checkEnv: true // Enable env var fallbacks
-    })
-  }
-  catch (error) {
-    // Secure logging - don't expose file paths or system details
-    const errorId = Math.random().toString(36).substring(7)
-
-    if (logger) {
-      logger.error('Configuration loading failed', {
-        errorId,
-        configName: name,
-        errorType: error.constructor.name,
-        // Don't log full paths or sensitive details
-        message: error.message
-      })
-    }
-
-    // Use fallback configuration
-    console.warn(`Using fallback configuration (Error ID: ${errorId})`)
-    return fallback
-  }
-}
-```
-
-## Error Monitoring and Alerting
-
-### Error Metrics
-
-Track configuration loading errors for monitoring:
-
-```ts
-class ConfigErrorTracker {
-  private errorCounts = new Map<string, number>()
-
-  async loadConfigWithTracking<T>(name: string): Promise<T> {
-    try {
-      return await loadConfig({ name })
-    }
-    catch (error) {
-      this.trackError(name, error)
-      throw error
-    }
-  }
-
-  private trackError(configName: string, error: Error) {
-    const errorKey = `${configName}:${error.constructor.name}`
-    const count = this.errorCounts.get(errorKey) || 0
-    this.errorCounts.set(errorKey, count + 1)
-
-    // Alert if error count exceeds threshold
-    if (count + 1 >= 5) {
-      this.sendAlert(configName, error, count + 1)
-    }
-  }
-
-  private sendAlert(configName: string, error: Error, count: number) {
-    // Send to monitoring system
-    console.error(`ALERT: Config ${configName} failed ${count} times: ${error.message}`)
-  }
-
-  getErrorStats() {
-    return Object.fromEntries(this.errorCounts)
-  }
-}
-```
-
-### Health Checks
-
-Implement configuration health checks:
-
-```ts
-async function checkConfigHealth(configName: string): Promise<{
-  status: 'healthy' | 'degraded' | 'unhealthy'
-  issues: string[]
-  lastCheck: Date
-}> {
-  const issues: string[] = []
-  let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy'
-
-  try {
-    const config = await loadConfig({
-      name: configName,
-      // Quick validation
-      validate: (cfg) => {
-        const errors: string[] = []
-
-        // Check for required fields
-        if (!cfg || typeof cfg !== 'object') {
-          errors.push('Configuration is not an object')
-        }
-
-        return errors.length > 0 ? errors : undefined
-      }
-    })
-
-    // Check if using fallback values
-    if (JSON.stringify(config) === JSON.stringify({})) {
-      issues.push('Using empty configuration (possible fallback)')
-      status = 'degraded'
-    }
-  }
-  catch (error) {
-    if (error instanceof ConfigNotFoundError) {
-      issues.push('Configuration file not found')
-      status = 'degraded'
-    }
-    else if (error instanceof ValidationError) {
-      issues.push(`Validation failed: ${error.context.errors?.length} errors`)
-      status = 'unhealthy'
-    }
-    else {
-      issues.push(`Loading failed: ${error.message}`)
-      status = 'unhealthy'
-    }
-  }
-
-  return {
-    status,
-    issues,
-    lastCheck: new Date()
-  }
-}
-```
-
-## Testing Error Scenarios
-
-### Unit Testing Error Handling
-
-```ts
-import { describe, expect, it } from 'bun:test'
-import { ConfigNotFoundError, ValidationError } from 'bunfig'
-
-describe('Config Error Handling', () => {
-  it('should handle missing config gracefully', async () => {
-    const result = await loadConfigWithFallback('nonexistent', { port: 3000 })
-    expect(result.port).toBe(3000)
-  })
-
-  it('should retry on file system errors', async () => {
-    let attempts = 0
-    const mockLoadConfig = async () => {
-      attempts++
-      if (attempts < 3) {
-        throw new FileSystemError('EACCES: permission denied')
-      }
-      return { port: 3000 }
-    }
-
-    const result = await loadConfigWithRetry('test-app')
-    expect(attempts).toBe(3)
-    expect(result.port).toBe(3000)
-  })
-
-  it('should provide detailed validation errors', async () => {
-    try {
-      await loadConfig({
-        name: 'test',
-        schema: {
-          type: 'object',
-          properties: {
-            port: { type: 'number', minimum: 1 }
-          },
-          required: ['port']
-        }
-      })
-    }
-    catch (error) {
-      expect(error).toBeInstanceOf(ValidationError)
-      expect(error.context.errors).toHaveLength(1)
-      expect(error.context.errors[0].path).toBe('port')
-    }
-  })
-})
-```
-
-## Best Practices
-
-### 1. Always Handle Expected Errors
-
-```ts
-// ❌ Don't ignore errors
-const config = await loadConfig({ name: 'app' })
-
-// ✅ Handle expected error scenarios
-try {
-  const config = await loadConfig({ name: 'app' })
-}
-catch (error) {
-  if (error instanceof ConfigNotFoundError) {
-    // Handle missing config
-  }
-  else if (error instanceof ValidationError) {
-    // Handle validation errors
-  }
-  else {
-    // Re-throw unexpected errors
-    throw error
-  }
-}
-```
-
-### 2. Provide Meaningful Default Values
-
-```ts
-// ✅ Always provide sensible defaults
-const config = await loadConfig({
+const settings = await loadConfig({
   name: 'app',
-  defaultConfig: {
-    port: 3000,
-    host: 'localhost',
-    timeout: 30000,
-    retries: 3
-  }
+  defaultConfig: { port: 3000 },
+  errorPolicy: 'throw',
+  validate: (value) => {
+    if (!Number.isInteger(value.port) || value.port < 1 || value.port > 65535)
+      return ['port must be an integer between 1 and 65535']
+  },
 })
 ```
 
-### 3. Use Structured Logging
+Optional discovery still returns defaults when no configuration exists, with
+environment overrides when `checkEnv` is enabled. Missing paths and non-directory
+search paths are absence. Permission errors, malformed or failing modules,
+invalid exported values, and validation failures reject the load.
+
+A discovered `package.json` must parse to an object. A configuration field that
+is present must contain an object; `null`, arrays, booleans, numbers and strings
+are errors under throw policy. An invalid primary field cannot be hidden by a
+valid alias. A missing field permits the usual default behavior.
+
+Throw policy bypasses Bunfig's result and file caches, including results from
+earlier lenient calls. Configuration entrypoints and schema files are loaded
+again, and the current validator runs. Await configuration in your application's
+startup or asynchronous factory before creating resources from its settings.
+
+Bunfig owns reloads of the configuration and schema entry modules. Imports made
+by those modules keep Bun's normal dependency caching. Do not concurrently
+replace or delete cache entries for Bunfig-managed modules from another loader.
+Ordinary imports can run alongside Bunfig loads; an entry still executing is
+awaited before subsequent Bunfig reloads.
+
+Module resolution follows the installed Bun runtime. A file can exist and be
+readable while Bun cannot resolve it: Bun 1.4.2 and 1.4.3 have this limitation for
+literal `?` characters in a pathname. Throw policy preserves that native failure
+as `ConfigLoadError`, including its cause and path. Bunfig does not replace the
+runtime's module resolver; this upstream pathname limitation remains unresolved.
+
+## Require a specific file
 
 ```ts
-// ✅ Structure your error logs
-logger.error('Config loading failed', {
-  configName: 'app',
-  errorType: error.constructor.name,
-  searchPaths: error.context?.searchPaths?.length || 0,
-  timestamp: new Date().toISOString()
+import { loadConfig } from 'bunfig'
+
+const settings = await loadConfig({
+  name: 'app',
+  configFile: './config/app.ts',
+  defaultConfig: { port: 3000 },
+  errorPolicy: 'throw',
 })
 ```
 
-### 4. Implement Circuit Breakers
+An explicit `configFile` is required. Missing it raises `ConfigNotFoundError`;
+the loader does not search for another file or replace the failure with defaults.
+
+## Inspect structured errors
 
 ```ts
-class ConfigCircuitBreaker {
-  private failures = 0
-  private lastFailure?: Date
-  private readonly threshold = 5
-  private readonly timeout = 60000 // 1 minute
+import { ConfigLoadError, ConfigValidationError, loadConfig } from 'bunfig'
 
-  async loadConfig<T>(name: string): Promise<T> {
-    if (this.isOpen()) {
-      throw new Error('Circuit breaker is open')
-    }
-
-    try {
-      const result = await loadConfig({ name })
-      this.onSuccess()
-      return result
-    }
-    catch (error) {
-      this.onFailure()
-      throw error
-    }
-  }
-
-  private isOpen(): boolean {
-    if (this.failures >= this.threshold) {
-      const timeSinceLastFailure = Date.now() - (this.lastFailure?.getTime() || 0)
-      return timeSinceLastFailure < this.timeout
-    }
-    return false
-  }
-
-  private onSuccess() {
-    this.failures = 0
-    this.lastFailure = undefined
-  }
-
-  private onFailure() {
-    this.failures++
-    this.lastFailure = new Date()
-  }
+try {
+  await loadConfig({
+    name: 'app',
+    defaultConfig: { port: 3000 },
+    errorPolicy: 'throw',
+  })
+}
+catch (error) {
+  if (error instanceof ConfigLoadError)
+    console.error('Configuration could not be loaded', error.code)
+  else if (error instanceof ConfigValidationError)
+    console.error('Configuration validation failed', error.code)
+  throw error
 }
 ```
 
-## Related Features
+| Error | Meaning | Context |
+| --- | --- | --- |
+| `ConfigNotFoundError` | A required file or enhanced discovery result was not found | `configName`, `searchPaths`, `searchPathCount` |
+| `ConfigLoadError` | A configuration file or package setting could not be read or loaded | `configPath`, `originalError`, `originalMessage` |
+| `ConfigValidationError` | A schema or custom validator rejected the configuration | `configName`, `validationErrors`, `errorCount` |
 
-- [Configuration Loading](./configuration-loading.md) - Complete configuration loading guide
-- [Validation](./validation.md) - Configuration validation and schema
-- [Type Safety](./type-safety.md) - TypeScript integration and type safety
+These classes extend `BunfigError`, which provides `code`, `message`, `timestamp`
+and `context`. `ConfigLoadError.cause` preserves the underlying error. The
+`originalError` context field is its name, and `validationErrors` is an array of
+messages. Configuration errors can include sensitive values, so log only the
+metadata your application needs rather than dumping configuration or context.
+
+## Other loading APIs
+
+The legacy asynchronous `config({ ... })` function honors `errorPolicy: 'throw'`.
+The string-only form keeps its existing behavior.
+
+`loadConfigWithResult({ ... })` returns the configuration together with source
+information. Its existing enhanced error behavior remains available. With throw
+policy, optional absence uses defaults; invalid discovered configuration rejects.
+
+`createLibraryConfig` returns synchronous defaults while loading in the
+background. It cannot make an asynchronous loading failure throw at the call
+site, so it rejects `errorPolicy: 'throw'` immediately. Use `await loadConfig`
+when initialization must succeed before your application proceeds.
+
+## Fallback and retries
+
+Leave the policy unset or choose `errorPolicy: 'fallback'` when the existing
+lenient behavior is appropriate. Lenient discovery can skip an inaccessible
+optional directory and continue to a later candidate. An explicit file remains
+required.
+
+For shared storage, authentication and other required infrastructure, propagate
+configuration errors instead of substituting a different backend. Retry only
+failures your application can identify as transient; syntax errors and invalid
+settings require a configuration correction.

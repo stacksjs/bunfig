@@ -79,6 +79,14 @@ export interface Config<T> {
   headers?: Record<string, string>
   defaultConfig: T
   checkEnv?: boolean
+  /**
+   * Keep the default recovery behavior, or reject configuration loading and
+   * validation failures. Optional discovery still uses defaults when no
+   * configuration exists. An explicit configFile always requires that file.
+   * Throw policy rechecks current files and validation without caching.
+   * Use await loadConfig; the synchronous createLibraryConfig helper rejects it.
+   */
+  errorPolicy?: 'fallback' | 'throw'
   verbose?: boolean
   arrayStrategy?: ArrayMergeStrategy
 }

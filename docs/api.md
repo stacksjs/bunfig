@@ -66,6 +66,7 @@ async function loadConfig<T>({
   checkEnv,
   verbose,
   arrayStrategy, // 'replace' | 'merge' (default 'replace')
+  errorPolicy, // 'fallback' (default) | 'throw'
 }: Config<T>): Promise<T>
 ```
 
@@ -75,6 +76,7 @@ async function loadConfig<T>({
 - `alias`: An alternative name to check for config files (optional). Accepts a single string, or an array of strings to probe several fallback names in order. The primary `name` always wins over any alias.
 - `cwd`: Working directory to search for config files (defaults to process.cwd())
 - `defaultConfig`: Default configuration values
+- `errorPolicy`: Use `'throw'` to propagate invalid configuration, permission and validation errors. Optional absence still uses defaults; explicit files are required. Throw policy bypasses Bunfig caches and reloads configuration/schema entry modules.
 - `arrayStrategy`: Controls how arrays are merged. Defaults to `'replace'` (user-provided arrays replace defaults). Set to `'merge'` to concatenate arrays using bunfig's smart merge.
 
 #### Example
@@ -304,12 +306,16 @@ The first file found in this order will be used. The contents will be deeply mer
 
 ## Error Handling
 
-All functions that load configuration files handle errors gracefully:
+`loadConfig` keeps its default fallback behavior unless `errorPolicy: 'throw'` is
+selected. Throw policy rejects malformed or failing configuration, invalid
+exported values, permission errors, and schema or custom validation failures.
+Optional absence still uses defaults and environment overrides; an explicit
+missing `configFile` raises `ConfigNotFoundError`.
 
-- Missing files return the default configuration
-- Invalid files are skipped
-- Type mismatches are handled by returning the default configuration
-- File system errors are caught and handled appropriately
+`config({ ... })` honors the asynchronous policy. Synchronous
+`createLibraryConfig` rejects throw policy; use `await loadConfig` for startup
+requirements. See [error handling](./features/error-handling.md) for structured
+error metadata, enhanced result behavior and reload ownership.
 
 ## Best Practices
 

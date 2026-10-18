@@ -1,10 +1,11 @@
 import type { ArrayMergeStrategy, ConfigSource } from '../types'
-import { existsSync } from 'node:fs'
+import { existsSync, statSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { globalCache, globalPerformanceMonitor } from '../cache'
 import { CONFIG_FILE_EXTENSIONS, getConfigNamePatterns, getConfigPaths } from '../discovery'
 import { ConfigLoadError, ErrorFactory, withErrorRecovery } from '../errors'
 import { deepMergeWithArrayStrategy } from '../utils'
+import { importFreshConfiguration, isMissingConfigPath } from './config-files'
 
 /**
  * File loading options
@@ -20,6 +21,8 @@ export interface FileLoadOptions {
   trackPerformance?: boolean
   /** Verbose logging */
   verbose?: boolean
+  /** Propagate discovery failures other than genuine absence. */
+  strictDiscovery?: boolean
 }
 
 /**
@@ -42,6 +45,7 @@ export class ConfigFileLoader {
       cacheTtl,
       trackPerformance = true,
       verbose = false,
+      strictDiscovery = false,
     } = options
 
     // Check cache first
@@ -60,19 +64,22 @@ export class ConfigFileLoader {
     }
 
     const loadOperation = async () => {
-      if (!existsSync(configPath)) {
-        return null
-      }
-
       try {
-        // Add cache busting for dynamic imports to ensure fresh file content
-        const cacheBuster = `?t=${Date.now()}`
-        const importedConfig = await import(configPath + cacheBuster)
-        const loadedConfig = importedConfig.default || importedConfig
+        try {
+          statSync(configPath)
+        }
+        catch (error) {
+          if (isMissingConfigPath(error) || !strictDiscovery)
+            return null
+          throw error
+        }
+
+        const importedConfig = await importFreshConfiguration(configPath)
 
         // Check if the file is completely empty (no exports)
-        const hasDefaultExport = 'default' in importedConfig
+        const hasDefaultExport = Object.hasOwn(importedConfig, 'default')
         const hasNamedExports = Object.keys(importedConfig).length > 0
+        const loadedConfig = hasDefaultExport ? importedConfig.default : importedConfig
 
         if (!hasDefaultExport && !hasNamedExports) {
           throw new ConfigLoadError(
