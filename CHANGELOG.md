@@ -1,3 +1,17 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.20...v0.15.21)
+
+## 🐛 Bug Fixes
+
+- preserve bundled configuration error contracts ([0f2a2f7](https://github.com/stacksjs/bunfig/commit/0f2a2f7)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🔧 Chores
+
+- release v0.15.21 ([208a881](https://github.com/stacksjs/bunfig/commit/208a881)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.19...v0.15.20)
 
 ## ✨ Features
