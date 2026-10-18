@@ -1,3 +1,27 @@
+[Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.19...v0.15.20)
+
+## ✨ Features
+
+- support fail-closed configuration loading ([7dacba3](https://github.com/stacksjs/bunfig/commit/7dacba3)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🐛 Bug Fixes
+
+- **ci**: setup-php 2.37.1, which closes the two open advisories ([657f4a8](https://github.com/stacksjs/bunfig/commit/657f4a8)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **types**: annotate the tsserver plugin's default export ([9a3374b](https://github.com/stacksjs/bunfig/commit/9a3374b)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🔧 Chores
+
+- release v0.15.20 ([38685b0](https://github.com/stacksjs/bunfig/commit/38685b0)) _(by Chris <chrisbreuer93@gmail.com>)_
+- run @stacksjs/logsmith, not the unrelated npm 'logsmith' ([20f314f](https://github.com/stacksjs/bunfig/commit/20f314f)) _(by Chris <chrisbreuer93@gmail.com>)_
+- release through @stacksjs/bumpx, not the unrelated npm 'bumpx' ([13f23ab](https://github.com/stacksjs/bunfig/commit/13f23ab)) _(by Chris <chrisbreuer93@gmail.com>)_
+- stop tracking the 61MB compiled binary ([572abd4](https://github.com/stacksjs/bunfig/commit/572abd4)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: dtsx 0.11.10 ([e6ec943](https://github.com/stacksjs/bunfig/commit/e6ec943)) _(by Chris <chrisbreuer93@gmail.com>)_
+- restore the committed binary my last commit rebuilt ([b2cf199](https://github.com/stacksjs/bunfig/commit/b2cf199)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/bunfig/compare/v0.15.17...v0.15.19)
 
 ### 🐛 Bug Fixes
