@@ -48,6 +48,7 @@ export abstract class BunfigError extends Error {
  * Configuration file not found error
  */
 export class ConfigNotFoundError extends BunfigError {
+  override readonly name: string = 'ConfigNotFoundError'
   readonly code = 'CONFIG_NOT_FOUND'
 
   constructor(
@@ -77,6 +78,7 @@ export class ConfigNotFoundError extends BunfigError {
  * Configuration file syntax or loading error
  */
 export class ConfigLoadError extends BunfigError {
+  override readonly name: string = 'ConfigLoadError'
   readonly code = 'CONFIG_LOAD_ERROR'
 
   constructor(
@@ -103,6 +105,7 @@ export class ConfigLoadError extends BunfigError {
  * Configuration validation error
  */
 export class ConfigValidationError extends BunfigError {
+  override readonly name: string = 'ConfigValidationError'
   readonly code = 'CONFIG_VALIDATION_ERROR'
 
   constructor(
@@ -126,6 +129,7 @@ export class ConfigValidationError extends BunfigError {
  * Configuration merge error
  */
 export class ConfigMergeError extends BunfigError {
+  override readonly name: string = 'ConfigMergeError'
   readonly code = 'CONFIG_MERGE_ERROR'
 
   constructor(
@@ -153,6 +157,7 @@ export class ConfigMergeError extends BunfigError {
  * Environment variable parsing error
  */
 export class EnvVarError extends BunfigError {
+  override readonly name: string = 'EnvVarError'
   readonly code = 'ENV_VAR_ERROR'
 
   constructor(
@@ -177,6 +182,7 @@ export class EnvVarError extends BunfigError {
  * File system operation error
  */
 export class FileSystemError extends BunfigError {
+  override readonly name: string = 'FileSystemError'
   readonly code = 'FILE_SYSTEM_ERROR'
 
   constructor(
@@ -202,6 +208,7 @@ export class FileSystemError extends BunfigError {
  * Type generation error
  */
 export class TypeGenerationError extends BunfigError {
+  override readonly name: string = 'TypeGenerationError'
   readonly code = 'TYPE_GENERATION_ERROR'
 
   constructor(
@@ -227,6 +234,7 @@ export class TypeGenerationError extends BunfigError {
  * Schema validation error for runtime type checking
  */
 export class SchemaValidationError extends BunfigError {
+  override readonly name: string = 'SchemaValidationError'
   readonly code = 'SCHEMA_VALIDATION_ERROR'
 
   constructor(
@@ -250,6 +258,7 @@ export class SchemaValidationError extends BunfigError {
  * Browser-specific configuration loading error
  */
 export class BrowserConfigError extends BunfigError {
+  override readonly name: string = 'BrowserConfigError'
   readonly code = 'BROWSER_CONFIG_ERROR'
 
   constructor(
@@ -274,6 +283,7 @@ export class BrowserConfigError extends BunfigError {
  * Plugin operation error
  */
 export class PluginError extends BunfigError {
+  override readonly name: string = 'PluginError'
   readonly code = 'PLUGIN_ERROR'
 
   constructor(

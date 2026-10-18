@@ -15,7 +15,7 @@ import { getLocalConfigDirectories } from './discovery'
 import { getPackageVersion } from './version' with { type: 'macro' }
 
 const version: string = getPackageVersion()
-import { ErrorFactory } from './errors'
+import { ConfigLoadError, ConfigNotFoundError, ConfigValidationError, ErrorFactory } from './errors'
 import { EnvProcessor } from './services/env-processor'
 import { isMissingConfigPath } from './services/config-files'
 import { ConfigFileLoader } from './services/file-loader'
@@ -87,14 +87,14 @@ export class ConfigLoader {
         // with settings nobody chose, and the mistake surfaces as behaviour
         // rather than as an error. Missing, unreadable and malformed all count.
         if (baseOptions.configFile || (baseOptions.errorPolicy === 'throw'
-          && !(error instanceof Error && error.name === 'ConfigNotFoundError')))
+          && !(error instanceof ConfigNotFoundError)))
           throw error
 
         // Check if this is strict error handling mode (enhanced API)
         const isStrictMode = (baseOptions as any).__strictErrorHandling
 
         // Handle ConfigNotFoundError
-        if (error instanceof Error && error.name === 'ConfigNotFoundError') {
+        if (error instanceof ConfigNotFoundError) {
           // In strict mode (enhanced API), re-throw ConfigNotFoundError
           if (isStrictMode && baseOptions.errorPolicy !== 'throw') {
             throw error
@@ -112,7 +112,7 @@ export class ConfigLoader {
           }
         }
         // Handle ConfigLoadError gracefully by falling back to defaults
-        else if (error instanceof Error && error.name === 'ConfigLoadError') {
+        else if (error instanceof ConfigLoadError) {
           // Check if this is a syntax error (recoverable) or permission error (not recoverable)
           const isPermissionError = error.message.includes('EACCES')
             || error.message.includes('EPERM')
@@ -220,7 +220,7 @@ export class ConfigLoader {
       // cycle (Crosswind, dev servers, watchers). Re-throw silently so
       // the caller's catch block stays in charge of the user-facing
       // message; truly unexpected errors still get the noisy log.
-      if (error instanceof Error && error.name === 'ConfigNotFoundError')
+      if (error instanceof ConfigNotFoundError)
         throw error
 
       const duration = Date.now() - startTime
@@ -808,11 +808,10 @@ export async function loadConfig<T>(options: Config<T> | EnhancedConfig<T>): Pro
       throw error
 
     // Preserve the default fallback policy for other callers.
-    const errorName = error instanceof Error ? error.name : 'UnknownError'
     const errorMessage = error instanceof Error ? error.message : String(error)
-    const isConfigError = errorName === 'ConfigNotFoundError'
-      || errorName === 'ConfigLoadError'
-      || errorName === 'ConfigValidationError'
+    const isConfigError = error instanceof ConfigNotFoundError
+      || error instanceof ConfigLoadError
+      || error instanceof ConfigValidationError
       || errorMessage.includes('config') // Fallback check for any config-related error
 
     // Always fall back to defaults, but log if it's not an expected "config not found" scenario
@@ -872,8 +871,8 @@ export async function config<T>(
     }
     catch (error) {
       // For backward compatibility, handle ConfigNotFoundError and some ConfigLoadError gracefully
-      if (error instanceof Error && (error.name === 'ConfigNotFoundError'
-        || (error.name === 'ConfigLoadError' && shouldHandleConfigLoadErrorGracefully(error)))) {
+      if (error instanceof ConfigNotFoundError
+        || (error instanceof ConfigLoadError && shouldHandleConfigLoadErrorGracefully(error))) {
         // Fall back to environment variables + defaults
         const envResult = await globalConfigLoader.applyEnvironmentVariables(
           nameOrOptions,
@@ -904,8 +903,8 @@ export async function config<T>(
       throw error
 
     // For backward compatibility, handle ConfigNotFoundError and some ConfigLoadError gracefully
-    if (error instanceof Error && (error.name === 'ConfigNotFoundError'
-      || (error.name === 'ConfigLoadError' && shouldHandleConfigLoadErrorGracefully(error)))) {
+    if (error instanceof ConfigNotFoundError
+      || (error instanceof ConfigLoadError && shouldHandleConfigLoadErrorGracefully(error))) {
       // Fall back to environment variables + defaults
       const envResult = await globalConfigLoader.applyEnvironmentVariables(
         nameOrOptions.name || '',

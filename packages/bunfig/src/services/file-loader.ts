@@ -158,7 +158,7 @@ export class ConfigFileLoader {
       }
       catch (error) {
         // Re-throw ConfigLoadError since it indicates a file was found but has issues
-        if (error instanceof Error && error.name === 'ConfigLoadError') {
+        if (error instanceof ConfigLoadError) {
           throw error
         }
         // Log other errors but continue trying other paths
