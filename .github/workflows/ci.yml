@@ -34,7 +34,7 @@ jobs:
           packages: 'bun.com@${{ env.BUN_VERSION }}'
 
       - name: Use cached node_modules
-        uses: actions/cache@v5.0.3
+        uses: actions/cache@v6.1.0
         with:
           path: node_modules
           key: node-modules-${{ hashFiles('**/bun.lock') }}
@@ -61,7 +61,7 @@ jobs:
           packages: 'bun.com@${{ env.BUN_VERSION }}'
 
       - name: Use cached node_modules
-        uses: actions/cache@v5.0.3
+        uses: actions/cache@v6.1.0
         with:
           path: node_modules
           key: node-modules-${{ hashFiles('**/bun.lock') }}
@@ -88,7 +88,7 @@ jobs:
           packages: 'bun.com@${{ env.BUN_VERSION }}'
 
       - name: Use cached node_modules
-        uses: actions/cache@v5.0.3
+        uses: actions/cache@v6.1.0
         with:
           path: node_modules
           key: node-modules-${{ hashFiles('**/bun.lock') }}
